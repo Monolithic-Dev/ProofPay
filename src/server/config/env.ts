@@ -7,7 +7,7 @@ const boolEnv = z
   .union([z.literal('true'), z.literal('false')])
   .transform((v) => v === 'true')
 
-const envSchema = z.object({
+export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   APP_BASE_URL: z.string().url().default('http://localhost:3000'),
   DATABASE_URL: z.string().min(1),
@@ -49,7 +49,7 @@ const envSchema = z.object({
   SANDBOX_BUYER_PASSWORD: z.string().optional(),
 })
 
-function parseEnv(raw: NodeJS.ProcessEnv) {
+export function parseEnv(raw: NodeJS.ProcessEnv) {
   const result = envSchema.safeParse(raw)
 
   if (!result.success) {
@@ -59,6 +59,9 @@ function parseEnv(raw: NodeJS.ProcessEnv) {
       return `  • ${path}: ${issue.message}`
     })
     console.error('❌ Environment validation failed:\n' + issues.join('\n'))
+    if (raw['NODE_ENV'] === 'test' || process.env['NODE_ENV'] === 'test') {
+      throw new Error('Environment validation failed:\n' + issues.join('\n'))
+    }
     process.exit(1)
   }
 
