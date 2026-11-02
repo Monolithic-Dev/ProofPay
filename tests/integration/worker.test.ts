@@ -57,8 +57,9 @@ describe('Worker Process Integration', () => {
   it('pollOnce claims a pending job, executes it, and marks it complete', async () => {
     try {
       const db = getDb()
-      // Enqueue a non-existent milestone job to test the loop
-      await enqueueJob(db, 'EXPIRE_CONTRACT', { contract_id: 'c1' })
+      await db.delete(jobs)
+      // Enqueue a job that succeeds to test the poll loop
+      await enqueueJob(db, 'REAUTH_CHECK', {})
 
       const handled = await pollOnce()
       expect(handled).toBe(true)

@@ -3,7 +3,7 @@ import pino from 'pino'
 // Lazy import env to avoid circular deps during testing
 function getLogLevel(): string {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    // eslint-disable-next-line
     const { env } = require('../config/env') as { env: { LOG_LEVEL: string; NODE_ENV: string } }
     return env.LOG_LEVEL
   } catch {
@@ -13,7 +13,7 @@ function getLogLevel(): string {
 
 function isProduction(): boolean {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    // eslint-disable-next-line
     const { env } = require('../config/env') as { env: { NODE_ENV: string } }
     return env.NODE_ENV === 'production'
   } catch {

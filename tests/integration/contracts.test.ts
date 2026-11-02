@@ -15,7 +15,7 @@ import {
   acceptContract,
   cancelContract,
 } from '@/server/contracts/service'
-import { setLlmTransport } from '@/server/ai/fake-llm'
+import { setLlmTransport, defaultFakeLlm } from '@/server/ai/fake-llm'
 import { NotFoundError, ForbiddenError, ValidationError } from '@/server/util/errors'
 import type { SessionUser } from '@/server/auth/session'
 
@@ -33,7 +33,7 @@ describe('Contract Lifecycle Integration', () => {
   let dbActive = false
 
   beforeEach(async () => {
-    setLlmTransport(null) // Uses standard valid fixture
+    setLlmTransport(defaultFakeLlm) // Uses hermetic FakeLLM transport
 
     try {
       await getDb().execute(sql`SELECT 1`)

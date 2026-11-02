@@ -8,6 +8,8 @@ import { getDb } from '@/server/db/client'
 import { getBudgetStatus } from '@/server/ai/llm'
 import { kvGet } from '@/server/db/repos/kv.repo'
 import { jobs } from '@/server/db/schema'
+import { getAccessToken } from '@/server/paypal/client'
+import { env } from '@/server/config/env'
 
 export async function GET() {
   const db = getDb()
@@ -67,10 +69,18 @@ export async function GET() {
     }
   }
 
+  let paypalStatus = { ok: false, mode: env.PAYPAL_ENV }
+  try {
+    const token = await getAccessToken()
+    paypalStatus.ok = !!token
+  } catch {
+    paypalStatus.ok = false
+  }
+
   let status: 'ok' | 'degraded' | 'down' = 'ok'
   if (dbStatus !== 'ok') {
     status = 'down'
-  } else if (workerLagSeconds > 120 || llmBudget.exhausted || stuckJobs > 5) {
+  } else if (workerLagSeconds > 120 || llmBudget.exhausted || stuckJobs > 5 || !paypalStatus.ok) {
     status = 'degraded'
   }
 
@@ -83,6 +93,7 @@ export async function GET() {
       pending_jobs: pendingJobs,
       stuck_jobs: stuckJobs,
       llm_budget: llmBudget,
+      paypal: paypalStatus,
       worker: {
         last_heartbeat: workerHeartbeat,
       },

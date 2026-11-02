@@ -3,7 +3,7 @@ import path from 'path'
 
 const testEnv = {
   NODE_ENV: 'test' as const,
-  DATABASE_URL: 'postgresql://proofpay:proofpay@localhost:5432/proofpay_test',
+  DATABASE_URL: process.env['DATABASE_URL'] || 'postgresql://proofpay:proofpay@localhost:5435/proofpay_test',
   PAYPAL_ENV: 'sandbox',
   PAYPAL_CLIENT_ID: 'mock_test_client_id',
   PAYPAL_CLIENT_SECRET: 'mock_test_client_secret',

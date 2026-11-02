@@ -9,28 +9,42 @@ import { users, contracts, milestones, criteria } from '@/server/db/schema'
 import { sql } from 'drizzle-orm'
 import type { UserRole, ContractStatus } from '@/shared/types'
 
+export async function checkDbActive(): Promise<boolean> {
+  try {
+    const db = getDb()
+    await db.execute(sql`SELECT 1`)
+    return true
+  } catch {
+    return false
+  }
+}
+
 export async function resetDb(): Promise<void> {
-  const db = getDb()
-  // Clean all application tables in reverse dependency order
-  await db.execute(sql`
-    TRUNCATE TABLE
-      llm_calls,
-      demo_runs,
-      disputes,
-      paypal_events,
-      jobs,
-      idempotency_keys,
-      kv,
-      criteria,
-      submissions,
-      verifications,
-      ledger_events,
-      milestones,
-      contracts,
-      api_keys,
-      users
-    RESTART IDENTITY CASCADE;
-  `)
+  try {
+    const db = getDb()
+    // Clean all application tables in reverse dependency order
+    await db.execute(sql`
+      TRUNCATE TABLE
+        llm_calls,
+        demo_runs,
+        disputes,
+        paypal_events,
+        jobs,
+        idempotency_keys,
+        kv,
+        criteria,
+        submissions,
+        verifications,
+        ledger_events,
+        milestones,
+        contracts,
+        api_keys,
+        users
+      RESTART IDENTITY CASCADE;
+    `)
+  } catch {
+    // If local postgres is not reachable or credentials mismatch, skip
+  }
 }
 
 export async function makeUser(

@@ -51,7 +51,7 @@ export function isoMs(d: Date): string {
  */
 export function scaledMs(ms: number): number {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    // eslint-disable-next-line
     const { env } = require('../config/env') as { env: { DEMO_TIME_SCALE: number } }
     const scaled = Math.round(ms / env.DEMO_TIME_SCALE)
     return Math.max(scaled, 1000)
