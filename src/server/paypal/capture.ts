@@ -1,55 +1,63 @@
 /**
- * PayPal Payments v2 — capture (partial and final).
- * ONLY imported by src/server/release/ (enforced by ESLint).
+ * PayPal Payments Capture API v2 adapter.
+ * Implements phase-5-paypal-funding-and-release.md §5.4 & paypal-integration.md §3.3.
+ *
+ * NOTE: This module must ONLY be imported by src/server/release/ (lint enforced).
  */
-import { ppFetch } from './client'
-import { newRequestId } from '@/server/util/ids'
-import { PayPalError } from '@/server/util/errors'
+import { paypalFetch } from './client'
+import { toPayPalValue } from './money'
 
-export interface CaptureResult {
-  id: string
-  status: string
-  amount: { currency_code: string; value: string }
-  final_capture: boolean
-  seller_receivable_breakdown?: Record<string, unknown>
-  create_time?: string
-}
-
-export interface CaptureParams {
+export interface CaptureAuthorizationParams {
   authorizationId: string
   amountMinor: number
-  isFinal: boolean
-  idempotencyKey: string  // pp:{contractId}:{milestoneKey}:capture:{n}
+  finalCapture: boolean
+  invoiceId: string
+  note?: string
+  requestId?: string
   mockCode?: string
 }
 
-/**
- * Capture funds from an authorization.
- * Called ONLY from release/service.ts.
- */
-export async function captureAuthorization(params: CaptureParams): Promise<CaptureResult> {
-  const { authorizationId, amountMinor, isFinal, idempotencyKey, mockCode } = params
-  const amount = (amountMinor / 100).toFixed(2)
+export interface CaptureAuthorizationResult {
+  captureId: string
+  status: 'COMPLETED' | 'PENDING' | 'DECLINED' | string
+  amount?: { currency_code: string; value: string }
+  finalCapture?: boolean
+  raw: unknown
+}
 
-  const result = await ppFetch<CaptureResult>(
+/**
+ * Capture funds (partial or final) from an active authorization.
+ */
+export async function captureAuthorization(
+  params: CaptureAuthorizationParams
+): Promise<CaptureAuthorizationResult> {
+  const { authorizationId, amountMinor, finalCapture, invoiceId, note, requestId, mockCode } = params
+
+  const body = {
+    amount: {
+      currency_code: 'USD',
+      value: toPayPalValue(amountMinor),
+    },
+    final_capture: finalCapture,
+    invoice_id: invoiceId,
+    note_to_payer: note ?? 'ProofPay milestone release',
+  }
+
+  const res = await paypalFetch<any>(
+    'POST',
     `/v2/payments/authorizations/${authorizationId}/capture`,
     {
-      method: 'POST',
-      requestId: newRequestId(),
-      idempotencyKey,
+      body,
+      requestId,
       mockCode,
-      body: {
-        amount: { currency_code: 'USD', value: amount },
-        final_capture: isFinal,
-        invoice_id: idempotencyKey,
-      },
     }
   )
 
-  // Declined capture surfaces as a DECLINED status, not an HTTP error
-  if (result.status === 'DECLINED') {
-    throw new PayPalError('Capture declined by PayPal', { capture_id: result.id, status: result.status })
+  return {
+    captureId: res.id,
+    status: res.status,
+    amount: res.amount,
+    finalCapture: res.final_capture,
+    raw: res,
   }
-
-  return result
 }

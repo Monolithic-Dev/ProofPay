@@ -1,17 +1,25 @@
 /**
- * PayPal void — ONLY imported by src/server/release/.
+ * PayPal Authorizations Void API v2 adapter.
+ * Implements phase-5-paypal-funding-and-release.md §5.4 & paypal-integration.md §3.4.
+ *
+ * NOTE: This module must ONLY be imported by src/server/release/ (lint enforced).
  */
-import { ppFetch } from './client'
-import { newRequestId } from '@/server/util/ids'
+import { paypalFetch } from './client'
 
-export async function voidAuthorization(authId: string): Promise<void> {
-  await ppFetch<void>(
-    `/v2/payments/authorizations/${authId}/void`,
+/**
+ * Void an authorization hold.
+ * Succeeds on HTTP 204 No Content.
+ */
+export async function voidAuthorization(
+  authorizationId: string,
+  requestId?: string
+): Promise<void> {
+  await paypalFetch<void>(
+    'POST',
+    `/v2/payments/authorizations/${authorizationId}/void`,
     {
-      method: 'POST',
-      requestId: newRequestId(),
-      idempotencyKey: `pp:void:${authId}`,
       body: {},
+      requestId,
     }
   )
 }
