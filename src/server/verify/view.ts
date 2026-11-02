@@ -35,6 +35,7 @@ export interface VerificationView {
   prompt_version: string | null
   created_at: string
   completed_at: string | null
+  latency_ms?: number | null
 }
 
 export interface MilestoneView {
@@ -116,6 +117,7 @@ export function toVerificationView(
     prompt_version: row.prompt_version,
     created_at: row.created_at ? new Date(row.created_at).toISOString() : '',
     completed_at: row.completed_at ? new Date(row.completed_at).toISOString() : null,
+    latency_ms: row.latency_ms,
   }
 }
 

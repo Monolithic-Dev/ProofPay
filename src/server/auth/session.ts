@@ -51,6 +51,7 @@ export async function signSession(user: {
 }
 
 export const createSession = signSession
+export const createSessionToken = signSession
 
 /**
  * Read and verify a session token from a cookie string or Request.

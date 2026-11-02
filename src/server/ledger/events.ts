@@ -10,6 +10,7 @@ export const LEDGER_EVENT_TYPES = [
   'CONTRACT_PROPOSED',
   'CONTRACT_ACCEPTED',
   'FUNDING_STARTED',
+  'FUNDING_CANCELLED',
   'AUTHORIZATION_CREATED',
   'SUBMISSION_RECEIVED',
   'VERIFICATION_COMPLETED',
@@ -73,6 +74,12 @@ export const LedgerPayloadSchemas: Record<LedgerEventType, z.ZodObject<any>> = {
     .object({
       paypal_order_id: z.string(),
       total_minor: z.number().int().positive(),
+    })
+    .strict(),
+
+  FUNDING_CANCELLED: z
+    .object({
+      paypal_order_id: z.string(),
     })
     .strict(),
 
