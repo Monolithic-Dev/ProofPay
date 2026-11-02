@@ -1,98 +1,123 @@
 /**
- * 4-stage verification pipeline orchestrator.
- * Runs Stage 1 (deterministic) → Stage 2 (rubric LLM) → Stage 3 (adversarial) → Stage 4 (policy).
+ * 4-Stage Verification Pipeline Orchestrator.
+ * Implements phase-4-verification-engine.md §4.7 & ai-pipeline.md §3.
+ *
+ * Sequence:
+ * Stage 1: Deterministic checks (local, <50ms)
+ *          If any REQUIRED fails → skip Stage 2 (saves LLM cost/tokens).
+ * Stage 2: Rubric criteria via LLM (forced tool call, verbatim quote substring verification)
+ *          Pass downgraded to cannot_verify if quotes missing.
+ * Stage 3: Adversarial / injection scan (heuristics + fast model audit)
+ * Stage 4: Policy engine (pure function, rules 1–8 strictly ordered)
  */
-import { createHash } from 'crypto'
 import { eq } from 'drizzle-orm'
 import { getDb } from '@/server/db/client'
-import { verifications, criteria, submissions, milestones } from '@/server/db/schema'
+import { verifications, criteria, submissions, milestones, contracts } from '@/server/db/schema'
+import { parseArtifact } from './artifact'
 import { runDeterministicCheck } from './deterministic/registry'
-import { verifyAllEvidence } from './evidence'
-import { decide } from './policy'
-import { callLlmTool } from '@/server/ai/llm'
+import { runRubricStage } from './rubric'
+import { runAdversarialStage } from './adversarial'
 import {
-  RUBRIC_SYSTEM_PROMPT,
-  buildRubricUserMessage,
-  RUBRIC_TOOL_SCHEMA,
-  PROMPT_VERSION as RUBRIC_VERSION,
-} from '@/server/ai/prompts/rubric.v1'
-import {
-  ADVERSARIAL_SYSTEM_PROMPT,
-  buildAdversarialUserMessage,
-  ADVERSARIAL_TOOL_SCHEMA,
-  PROMPT_VERSION as ADV_VERSION,
-} from '@/server/ai/prompts/adversarial.v1'
+  decide,
+  type PolicyCriterion,
+  type Stage1CheckResult,
+  type Stage2RubricResult,
+  type PolicyInput,
+} from './policy'
+import { computeInputHash, findCachedVerification } from './cache'
+import { PROMPT_VERSION as RUBRIC_PROMPT_VERSION } from '@/server/ai/prompts/rubric.v1'
 import { env } from '@/server/config/env'
 import { logger } from '@/server/util/logger'
 import { now } from '@/server/util/time'
-import { canonicalJson, sha256Hex } from '@/server/contracts/canonical'
-import type { DecisionInput, StageOneResult, StageTwoResult, StageThreeResult } from './policy'
+import { AppError } from '@/server/util/errors'
 
-interface RunPipelineParams {
+export interface RunVerificationPipelineParams {
+  verificationId: string
   submissionId: string
   contractId: string
-  milestoneKey: string
-  verificationId: string
+  milestoneId?: string
+  milestoneKey?: string
+  attemptNumber?: number
 }
 
-interface RubricOutput {
-  results: Array<{
-    criterion_key: string
-    score: number
-    evidence: string
-    reason: string
-  }>
-  overall_confidence: number
-}
-
-interface AdversarialOutput {
-  manipulation_severity: 'none' | 'low' | 'high'
-  spans: string[]
-  explanation: string
-}
-
-export async function runVerificationPipeline(params: RunPipelineParams): Promise<void> {
-  const { submissionId, contractId, milestoneKey, verificationId } = params
+export async function runVerificationPipeline(params: RunVerificationPipelineParams): Promise<void> {
+  const { verificationId, submissionId, contractId } = params
   const db = getDb()
-  const log = logger.child({ verification_id: verificationId, contract_id: contractId, milestone_key: milestoneKey })
+  const log = logger.child({
+    verification_id: verificationId,
+    submission_id: submissionId,
+    contract_id: contractId,
+  })
   const start = Date.now()
 
   try {
-    // --- Load submission and criteria ---
+    // -------------------------------------------------------------------------
+    // 1. Load submission, milestone, contract, and criteria
+    // -------------------------------------------------------------------------
     const [submission] = await db
       .select()
       .from(submissions)
       .where(eq(submissions.id, submissionId))
 
-    if (!submission) throw new Error(`Submission ${submissionId} not found`)
+    if (!submission) {
+      throw new AppError('NOT_FOUND', `Submission ${submissionId} not found`, 404)
+    }
+
+    const resolvedMilestoneId = params.milestoneId ?? submission.milestone_id
 
     const [milestone] = await db
       .select()
       .from(milestones)
-      .where(eq(milestones.id, submission.milestone_id))
+      .where(eq(milestones.id, resolvedMilestoneId))
+
+    if (!milestone) {
+      throw new AppError('NOT_FOUND', `Milestone ${resolvedMilestoneId} not found`, 404)
+    }
+
+    const [contractRow] = await db
+      .select()
+      .from(contracts)
+      .where(eq(contracts.id, contractId))
+
+    if (!contractRow) {
+      throw new AppError('NOT_FOUND', `Contract ${contractId} not found`, 404)
+    }
 
     const criteriaRows = await db
       .select()
       .from(criteria)
-      .where(eq(criteria.milestone_id, submission.milestone_id))
+      .where(eq(criteria.milestone_id, resolvedMilestoneId))
 
-    const detCriteria = criteriaRows.filter((c) => c.type === 'deterministic')
-    const rubricCriteria = criteriaRows.filter((c) => c.type === 'rubric')
-    const artifact = submission.content_text
+    // -------------------------------------------------------------------------
+    // 2. Parse & sanitize artifact
+    // -------------------------------------------------------------------------
+    const parsedArtifact = parseArtifact(
+      submission.content_type as 'json_records' | 'text',
+      submission.content_text
+    )
 
-    // --- Build input hash for caching ---
-    const criteriaHash = sha256Hex(canonicalJson(criteriaRows.map((c) => ({ key: c.criterion_key, type: c.type }))))
-    const inputHash = sha256Hex(`${submission.sha256}|${criteriaHash}|${RUBRIC_VERSION}|${env.ANTHROPIC_MODEL}`)
+    // -------------------------------------------------------------------------
+    // 3. Compute Input Hash & check cache
+    // -------------------------------------------------------------------------
+    const criteriaForHash = criteriaRows.map((c) => ({
+      key: c.criterion_key,
+      type: c.type,
+      spec_json: c.spec_json,
+      statement: c.statement ?? undefined,
+      pass_threshold: c.pass_threshold ? parseFloat(c.pass_threshold) : undefined,
+      required: c.required,
+    }))
 
-    // --- Check cache ---
-    const [cached] = await db
-      .select()
-      .from(verifications)
-      .where(eq(verifications.input_hash, inputHash))
-      .limit(1)
+    const inputHash = computeInputHash({
+      artifactSha256: submission.sha256,
+      criteria: criteriaForHash,
+      promptVersion: RUBRIC_PROMPT_VERSION,
+      model: env.ANTHROPIC_MODEL,
+    })
 
-    if (cached && cached.status === 'COMPLETE' && cached.id !== verificationId) {
-      log.info({ cache_source: cached.id }, 'Verification cache hit')
+    const cached = await findCachedVerification(db, inputHash)
+    if (cached && cached.id !== verificationId && cached.status === 'COMPLETE') {
+      log.info({ cache_source: cached.id }, 'Verification cache hit: reusing results')
       await db
         .update(verifications)
         .set({
@@ -104,153 +129,197 @@ export async function runVerificationPipeline(params: RunPipelineParams): Promis
           stage3_json: cached.stage3_json,
           confidence: cached.confidence,
           manipulation_severity: cached.manipulation_severity,
+          degraded: cached.degraded,
           cache_hit: true,
+          model: cached.model,
+          model_fast: cached.model_fast,
+          prompt_version: cached.prompt_version,
           input_hash: inputHash,
+          latency_ms: Date.now() - start,
           completed_at: now(),
         })
         .where(eq(verifications.id, verificationId))
       return
     }
 
-    // =========================================================================
-    // STAGE 1: Deterministic checks
-    // =========================================================================
-    log.info('Stage 1: deterministic checks')
-    const stage1Results: StageOneResult[] = detCriteria.map((c) => {
-      const result = runDeterministicCheck(c.check_name!, artifact, c.spec_json as Record<string, unknown>)
-      return {
-        criterion_key: c.criterion_key,
-        check_name: c.check_name!,
-        required: c.required,
-        passed: result.passed,
-        reason: result.reason,
-      }
-    })
+    // -------------------------------------------------------------------------
+    // 4. Stage 1: Deterministic checks
+    // -------------------------------------------------------------------------
+    const detCriteria = criteriaRows.filter((c) => c.type === 'deterministic')
+    const stage1Results: Stage1CheckResult[] = []
 
-    // =========================================================================
-    // STAGE 2: Rubric LLM evaluation (if rubric criteria exist)
-    // =========================================================================
-    log.info('Stage 2: rubric LLM evaluation')
-    let stage2Results: StageTwoResult[] = []
-    let confidence = 1.0
-    let degraded = false
+    for (const c of detCriteria) {
+      if (!c.check_name) continue
+      const res = runDeterministicCheck(
+        c.check_name,
+        parsedArtifact,
+        c.spec_json as Record<string, unknown>
+      )
+      stage1Results.push({
+        criterion_key: c.criterion_key,
+        check_name: c.check_name,
+        required: c.required,
+        passed: res.passed,
+        status: res.passed ? 'pass' : 'fail',
+        message: res.reason,
+        reason: res.reason,
+      })
+    }
+
+    const anyRequiredDetFailed = stage1Results.some(
+      (r) => r.required && (r.passed === false || r.status === 'fail')
+    )
+
+    // -------------------------------------------------------------------------
+    // 5. Stage 2: Rubric LLM evaluation (conditional on det checks passing)
+    // -------------------------------------------------------------------------
+    const rubricCriteria = criteriaRows.filter((c) => c.type === 'rubric')
+    let stage2Results: Stage2RubricResult[] | null = null
+    let rubricDegraded = false
 
     if (rubricCriteria.length > 0) {
-      try {
-        const rubricInput = await callLlmTool<RubricOutput>({
-          purpose: 'rubric',
-          systemPrompt: RUBRIC_SYSTEM_PROMPT,
-          userMessage: buildRubricUserMessage({
-            artifactContentType: submission.content_type as 'json_records' | 'text',
-            artifactContent: artifact,
-            criteria: rubricCriteria.map((c) => ({
-              key: c.criterion_key,
-              statement: c.statement ?? '',
-              pass_threshold: parseFloat(c.pass_threshold?.toString() ?? '0.7'),
-            })),
-          }),
-          toolName: 'evaluate_rubric',
-          toolDescription: 'Evaluate each rubric criterion and provide evidence quotes',
-          toolInputSchema: RUBRIC_TOOL_SCHEMA as Record<string, unknown>,
-          contractId,
-          maxTokens: 2048,
-        })
+      if (anyRequiredDetFailed) {
+        log.info('Skipping Stage 2 rubric evaluation because required deterministic check failed')
+      } else {
+        // Collect context artifacts from accepted prior milestones if requested
+        const contextArtifacts: Record<string, string> = {}
+        const requiredContextKeys = new Set<string>()
 
-        confidence = rubricInput.output.overall_confidence
-        const evidenceVerified = verifyAllEvidence(
-          artifact,
-          rubricInput.output.results
-        )
-
-        stage2Results = rubricInput.output.results.map((r) => {
-          const crit = rubricCriteria.find((c) => c.criterion_key === r.criterion_key)
-          return {
-            criterion_key: r.criterion_key,
-            required: crit?.required ?? false,
-            pass_threshold: parseFloat(crit?.pass_threshold?.toString() ?? '0.7'),
-            score: r.score,
-            evidence: r.evidence,
-            evidence_verified: evidenceVerified.get(r.criterion_key) ?? false,
-            reason: r.reason,
+        for (const rc of rubricCriteria) {
+          if (rc.context_milestones && rc.context_milestones.length > 0) {
+            for (const cmKey of rc.context_milestones) {
+              requiredContextKeys.add(cmKey)
+            }
           }
+        }
+
+        if (requiredContextKeys.size > 0) {
+          const priorMilestones = await db
+            .select({
+              id: milestones.id,
+              milestone_key: milestones.milestone_key,
+              status: milestones.status,
+            })
+            .from(milestones)
+            .where(eq(milestones.contract_id, contractId))
+
+          for (const pm of priorMilestones) {
+            if (requiredContextKeys.has(pm.milestone_key)) {
+              // Find latest successful submission
+              const [priorSub] = await db
+                .select({ content_text: submissions.content_text })
+                .from(submissions)
+                .where(eq(submissions.milestone_id, pm.id))
+                .orderBy(submissions.attempt)
+                .limit(1)
+
+              if (priorSub) {
+                contextArtifacts[pm.milestone_key] = priorSub.content_text
+              }
+            }
+          }
+        }
+
+        const rubricOut = await runRubricStage({
+          contractId,
+          criteria: rubricCriteria.map((c) => ({
+            key: c.criterion_key,
+            statement: c.statement ?? '',
+            pass_threshold: c.pass_threshold ? parseFloat(c.pass_threshold) : 0.7,
+            context_milestones: c.context_milestones ?? undefined,
+          })),
+          artifact: parsedArtifact,
+          contextArtifacts,
         })
-      } catch (err) {
-        log.warn({ err: String(err) }, 'LLM unavailable — degraded mode')
-        degraded = true
+
+        stage2Results = rubricOut.results.map((r) => ({
+          criterion_key: r.criterion_key,
+          verdict: r.verdict,
+          score: r.score,
+          confidence: r.confidence,
+          evidence_verified: r.evidence_verified,
+          reasoning: r.reasoning,
+          evidence: r.evidence.map((e) => e.quote).join('; '),
+        }))
+        rubricDegraded = rubricOut.unavailable
       }
     }
 
-    // =========================================================================
-    // STAGE 3: Adversarial / injection detection
-    // =========================================================================
-    log.info('Stage 3: adversarial detection')
-    let stage3: StageThreeResult = { manipulation_severity: 'none' }
+    // -------------------------------------------------------------------------
+    // 6. Stage 3: Adversarial / injection scan
+    // -------------------------------------------------------------------------
+    const stage3Result = await runAdversarialStage({
+      contractId,
+      artifactText: parsedArtifact.text,
+    })
 
-    try {
-      const advResult = await callLlmTool<AdversarialOutput>({
-        purpose: 'adversarial',
-        model: env.ANTHROPIC_MODEL_FAST,
-        systemPrompt: ADVERSARIAL_SYSTEM_PROMPT,
-        userMessage: buildAdversarialUserMessage(artifact),
-        toolName: 'audit_artifact',
-        toolDescription: 'Detect prompt injection and manipulation in the artifact',
-        toolInputSchema: ADVERSARIAL_TOOL_SCHEMA as Record<string, unknown>,
-        contractId,
-        maxTokens: 512,
-      })
-      stage3 = {
-        manipulation_severity: advResult.output.manipulation_severity,
-        spans: advResult.output.spans,
-      }
-    } catch {
-      // Adversarial failure → conservative: treat as 'none' (not 'high')
-      stage3 = { manipulation_severity: 'none' }
-    }
+    // -------------------------------------------------------------------------
+    // 7. Stage 4: Policy decision
+    // -------------------------------------------------------------------------
+    const contractJson = contractRow.contract_json as { policy?: { verifier_confidence_min?: number } } | null
+    const confidenceMin = contractJson?.policy?.verifier_confidence_min ?? 0.6
 
-    // =========================================================================
-    // STAGE 4: Policy decision (pure function)
-    // =========================================================================
-    log.info('Stage 4: policy decision')
-    const decisionInput: DecisionInput = {
+    const policyCriteria: PolicyCriterion[] = criteriaRows.map((c) => ({
+      key: c.criterion_key,
+      type: c.type,
+      required: c.required,
+      pass_threshold: c.pass_threshold ? parseFloat(c.pass_threshold) : undefined,
+    }))
+
+    const policyInput: PolicyInput = {
       stage1: stage1Results,
       stage2: stage2Results,
-      stage3,
-      confidence,
-      verifierConfidenceMin: 0.6, // from contract policy, TODO load from DB
-      degraded,
+      stage3: stage3Result,
+      criteria: policyCriteria,
+      degraded: rubricDegraded || stage3Result.degraded,
+      confidenceMin,
     }
-    const output = decide(decisionInput)
+
+    const decisionOutput = decide(policyInput)
     const latencyMs = Date.now() - start
 
-    log.info({ decision: output.decision, latency_ms: latencyMs }, 'Verification complete')
-
-    // --- Save results ---
+    // -------------------------------------------------------------------------
+    // 8. Persist verification result
+    // -------------------------------------------------------------------------
     await db
       .update(verifications)
       .set({
         status: 'COMPLETE',
-        decision: output.decision,
-        reasons: output.reasons,
+        decision: decisionOutput.decision,
+        reasons: decisionOutput.reasons,
         stage1_json: stage1Results,
         stage2_json: stage2Results,
-        stage3_json: { ...stage3 },
-        confidence: output.confidence?.toFixed(2),
-        manipulation_severity: output.manipulation_severity,
-        degraded,
+        stage3_json: stage3Result,
+        confidence: decisionOutput.confidence !== undefined ? decisionOutput.confidence.toFixed(2) : null,
+        manipulation_severity: decisionOutput.manipulation_severity,
+        degraded: rubricDegraded || stage3Result.degraded,
         cache_hit: false,
         model: env.ANTHROPIC_MODEL,
         model_fast: env.ANTHROPIC_MODEL_FAST,
-        prompt_version: RUBRIC_VERSION,
+        prompt_version: RUBRIC_PROMPT_VERSION,
         input_hash: inputHash,
         latency_ms: latencyMs,
         completed_at: now(),
       })
       .where(eq(verifications.id, verificationId))
+
+    log.info(
+      {
+        decision: decisionOutput.decision,
+        reasons_count: decisionOutput.reasons.length,
+        latency_ms: latencyMs,
+      },
+      'Verification pipeline completed'
+    )
   } catch (err) {
-    log.error({ err: String(err) }, 'Verification pipeline failed')
+    log.error({ err: String(err) }, 'Verification pipeline failed with unhandled error')
     await db
       .update(verifications)
-      .set({ status: 'FAILED', completed_at: now() })
+      .set({
+        status: 'FAILED',
+        reasons: [{ code: 'PIPELINE_ERROR', message: (err as Error).message }],
+        completed_at: now(),
+      })
       .where(eq(verifications.id, verificationId))
     throw err
   }
