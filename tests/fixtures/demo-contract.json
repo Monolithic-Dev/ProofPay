@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "title": "Product dataset + summary",
+  "summary": "25 validated product records and a 150–200 word category summary.",
+  "currency": "USD",
+  "total_minor": 10000,
+  "milestones": [
+    {
+      "key": "m1",
+      "title": "Dataset",
+      "amount_minor": 6000,
+      "due_in_days": 3,
+      "deliverable": {
+        "content_type": "json_records",
+        "max_bytes": 1048576,
+        "description": "JSON array of product objects per product_v1"
+      },
+      "criteria": [
+        {
+          "key": "c1",
+          "type": "deterministic",
+          "required": true,
+          "description": "Matches product_v1 schema",
+          "check": "json_schema",
+          "spec": { "schema_ref": "product_v1" }
+        },
+        {
+          "key": "c2",
+          "type": "deterministic",
+          "required": true,
+          "description": "At least 25 records",
+          "check": "row_count",
+          "spec": { "min": 25 }
+        },
+        {
+          "key": "c3",
+          "type": "deterministic",
+          "required": true,
+          "description": "SKUs are unique",
+          "check": "unique_field",
+          "spec": { "field": "sku" }
+        },
+        {
+          "key": "c4",
+          "type": "deterministic",
+          "required": true,
+          "description": "Emails are well formed",
+          "check": "regex_field",
+          "spec": { "field": "contact_email", "pattern": "email" }
+        },
+        {
+          "key": "c5",
+          "type": "rubric",
+          "required": false,
+          "statement": "Each description is specific to its product and not a copied template.",
+          "pass_threshold": 0.7
+        }
+      ]
+    },
+    {
+      "key": "m2",
+      "title": "Summary",
+      "amount_minor": 4000,
+      "due_in_days": 5,
+      "deliverable": {
+        "content_type": "text",
+        "max_bytes": 20000,
+        "description": "150–200 word summary"
+      },
+      "criteria": [
+        {
+          "key": "c6",
+          "type": "deterministic",
+          "required": true,
+          "description": "150–200 words",
+          "check": "word_count",
+          "spec": { "min": 150, "max": 200 }
+        },
+        {
+          "key": "c7",
+          "type": "rubric",
+          "required": true,
+          "statement": "The summary names at least three distinct product categories that appear in the m1 dataset.",
+          "pass_threshold": 0.8,
+          "context_milestones": ["m1"]
+        }
+      ]
+    }
+  ],
+  "policy": {
+    "max_revisions": 2,
+    "auto_release_hours": 48,
+    "on_final_failure": "void_remaining",
+    "verifier_confidence_min": 0.6
+  }
+}
