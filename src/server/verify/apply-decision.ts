@@ -163,6 +163,19 @@ export async function applyDecision(params: ApplyDecisionParams): Promise<ApplyD
           },
         })
 
+        // Enqueue VOID_REMAINING per phase-5-paypal-funding-and-release.md §5.6
+        await enqueueJob(
+          tx,
+          'VOID_REMAINING',
+          {
+            contract_id: contractId,
+            reason: 'final_failure',
+          },
+          {
+            dedupeKey: `void:${contractId}`,
+          }
+        )
+
         return { applied: true, newStatus: 'FAILED_FINAL' }
       }
 

@@ -4,7 +4,8 @@
  */
 import { eq } from 'drizzle-orm'
 import { getDb, withTx, lockContract } from '@/server/db/client'
-import { contracts, users, type ContractRow } from '@/server/db/schema'
+import { contracts, milestones, users, type ContractRow } from '@/server/db/schema'
+import { enqueueJob } from '@/server/jobs/queue'
 import {
   getContractById,
   transitionContractStatus,
@@ -345,10 +346,29 @@ export async function cancelContract(
 
   const { contract: existing } = await requireParty(getDb(), id, user)
 
-  if (existing.status !== 'DRAFT' && existing.status !== 'PROPOSED') {
+  const allowedStatuses = ['DRAFT', 'PROPOSED', 'ACCEPTED', 'FUNDED', 'IN_PROGRESS']
+  if (!allowedStatuses.includes(existing.status)) {
     throw new ConflictError(
-      `Cannot cancel contract in status '${existing.status}'. Funded contracts require refund flow.`
+      `Cannot cancel contract in status '${existing.status}'.`
     )
+  }
+
+  // If funded or in progress, only buyer may cancel, and no milestone can be VERIFYING
+  const isFundedOrProgress = existing.status === 'FUNDED' || existing.status === 'IN_PROGRESS'
+  if (isFundedOrProgress) {
+    if (user.sub !== existing.buyer_id && user.role !== 'admin') {
+      throw new ForbiddenError('Only the buyer can cancel an active or funded contract')
+    }
+
+    const db = getDb()
+    const activeMilestones = await db
+      .select({ status: milestones.status })
+      .from(milestones)
+      .where(eq(milestones.contract_id, id))
+
+    if (activeMilestones.some((m) => m.status === 'VERIFYING')) {
+      throw new ConflictError('Cannot cancel contract while milestone verification is active')
+    }
   }
 
   const updatedRow = await withTx(async (tx) => {
@@ -363,14 +383,27 @@ export async function cancelContract(
 
     await appendLedgerEvent(tx, {
       contractId: id,
-      type: 'contract_cancelled',
+      type: 'CONTRACT_CANCELLED',
       actorType: user.sub === existing.buyer_id ? 'buyer' : 'seller',
       actorId: user.sub,
       payload: {
         reason: reason ?? 'User initiated cancellation',
-        previous_status: existing.status,
       },
     })
+
+    if (isFundedOrProgress) {
+      await enqueueJob(
+        tx,
+        'VOID_REMAINING',
+        {
+          contract_id: id,
+          reason: 'buyer_cancel',
+        },
+        {
+          dedupeKey: `void:${id}`,
+        }
+      )
+    }
 
     return updated
   })
