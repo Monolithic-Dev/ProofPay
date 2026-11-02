@@ -1,45 +1,57 @@
 /**
- * PayPal authorization management — get, reauthorize, void.
- * Void is ONLY imported by src/server/release/ (enforced by ESLint).
+ * PayPal Authorizations API v2 adapter.
+ * Implements phase-5-paypal-funding-and-release.md §5.3 & paypal-integration.md §3.5, §3.7.
  */
-import { ppFetch } from './client'
-import { newRequestId } from '@/server/util/ids'
+import { paypalFetch } from './client'
 
-export interface PayPalAuthorization {
+export interface PayPalAuthorizationDetails {
   id: string
   status: string
   amount: { currency_code: string; value: string }
   expiration_time?: string
   create_time?: string
   seller_protection?: { status: string }
-}
-
-export async function getAuthorization(authId: string): Promise<PayPalAuthorization> {
-  return ppFetch<PayPalAuthorization>(
-    `/v2/payments/authorizations/${authId}`,
-    { requestId: newRequestId() }
-  )
+  links?: Array<{ href: string; rel: string; method?: string }>
 }
 
 export interface ReauthorizeResult {
-  id: string
+  newAuthorizationId: string
   status: string
-  expiration_time?: string
+  expirationTime?: string
+  amount?: { currency_code: string; value: string }
 }
 
-export async function reauthorize(authId: string, amountMinor: number): Promise<ReauthorizeResult> {
-  return ppFetch<ReauthorizeResult>(
-    `/v2/payments/authorizations/${authId}/reauthorize`,
+/**
+ * Get live authorization status. Powers the "✓ Verified with PayPal" badge and reconciliation.
+ */
+export async function getAuthorization(authorizationId: string): Promise<PayPalAuthorizationDetails> {
+  return paypalFetch<PayPalAuthorizationDetails>(
+    'GET',
+    `/v2/payments/authorizations/${authorizationId}`
+  )
+}
+
+/**
+ * Reauthorize an authorization after the 3-day honor window.
+ * Returns the new authorization ID.
+ */
+export async function reauthorize(
+  authorizationId: string,
+  requestId?: string
+): Promise<ReauthorizeResult> {
+  const res = await paypalFetch<any>(
+    'POST',
+    `/v2/payments/authorizations/${authorizationId}/reauthorize`,
     {
-      method: 'POST',
-      requestId: newRequestId(),
-      idempotencyKey: `pp:reauth:${authId}`,
-      body: {
-        amount: {
-          currency_code: 'USD',
-          value: (amountMinor / 100).toFixed(2),
-        },
-      },
+      body: {},
+      requestId,
     }
   )
+
+  return {
+    newAuthorizationId: res.id,
+    status: res.status,
+    expirationTime: res.expiration_time,
+    amount: res.amount,
+  }
 }
