@@ -30,12 +30,13 @@ export async function appendLedgerEvent(
   const { contractId, type, actorType, actorId, payload } = params
 
   // Get max seq for this contract (within the same tx)
-  const [{ maxSeq }] = await db
+  const seqRows = await db
     .select({ maxSeq: max(ledger_events.seq) })
     .from(ledger_events)
     .where(eq(ledger_events.contract_id, contractId))
 
-  const seq = (maxSeq ?? 0) + 1
+  const maxSeq = seqRows[0]?.maxSeq ?? 0
+  const seq = maxSeq + 1
 
   // Get previous hash
   let prevHash = ZERO_HASH

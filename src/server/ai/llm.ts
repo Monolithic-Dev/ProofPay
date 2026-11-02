@@ -32,13 +32,14 @@ async function checkDailyBudget(): Promise<void> {
   const startOfDay = new Date(now())
   startOfDay.setUTCHours(0, 0, 0, 0)
 
-  const [{ total }] = await db
+  const rows = await db
     .select({ total: sql<number>`coalesce(sum(${llm_calls.cost_micro_usd}), 0)` })
     .from(llm_calls)
     .where(gte(llm_calls.created_at, startOfDay))
 
+  const total = rows[0]?.total ?? 0
   const budgetMicroUsd = env.LLM_DAILY_BUDGET_USD * 1_000_000
-  if ((total ?? 0) >= budgetMicroUsd) {
+  if (total >= budgetMicroUsd) {
     throw new BudgetExceededError()
   }
 }

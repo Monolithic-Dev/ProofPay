@@ -12,12 +12,14 @@ import {
   smallint,
   numeric,
   jsonb,
-  timestamptz,
+  timestamp,
   uniqueIndex,
   index,
   check,
 } from 'drizzle-orm/pg-core'
 import { sql } from 'drizzle-orm'
+
+export const timestamptz = (name: string) => timestamp(name, { withTimezone: true, mode: 'date' })
 
 // ---------------------------------------------------------------------------
 // Enums

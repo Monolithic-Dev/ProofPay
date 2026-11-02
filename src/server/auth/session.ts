@@ -34,7 +34,7 @@ export async function createSession(payload: Omit<SessionPayload, 'iat' | 'exp'>
 export async function verifySession(token: string): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(token, getSecret())
-    return payload as SessionPayload
+    return payload as unknown as SessionPayload
   } catch {
     return null
   }
