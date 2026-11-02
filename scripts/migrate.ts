@@ -6,8 +6,26 @@ import fs from 'fs'
 import path from 'path'
 import postgres from 'postgres'
 
+// Load .env if present
+const envPath = path.resolve(process.cwd(), '.env')
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8')
+  for (const line of envContent.split('\n')) {
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith('#')) continue
+    const eqIdx = trimmed.indexOf('=')
+    if (eqIdx > 0) {
+      const key = trimmed.slice(0, eqIdx).trim()
+      const val = trimmed.slice(eqIdx + 1).trim()
+      if (!process.env[key]) {
+        process.env[key] = val
+      }
+    }
+  }
+}
+
 const DATABASE_URL =
-  process.env['DATABASE_URL'] || 'postgresql://proofpay:proofpay@localhost:5432/proofpay'
+  process.env['DATABASE_URL'] || 'postgresql://proofpay:proofpay@localhost:5435/proofpay'
 
 export async function runMigrations(dbUrl = DATABASE_URL): Promise<void> {
   console.log(`🔌 Connecting to database: ${dbUrl.replace(/:[^:@]+@/, ':***@')}`)

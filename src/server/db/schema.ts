@@ -312,6 +312,7 @@ export const paypal_events = pgTable('paypal_events', {
   processed_at: timestamptz('processed_at'),
   created_at: timestamptz('created_at').notNull().defaultNow(),
 })
+export const paypalEvents = paypal_events
 
 // ---------------------------------------------------------------------------
 // 3.10 jobs (transactional outbox)

@@ -17,7 +17,8 @@ function getDbUrl(): string {
   if (process.env['NODE_ENV'] === 'test') {
     return (
       process.env['TEST_DATABASE_URL'] ??
-      'postgresql://proofpay:proofpay@localhost:5432/proofpay_test'
+      process.env['DATABASE_URL'] ??
+      'postgresql://proofpay:proofpay@localhost:5435/proofpay_test'
     )
   }
   return process.env['DATABASE_URL'] ?? ''
