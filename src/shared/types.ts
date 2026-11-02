@@ -45,29 +45,42 @@ export type UserRole = z.infer<typeof UserRole>
 // API response shapes (from api-spec.md §3 and §10)
 // ---------------------------------------------------------------------------
 export const LintIssue = z.object({
+  id: z.string().optional(),
   code: z.string(),
-  severity: z.enum(['error', 'warn', 'info']),
+  severity: z.enum(['error', 'warn', 'warning', 'info']),
   path: z.string(),
   message: z.string(),
   fix: z.string().optional(),
+  suggested_fix: z
+    .object({
+      description: z.string(),
+      patch: z.unknown().optional(),
+    })
+    .optional(),
 })
 export type LintIssue = z.infer<typeof LintIssue>
 
 export const CriterionResult = z.object({
   criterion_key: z.string(),
   type: CriterionType,
-  passed: z.boolean(),
+  passed: z.boolean().optional(),
+  status: z.string().optional(),
   score: z.number().min(0).max(1).optional(),
-  evidence: z.string().optional(),
+  evidence: z.any().optional(),
   reason: z.string().optional(),
+  message: z.string().optional(),
+  observed: z.unknown().optional(),
+  expected: z.unknown().optional(),
+  confidence: z.number().optional(),
 })
 export type CriterionResult = z.infer<typeof CriterionResult>
 
 export const VerificationView = z.object({
   id: z.string().uuid(),
   submission_id: z.string().uuid(),
+  milestone_key: z.string().optional(),
   status: z.enum(['RUNNING', 'COMPLETE', 'FAILED']),
-  decision: Decision.optional(),
+  decision: Decision.optional().nullable(),
   reasons: z.array(
     z.object({
       code: z.string(),
@@ -75,48 +88,54 @@ export const VerificationView = z.object({
       message: z.string(),
     })
   ),
-  stage1: z.array(CriterionResult).optional(),
-  stage2: z.array(CriterionResult).optional(),
-  stage3: z
+  criteria: z.array(z.any()).optional(),
+  manipulation: z
     .object({
-      manipulation_severity: z.enum(['none', 'low', 'high']),
-      spans: z.array(z.string()).optional(),
+      severity: z.enum(['none', 'low', 'high']).or(z.string()),
+      spans: z.array(z.any()).optional(),
     })
     .optional(),
-  confidence: z.number().min(0).max(1).optional(),
-  manipulation_severity: z.enum(['none', 'low', 'high']).optional(),
+  stage1: z.array(CriterionResult).optional(),
+  stage2: z.array(CriterionResult).optional(),
+  stage3: z.any().optional(),
+  confidence: z.number().min(0).max(1).optional().nullable(),
+  manipulation_severity: z.enum(['none', 'low', 'high']).optional().nullable(),
   degraded: z.boolean(),
   cache_hit: z.boolean(),
-  model: z.string().optional(),
-  prompt_version: z.string().optional(),
-  latency_ms: z.number().optional(),
+  model: z.string().optional().nullable(),
+  prompt_version: z.string().optional().nullable(),
+  latency_ms: z.number().optional().nullable(),
   created_at: z.string(),
-  completed_at: z.string().optional(),
+  completed_at: z.string().optional().nullable(),
 })
 export type VerificationView = z.infer<typeof VerificationView>
 
 export const MilestoneView = z.object({
-  id: z.string().uuid(),
-  contract_id: z.string().uuid(),
+  id: z.string().uuid().optional(),
+  contract_id: z.string().uuid().optional(),
   milestone_key: z.string(),
-  idx: z.number(),
+  key: z.string().optional(),
+  idx: z.number().optional(),
   title: z.string(),
   amount_minor: z.number(),
-  due_in_days: z.number(),
-  due_at: z.string().optional(),
+  due_in_days: z.number().optional(),
+  due_at: z.string().optional().nullable(),
   status: MilestoneStatus,
   revisions_used: z.number(),
   max_revisions: z.number(),
-  deliverable: z.object({
-    content_type: z.enum(['json_records', 'text']),
-    max_bytes: z.number(),
-    description: z.string(),
-  }),
-  capture_id: z.string().optional(),
-  captured_at: z.string().optional(),
-  escalated_at: z.string().optional(),
-  auto_release_at: z.string().optional(),
-  latest_verification: VerificationView.optional(),
+  deliverable: z
+    .object({
+      content_type: z.enum(['json_records', 'text']),
+      max_bytes: z.number(),
+      description: z.string(),
+    })
+    .optional(),
+  deliverable_json: z.record(z.unknown()).optional(),
+  capture_id: z.string().optional().nullable(),
+  captured_at: z.string().optional().nullable(),
+  escalated_at: z.string().optional().nullable(),
+  auto_release_at: z.string().optional().nullable(),
+  latest_verification: VerificationView.optional().nullable(),
 })
 export type MilestoneView = z.infer<typeof MilestoneView>
 
@@ -228,3 +247,13 @@ export const DemoRunView = z.object({
   finished_at: z.string().optional(),
 })
 export type DemoRunView = z.infer<typeof DemoRunView>
+
+export const ApiKeyView = z.object({
+  id: z.string(),
+  label: z.string(),
+  keyPrefix: z.string(),
+  createdAt: z.union([z.string(), z.date()]),
+  lastUsedAt: z.union([z.string(), z.date()]).nullable().optional(),
+  revokedAt: z.union([z.string(), z.date()]).nullable().optional(),
+})
+export type ApiKeyView = z.infer<typeof ApiKeyView>

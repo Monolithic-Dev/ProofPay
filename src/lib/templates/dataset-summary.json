@@ -1,0 +1,75 @@
+{
+  "title": "Product Dataset & Market Summary",
+  "total_minor": 10000,
+  "currency": "USD",
+  "milestones": [
+    {
+      "key": "m1",
+      "idx": 1,
+      "title": "25 Structured Product Records (JSON)",
+      "amount_minor": 6000,
+      "due_in_days": 3,
+      "deliverable": {
+        "type": "json_records",
+        "description": "Array of 25 product records with sku, name, category, price_usd, contact_email, description"
+      },
+      "criteria": [
+        {
+          "key": "c1",
+          "type": "deterministic",
+          "description": "Output must be valid JSON array of at least 25 records",
+          "rule": {
+            "kind": "json_schema",
+            "schema": {
+              "type": "array",
+              "minItems": 25,
+              "items": {
+                "type": "object",
+                "required": ["sku", "name", "category", "price_usd", "contact_email", "description"],
+                "properties": {
+                  "sku": { "type": "string" },
+                  "name": { "type": "string" },
+                  "category": { "type": "string" },
+                  "price_usd": { "type": "number", "minimum": 0 },
+                  "contact_email": { "type": "string", "format": "email" },
+                  "description": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "m2",
+      "idx": 2,
+      "title": "Category Summary Report (Markdown)",
+      "amount_minor": 4000,
+      "due_in_days": 2,
+      "deliverable": {
+        "type": "text",
+        "description": "150-300 word summary highlighting top 3 categories and price distribution"
+      },
+      "criteria": [
+        {
+          "key": "c2",
+          "type": "deterministic",
+          "description": "Report length between 150 and 300 words",
+          "rule": {
+            "kind": "regex",
+            "pattern": "\\b\\w+\\b"
+          }
+        },
+        {
+          "key": "c3",
+          "type": "rubric",
+          "description": "Accurately references product categories and provides an executive overview with clear insights",
+          "rubric": {
+            "target": "high quality synthesis of category pricing",
+            "passing_score": 75
+          }
+        }
+      ]
+    }
+  ]
+}
