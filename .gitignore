@@ -1,0 +1,45 @@
+# Environment files - never commit secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# but DO commit the example
+!.env.example
+
+# Next.js build output
+.next/
+out/
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage
+coverage/
+playwright-report/
+test-results/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Drizzle generated (keep migrations, not meta)
+drizzle/meta/
+
+# Misc
+*.local
