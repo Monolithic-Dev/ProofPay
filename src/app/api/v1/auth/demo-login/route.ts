@@ -1,0 +1,59 @@
+/**
+ * Demo login — POST /api/v1/auth/demo-login
+ * Creates a session for one of the 4 demo personas.
+ */
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { eq } from 'drizzle-orm'
+import { getDb } from '@/server/db/client'
+import { users } from '@/server/db/schema'
+import { createSession, setSessionCookie } from '@/server/auth/session'
+import { toErrorResponse, httpStatusFor, ValidationError } from '@/server/util/errors'
+import { newRequestId } from '@/server/util/ids'
+
+const bodySchema = z.object({
+  persona_key: z.enum(['buyer', 'seller', 'buyer_agent', 'worker_agent']),
+})
+
+export async function POST(req: NextRequest) {
+  const requestId = newRequestId()
+
+  try {
+    const body = await req.json().catch(() => ({}))
+    const { persona_key } = bodySchema.parse(body)
+
+    const db = getDb()
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.persona_key, persona_key))
+      .limit(1)
+
+    if (!user) {
+      throw new ValidationError(`Demo persona '${persona_key}' not found. Run: npm run seed`)
+    }
+
+    const token = await createSession({
+      sub: user.id,
+      email: user.email,
+      role: user.role as 'buyer' | 'seller' | 'admin',
+      is_agent: user.is_agent,
+    })
+
+    await setSessionCookie(token)
+
+    return NextResponse.json({
+      id: user.id,
+      email: user.email,
+      display_name: user.display_name,
+      role: user.role,
+      is_agent: user.is_agent,
+      persona_key: user.persona_key,
+    }, { headers: { 'X-Request-Id': requestId } })
+  } catch (err) {
+    return NextResponse.json(
+      toErrorResponse(err, requestId),
+      { status: httpStatusFor(err), headers: { 'X-Request-Id': requestId } }
+    )
+  }
+}

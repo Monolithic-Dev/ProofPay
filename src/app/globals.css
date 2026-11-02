@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --surface-2: #F1F5F9;
+  --text: #0F172A;
+  --muted: #64748B;
+  --border: #E2E8F0;
+  --brand: #1D4ED8;
+  --brand-rgb: 29, 78, 216;
+  --ok: #15803D;
+  --warn: #B45309;
+  --bad: #B91C1C;
+  --void: #94A3B8;
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', monospace;
+}
+
+.dark {
+  --bg: #0E1116;
+  --surface: #161B22;
+  --surface-2: #1F242C;
+  --text: #E6EDF3;
+  --muted: #8B98A9;
+  --border: #30363D;
+  --brand: #5B8DEF;
+  --brand-rgb: 91, 141, 239;
+  --ok: #3FB950;
+  --warn: #D29922;
+  --bad: #F85149;
+  --void: #6E7681;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, pre {
+  font-family: var(--font-jetbrains-mono);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
