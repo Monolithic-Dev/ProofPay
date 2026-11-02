@@ -19,7 +19,7 @@
     "seed": "tsx scripts/seed.ts",
     "test": "vitest",
     "test:unit": "vitest run --project unit",
-    "test:integration": "vitest run --project integration",
+    "test:integration": "vitest run --project integration --no-file-parallelism",
     "test:e2e": "playwright test",
     "eval": "tsx scripts/run-eval.ts",
     "chaos": "tsx scripts/run-chaos.ts",
