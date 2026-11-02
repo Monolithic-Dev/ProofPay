@@ -147,16 +147,20 @@ export function decide(input: PolicyInput): PolicyOutput {
 
   // ---------------------------------------------------------------------------
   // Rule 3: Any REQUIRED rubric criterion fails → REJECT
-  // (verdict === 'fail' after threshold and evidence verification checks)
+  // (verdict === 'fail' or score < threshold on a pass)
   // ---------------------------------------------------------------------------
   if (stage2) {
     const rubricFailures = stage2.filter((r) => {
       const isRequired = r.required ?? critMap.get(r.criterion_key)?.required ?? true
+      if (!isRequired) return false
+      // cannot_verify or unverified evidence will be handled by Rule 4 (ESCALATE)
+      if (r.verdict === 'cannot_verify' || (r.verdict === 'pass' && r.evidence_verified === false)) {
+        return false
+      }
       const threshold = r.pass_threshold ?? critMap.get(r.criterion_key)?.pass_threshold ?? 0.7
-      const evidenceFailed = r.evidence_verified === false
       const scoreFailed = r.score < threshold
       const verdictFailed = r.verdict === 'fail'
-      return isRequired && (verdictFailed || evidenceFailed || scoreFailed)
+      return verdictFailed || scoreFailed
     })
 
     if (rubricFailures.length > 0) {
@@ -200,7 +204,7 @@ export function decide(input: PolicyInput): PolicyOutput {
     for (const r of stage2) {
       const isRequired = r.required ?? critMap.get(r.criterion_key)?.required ?? true
       if (isRequired) {
-        if (r.verdict === 'cannot_verify') {
+        if (r.verdict === 'cannot_verify' || (r.verdict === 'pass' && r.evidence_verified === false)) {
           reasons.push({
             code: 'LOW_CONFIDENCE',
             criterion_key: r.criterion_key,
