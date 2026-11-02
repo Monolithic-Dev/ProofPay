@@ -1,17 +1,23 @@
 /**
  * Health check route — GET /api/v1/health
- * Implements phase-3-auth-and-contracts.md §3.8.
+ * Implements phase-4-verification-engine.md §4.10 & phase-3-auth-and-contracts.md §3.8.
  */
 import { NextResponse } from 'next/server'
-import { sql } from 'drizzle-orm'
+import { sql, eq, and, lt } from 'drizzle-orm'
 import { getDb } from '@/server/db/client'
 import { getBudgetStatus } from '@/server/ai/llm'
 import { kvGet } from '@/server/db/repos/kv.repo'
+import { jobs } from '@/server/db/schema'
 
 export async function GET() {
+  const db = getDb()
   let dbStatus = 'ok'
+  let dbLatencyMs = 0
+
+  const t0 = Date.now()
   try {
-    await getDb().execute(sql`SELECT 1`)
+    await db.execute(sql`SELECT 1`)
+    dbLatencyMs = Date.now() - t0
   } catch {
     dbStatus = 'unreachable'
   }
@@ -29,19 +35,53 @@ export async function GET() {
   }
 
   let workerHeartbeat: string | null = null
+  let workerLagSeconds = 0
   try {
     const hb = await kvGet<{ timestamp: string }>('worker:heartbeat')
-    workerHeartbeat = hb?.timestamp ?? null
+    if (hb?.timestamp) {
+      workerHeartbeat = hb.timestamp
+      workerLagSeconds = Math.max(0, Math.floor((Date.now() - new Date(hb.timestamp).getTime()) / 1000))
+    }
   } catch {
     // KV unavailable
   }
 
-  const isHealthy = dbStatus === 'ok'
+  let pendingJobs = 0
+  let stuckJobs = 0
+  if (dbStatus === 'ok') {
+    try {
+      const pendingRows = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(jobs)
+        .where(eq(jobs.status, 'PENDING'))
+      pendingJobs = Number(pendingRows[0]?.count ?? 0)
+
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
+      const stuckRows = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(jobs)
+        .where(and(eq(jobs.status, 'RUNNING'), lt(jobs.locked_at, fiveMinutesAgo)))
+      stuckJobs = Number(stuckRows[0]?.count ?? 0)
+    } catch {
+      // Table may not exist in scratch tests
+    }
+  }
+
+  let status: 'ok' | 'degraded' | 'down' = 'ok'
+  if (dbStatus !== 'ok') {
+    status = 'down'
+  } else if (workerLagSeconds > 120 || llmBudget.exhausted || stuckJobs > 5) {
+    status = 'degraded'
+  }
 
   return NextResponse.json(
     {
-      status: isHealthy ? 'ok' : 'degraded',
+      status,
       db: dbStatus,
+      db_latency_ms: dbLatencyMs,
+      worker_lag_seconds: workerLagSeconds,
+      pending_jobs: pendingJobs,
+      stuck_jobs: stuckJobs,
       llm_budget: llmBudget,
       worker: {
         last_heartbeat: workerHeartbeat,
@@ -49,6 +89,6 @@ export async function GET() {
       version: process.env['RENDER_GIT_COMMIT'] ?? 'dev',
       timestamp: new Date().toISOString(),
     },
-    { status: isHealthy ? 200 : 503 }
+    { status: status === 'down' ? 503 : 200 }
   )
 }

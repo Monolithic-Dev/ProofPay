@@ -1,13 +1,14 @@
 /**
  * Worker process — polls the job queue and dispatches handlers.
+ * Implements phase-4-verification-engine.md §4.10.
  */
 import { getDb } from '@/server/db/client'
 import { claimNextJob, completeJob, failJob, reclaimStaleLocks } from '@/server/jobs/queue'
 import { handleVerifySubmission } from '@/server/jobs/handlers/verify-submission'
+import { handleAutoRelease } from '@/server/jobs/handlers/auto-release'
 import { releaseMilestone, voidRemaining } from '@/server/release/service'
 import { logger } from '@/server/util/logger'
 import { kv } from '@/server/db/schema'
-import { eq } from 'drizzle-orm'
 
 const log = logger.child({ process: 'worker' })
 let running = true
@@ -15,13 +16,21 @@ let running = true
 // ---------------------------------------------------------------------------
 // Heartbeat
 // ---------------------------------------------------------------------------
-async function writeHeartbeat(): Promise<void> {
+export async function writeHeartbeat(): Promise<void> {
   try {
     const db = getDb()
+    const nowIso = new Date().toISOString()
     await db
       .insert(kv)
-      .values({ key: 'worker:heartbeat', value: { ts: new Date().toISOString(), pid: process.pid }, updated_at: new Date() })
-      .onConflictDoUpdate({ target: kv.key, set: { value: { ts: new Date().toISOString(), pid: process.pid }, updated_at: new Date() } })
+      .values({
+        key: 'worker:heartbeat',
+        value: { timestamp: nowIso, pid: process.pid },
+        updated_at: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: kv.key,
+        set: { value: { timestamp: nowIso, pid: process.pid }, updated_at: new Date() },
+      })
   } catch {
     // non-fatal
   }
@@ -30,7 +39,12 @@ async function writeHeartbeat(): Promise<void> {
 // ---------------------------------------------------------------------------
 // Job dispatcher
 // ---------------------------------------------------------------------------
-async function dispatchJob(job: { id: string; type: string; payload: unknown; attempts: number }): Promise<void> {
+export async function dispatchJob(job: {
+  id: string
+  type: string
+  payload: unknown
+  attempts: number
+}): Promise<void> {
   const payload = job.payload as Record<string, unknown>
 
   switch (job.type) {
@@ -38,10 +52,14 @@ async function dispatchJob(job: { id: string; type: string; payload: unknown; at
       await handleVerifySubmission(payload as unknown as Parameters<typeof handleVerifySubmission>[0])
       break
 
+    case 'AUTO_RELEASE':
+      await handleAutoRelease(payload as unknown as Parameters<typeof handleAutoRelease>[0])
+      break
+
     case 'RELEASE_MILESTONE':
       await releaseMilestone({
         contractId: payload['contract_id'] as string,
-        milestoneKey: payload['milestone_key'] as string,
+        milestoneKey: (payload['milestone_key'] as string) ?? '',
       })
       break
 
@@ -52,8 +70,7 @@ async function dispatchJob(job: { id: string; type: string; payload: unknown; at
       )
       break
 
-    // Other handlers are stubs — to be implemented in later phases
-    case 'AUTO_RELEASE':
+    // Other handlers are stubs for subsequent phases
     case 'REAUTH_CHECK':
     case 'RECONCILE_PAYPAL':
     case 'EXPIRE_CONTRACT':
@@ -70,7 +87,7 @@ async function dispatchJob(job: { id: string; type: string; payload: unknown; at
 // ---------------------------------------------------------------------------
 // Poll loop
 // ---------------------------------------------------------------------------
-async function pollOnce(): Promise<boolean> {
+export async function pollOnce(): Promise<boolean> {
   const job = await claimNextJob()
   if (!job) return false
 
@@ -78,7 +95,12 @@ async function pollOnce(): Promise<boolean> {
   log2.info('Job claimed')
 
   try {
-    await dispatchJob({ id: job.id, type: job.type, payload: job.payload, attempts: job.attempts })
+    await dispatchJob({
+      id: job.id,
+      type: job.type,
+      payload: job.payload,
+      attempts: job.attempts,
+    })
     await completeJob(job.id)
     log2.info('Job complete')
     return true
@@ -90,7 +112,13 @@ async function pollOnce(): Promise<boolean> {
   }
 }
 
-async function runWorker(): Promise<void> {
+export function stopWorker(): void {
+  running = false
+}
+
+export async function startWorker(opts?: { concurrency?: number; pollIntervalMs?: number }): Promise<void> {
+  running = true
+  const pollIntervalMs = opts?.pollIntervalMs ?? 200
   log.info('Worker starting')
 
   // Reclaim stale locks on startup
@@ -101,11 +129,11 @@ async function runWorker(): Promise<void> {
   const heartbeatInterval = setInterval(() => void writeHeartbeat(), 30_000)
   await writeHeartbeat()
 
-  // Poll loop: 200ms idle, immediate retry when job found
+  // Poll loop
   while (running) {
     try {
       const found = await pollOnce()
-      if (!found) await sleep(200)
+      if (!found) await sleep(pollIntervalMs)
     } catch (err) {
       log.error({ err: String(err) }, 'Poll loop error')
       await sleep(1000)
@@ -116,15 +144,23 @@ async function runWorker(): Promise<void> {
   log.info('Worker stopped')
 }
 
-// Graceful shutdown
-process.on('SIGTERM', () => { running = false; log.info('SIGTERM received') })
-process.on('SIGINT', () => { running = false; log.info('SIGINT received') })
+// Graceful shutdown handlers
+process.on('SIGTERM', () => {
+  stopWorker()
+  log.info('SIGTERM received')
+})
+process.on('SIGINT', () => {
+  stopWorker()
+  log.info('SIGINT received')
+})
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms))
 }
 
-runWorker().catch((err) => {
-  log.fatal({ err: String(err) }, 'Worker fatal error')
-  process.exit(1)
-})
+if (process.env['NODE_ENV'] !== 'test') {
+  startWorker().catch((err) => {
+    log.fatal({ err: String(err) }, 'Worker fatal error')
+    process.exit(1)
+  })
+}
