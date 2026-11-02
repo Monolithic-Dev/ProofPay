@@ -6,7 +6,12 @@ import { getDb } from '@/server/db/client'
 import { claimNextJob, completeJob, failJob, reclaimStaleLocks } from '@/server/jobs/queue'
 import { handleVerifySubmission } from '@/server/jobs/handlers/verify-submission'
 import { handleAutoRelease } from '@/server/jobs/handlers/auto-release'
-import { releaseMilestone, voidRemaining } from '@/server/release/service'
+import { handleReleaseMilestone } from '@/server/jobs/handlers/release-milestone'
+import { handleVoidRemaining } from '@/server/jobs/handlers/void-remaining'
+import { handleReconcilePaypal } from '@/server/jobs/handlers/reconcile-paypal'
+import { handleReauthCheck } from '@/server/jobs/handlers/reauth-check'
+import { handleExpireContract } from '@/server/jobs/handlers/expire-contract'
+import { scheduleSweeps } from './schedulers'
 import { logger } from '@/server/util/logger'
 import { kv } from '@/server/db/schema'
 
@@ -57,23 +62,25 @@ export async function dispatchJob(job: {
       break
 
     case 'RELEASE_MILESTONE':
-      await releaseMilestone({
-        contractId: payload['contract_id'] as string,
-        milestoneKey: (payload['milestone_key'] as string) ?? '',
-      })
+      await handleReleaseMilestone(payload as unknown as Parameters<typeof handleReleaseMilestone>[0])
       break
 
     case 'VOID_REMAINING':
-      await voidRemaining(
-        payload['contract_id'] as string,
-        (payload['reason'] as string) ?? 'system'
-      )
+      await handleVoidRemaining(payload as unknown as Parameters<typeof handleVoidRemaining>[0])
       break
 
-    // Other handlers are stubs for subsequent phases
-    case 'REAUTH_CHECK':
     case 'RECONCILE_PAYPAL':
+      await handleReconcilePaypal(payload as unknown as Parameters<typeof handleReconcilePaypal>[0])
+      break
+
+    case 'REAUTH_CHECK':
+      await handleReauthCheck()
+      break
+
     case 'EXPIRE_CONTRACT':
+      await handleExpireContract(payload as unknown as Parameters<typeof handleExpireContract>[0])
+      break
+
     case 'PURGE_DEMO_DATA':
     case 'DEMO_STEP':
       log.warn({ type: job.type }, 'Job type handler not yet implemented — skipping')
@@ -129,6 +136,10 @@ export async function startWorker(opts?: { concurrency?: number; pollIntervalMs?
   const heartbeatInterval = setInterval(() => void writeHeartbeat(), 30_000)
   await writeHeartbeat()
 
+  // Sweep schedule tick every 60s
+  const sweepInterval = setInterval(() => void scheduleSweeps(), 60_000)
+  await scheduleSweeps().catch((err) => log.warn({ err: String(err) }, 'Initial scheduleSweeps failed'))
+
   // Poll loop
   while (running) {
     try {
@@ -141,6 +152,7 @@ export async function startWorker(opts?: { concurrency?: number; pollIntervalMs?
   }
 
   clearInterval(heartbeatInterval)
+  clearInterval(sweepInterval)
   log.info('Worker stopped')
 }
 
