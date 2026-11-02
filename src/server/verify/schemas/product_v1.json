@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "product_v1",
+  "description": "ProofPay product dataset schema v1",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["sku", "name", "category", "price_usd", "contact_email", "description"],
+    "additionalProperties": false,
+    "properties": {
+      "sku": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}-\\d{4}$",
+        "description": "Stock keeping unit, format: ABC-1234"
+      },
+      "name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 80
+      },
+      "category": {
+        "type": "string",
+        "enum": ["Electronics", "Home", "Fitness", "Beauty", "Toys"]
+      },
+      "price_usd": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      },
+      "contact_email": {
+        "type": "string",
+        "format": "email"
+      },
+      "description": {
+        "type": "string",
+        "minLength": 40,
+        "maxLength": 400
+      }
+    }
+  }
+}
