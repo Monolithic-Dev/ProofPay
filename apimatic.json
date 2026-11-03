@@ -1,0 +1,23 @@
+{
+  "$schema": "https://apimatic.io/schemas/apimatic-metadata.json",
+  "name": "ProofPay API",
+  "version": "1.0.0",
+  "description": "ProofPay: Autonomous PayPal Milestone Escrow & Agent Verification Engine. API specification for APIMatic Context Plugins and multi-language SDK generation.",
+  "inputFile": "public/openapi.json",
+  "exportConfiguration": {
+    "generateModels": true,
+    "sdkVersion": "1.0.0",
+    "platforms": [
+      "TypeScript",
+      "Python",
+      "CSharp",
+      "Java",
+      "Go",
+      "PHP"
+    ]
+  },
+  "docsConfiguration": {
+    "enableAuthentication": true,
+    "enableTryIt": true
+  }
+}

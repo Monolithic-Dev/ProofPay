@@ -1,0 +1,69 @@
+# Render Blueprint Specification for ProofPay
+# Official Sponsor Integration: Render (https://paypalaihackathon.devpost.com/details/render)
+# Deploys Next.js 15 Web Service, Background Scheduler Worker, and PostgreSQL 16 Database.
+
+services:
+  # 1. ProofPay Web Portal & REST API
+  - type: web
+    name: proofpay-web
+    runtime: node
+    plan: standard
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: proofpay-postgres
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: PAYPAL_MODE
+        value: sandbox
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: PROOFPAY_APP_URL
+        fromService:
+          type: web
+          name: proofpay-web
+          property: host
+
+  # 2. ProofPay Background Verification & Scheduler Worker
+  - type: worker
+    name: proofpay-worker
+    runtime: node
+    plan: standard
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm run worker
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: proofpay-postgres
+          property: connectionString
+      - key: PAYPAL_MODE
+        value: sandbox
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+
+# 3. Managed PostgreSQL 16 Database
+databases:
+  - name: proofpay-postgres
+    plan: standard
+    region: oregon
+    databaseName: proofpay
+    user: proofpay_user
+    postgresMajorVersion: 16

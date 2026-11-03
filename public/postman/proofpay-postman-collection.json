@@ -1,0 +1,140 @@
+{
+  "info": {
+    "name": "ProofPay API Collection (PayPal AI Hackathon)",
+    "description": "Complete Postman collection for ProofPay API — pay-on-acceptance digital escrow with PayPal authorization holds and deterministic AI verification.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "pp_k_sandbox_developer_key",
+      "type": "string"
+    },
+    {
+      "key": "contractId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User & Provision Org",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alex.seller@example.com\",\n  \"display_name\": \"Alex Chen\",\n  \"org_name\": \"Chen Machine Learning Ltd\",\n  \"role\": \"seller\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Login (Quick Persona Switch)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"persona_key\": \"buyer\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/demo-login", "host": ["{{baseUrl}}"], "path": ["auth", "demo-login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contracts & AI Studio",
+      "item": [
+        {
+          "name": "List Contracts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{apiKey}}" }],
+            "url": { "raw": "{{baseUrl}}/contracts", "host": ["{{baseUrl}}"], "path": ["contracts"] }
+          }
+        },
+        {
+          "name": "Compile Contract with AI (Groq LPU)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{apiKey}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Deliver 25 verified company records (name, domain, founded_year, category) for $60, then a markdown research brief for $40.\",\n  \"budget_cap_minor\": 10000\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/contracts", "host": ["{{baseUrl}}"], "path": ["contracts"] }
+          }
+        },
+        {
+          "name": "Accept Contract Terms",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{apiKey}}" }],
+            "url": { "raw": "{{baseUrl}}/contracts/{{contractId}}/accept", "host": ["{{baseUrl}}"], "path": ["contracts", "{{contractId}}", "accept"] }
+          }
+        },
+        {
+          "name": "Generate PayPal Authorization Link",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{apiKey}}" }],
+            "url": { "raw": "{{baseUrl}}/contracts/{{contractId}}/fund", "host": ["{{baseUrl}}"], "path": ["contracts", "{{contractId}}", "fund"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deliverables & Verification",
+      "item": [
+        {
+          "name": "Submit Deliverable Payload",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{apiKey}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content_type\": \"json_records\",\n  \"payload\": \"[{\\\"name\\\": \\\"Acme Inc\\\", \\\"domain\\\": \\\"acme.com\\\", \\\"founded_year\\\": 2021, \\\"category\\\": \\\"AI\\\"}]\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/contracts/{{contractId}}/milestones/m1/submit", "host": ["{{baseUrl}}"], "path": ["contracts", "{{contractId}}", "milestones", "m1", "submit"] }
+          }
+        },
+        {
+          "name": "Download Cryptographic Proof Pack",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{apiKey}}" }],
+            "url": { "raw": "{{baseUrl}}/contracts/{{contractId}}/proof-pack?format=json", "host": ["{{baseUrl}}"], "path": ["contracts", "{{contractId}}", "proof-pack"], "query": [{ "key": "format", "value": "json" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ledger & Audit",
+      "item": [
+        {
+          "name": "Global AG Grid Ledger Query",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{apiKey}}" }],
+            "url": { "raw": "{{baseUrl}}/ledger", "host": ["{{baseUrl}}"], "path": ["ledger"] }
+          }
+        }
+      ]
+    }
+  ]
+}
