@@ -97,6 +97,10 @@ export async function GET() {
       worker: {
         last_heartbeat: workerHeartbeat,
       },
+      features: {
+        chaos: Boolean(env.CHAOS_MODE),
+        demo: Boolean(env.DEMO_MODE),
+      },
       version: process.env['RENDER_GIT_COMMIT'] ?? 'dev',
       timestamp: new Date().toISOString(),
     },

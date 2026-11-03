@@ -305,6 +305,11 @@ export function createApiClient({ baseUrl, apiKey }: ApiClientConfig) {
       r<DemoRunView>(`/api/v1/demo/scenarios/${name}/run`, { method: 'POST' }),
     getDemoRun: (id: string) => r<DemoRunView>(`/api/v1/demo/runs/${id}`),
     getRun: (id: string) => r<DemoRunView>(`/api/v1/demo/runs/${id}`),
+    getHealth: () =>
+      r<{
+        status: string
+        features?: { chaos: boolean; demo: boolean }
+      }>('/api/v1/health'),
   }
 }
 
