@@ -15,6 +15,7 @@ import { KeyRound, Plus, Trash2, Check, Copy, Terminal, Bot, AlertTriangle, Shie
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useApiClient } from '@/lib/query'
 import { relativeTime } from '@/lib/format'
+import { SettingsNav } from '@/components/settings/SettingsNav'
 
 export default function ApiKeysPage() {
   const api = useApiClient()
@@ -69,11 +70,10 @@ export default function ApiKeysPage() {
 
   return (
     <PageShell
-      title="API Keys &amp; Agent Configuration"
-      subtitle="Issue hashed credentials for automated buyer/seller agents and MCP tools"
-      backHref="/"
-      backLabel="Home"
+      title="Settings"
+      subtitle="Manage your profile, team members, financial policies, and credentials"
     >
+      <SettingsNav />
       <div className="space-y-8">
         {actionError && (
           <ErrorState
