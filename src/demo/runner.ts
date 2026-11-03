@@ -28,10 +28,26 @@ export function registerScenario(scenario: ScenarioDefinition) {
 }
 
 export function getScenario(name: string): ScenarioDefinition | undefined {
+  if (Object.keys(SCENARIO_REGISTRY).length === 0) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require('./scenarios/index')
+    } catch {
+      // ignore in isolated unit tests
+    }
+  }
   return SCENARIO_REGISTRY[name]
 }
 
 export function listScenarios(): ScenarioDefinition[] {
+  if (Object.keys(SCENARIO_REGISTRY).length === 0) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require('./scenarios/index')
+    } catch {
+      // ignore
+    }
+  }
   return Object.values(SCENARIO_REGISTRY)
 }
 

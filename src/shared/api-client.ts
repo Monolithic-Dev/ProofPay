@@ -119,27 +119,40 @@ export function createApiClient({ baseUrl, apiKey }: ApiClientConfig) {
         method: 'POST',
         body: { prompt },
       }),
-    getContract: (id: string) => r<ContractView>(`/api/v1/contracts/${id}`),
-    updateContract: (id: string, patch: unknown) =>
-      r<ContractView>(`/api/v1/contracts/${id}`, { method: 'PATCH', body: patch }),
-    patchContract: (id: string, patch: unknown) =>
-      r<ContractView>(`/api/v1/contracts/${id}`, { method: 'PATCH', body: patch }),
+    getContract: async (id: string) => {
+      const res = await r<any>(`/api/v1/contracts/${id}`)
+      return (res?.contract ?? res) as ContractView
+    },
+    updateContract: async (id: string, patch: unknown) => {
+      const res = await r<any>(`/api/v1/contracts/${id}`, { method: 'PATCH', body: patch })
+      return (res?.contract ?? res) as ContractView
+    },
+    patchContract: async (id: string, patch: unknown) => {
+      const res = await r<any>(`/api/v1/contracts/${id}`, { method: 'PATCH', body: patch })
+      return (res?.contract ?? res) as ContractView
+    },
     lintContract: (id: string) =>
       r<{ issues: LintIssue[] }>(`/api/v1/contracts/${id}/lint`, { method: 'POST' }),
-    applyLintFix: (id: string, issueCode: string) =>
-      r<ContractView>(`/api/v1/contracts/${id}/lint/apply`, {
+    applyLintFix: async (id: string, issueCode: string) => {
+      const res = await r<any>(`/api/v1/contracts/${id}/lint/apply`, {
         method: 'POST',
         body: { code: issueCode },
-      }),
-    proposeContract: (id: string, sellerIdOrEmail: string) =>
-      r<ContractView>(`/api/v1/contracts/${id}/propose`, {
+      })
+      return (res?.contract ?? res) as ContractView
+    },
+    proposeContract: async (id: string, sellerIdOrEmail: string) => {
+      const res = await r<any>(`/api/v1/contracts/${id}/propose`, {
         method: 'POST',
         body: sellerIdOrEmail.includes('@')
           ? { seller_email: sellerIdOrEmail }
           : { seller_id: sellerIdOrEmail },
-      }),
-    acceptContract: (id: string) =>
-      r<ContractView>(`/api/v1/contracts/${id}/accept`, { method: 'POST' }),
+      })
+      return (res?.contract ?? res) as ContractView
+    },
+    acceptContract: async (id: string) => {
+      const res = await r<any>(`/api/v1/contracts/${id}/accept`, { method: 'POST' })
+      return (res?.contract ?? res) as ContractView
+    },
     fundContract: (id: string) =>
       r<{ approval_url: string; order_id: string }>(`/api/v1/contracts/${id}/fund`, {
         method: 'POST',
@@ -165,8 +178,10 @@ export function createApiClient({ baseUrl, apiKey }: ApiClientConfig) {
       }),
 
     // --- Milestones ---
-    getMilestone: (contractId: string, mid: string) =>
-      r<MilestoneView>(`/api/v1/contracts/${contractId}/milestones/${mid}`),
+    getMilestone: async (contractId: string, mid: string) => {
+      const res = await r<any>(`/api/v1/contracts/${contractId}/milestones/${mid}`)
+      return (res?.milestone ?? res) as MilestoneView
+    },
     submitMilestone: (
       contractId: string,
       mid: string,
@@ -242,8 +257,10 @@ export function createApiClient({ baseUrl, apiKey }: ApiClientConfig) {
       ),
 
     // --- Verifications ---
-    getVerification: (vid: string) =>
-      r<VerificationView>(`/api/v1/verifications/${vid}`),
+    getVerification: async (vid: string) => {
+      const res = await r<any>(`/api/v1/verifications/${vid}`)
+      return (res?.verification ?? res) as VerificationView
+    },
 
     // --- Chaos ---
     setChaos: (contractId: string, mockCode?: string) =>
