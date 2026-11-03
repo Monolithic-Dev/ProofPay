@@ -18,36 +18,32 @@ import type {
   ScenarioDefinition,
 } from './scenarios/types'
 
+import { happyPathScenario } from './scenarios/happy_path'
+import { rejectThenPassScenario } from './scenarios/reject_then_pass'
+import { injectionAttackScenario } from './scenarios/injection_attack'
+import { captureDeclinedScenario } from './scenarios/capture_declined'
+import { silentBuyerAutoreleaseScenario } from './scenarios/silent_buyer_autorelease'
+
 const log = logger.child({ module: 'demo:runner' })
 
-// Registry of available scenarios, populated dynamically
-const SCENARIO_REGISTRY: Record<string, ScenarioDefinition> = {}
+// Registry of available scenarios, populated statically
+const SCENARIO_REGISTRY: Record<string, ScenarioDefinition> = {
+  happy_path: happyPathScenario,
+  reject_then_pass: rejectThenPassScenario,
+  injection_attack: injectionAttackScenario,
+  capture_declined: captureDeclinedScenario,
+  silent_buyer_autorelease: silentBuyerAutoreleaseScenario,
+}
 
 export function registerScenario(scenario: ScenarioDefinition) {
   SCENARIO_REGISTRY[scenario.name] = scenario
 }
 
 export function getScenario(name: string): ScenarioDefinition | undefined {
-  if (Object.keys(SCENARIO_REGISTRY).length === 0) {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      require('./scenarios/index')
-    } catch {
-      // ignore in isolated unit tests
-    }
-  }
   return SCENARIO_REGISTRY[name]
 }
 
 export function listScenarios(): ScenarioDefinition[] {
-  if (Object.keys(SCENARIO_REGISTRY).length === 0) {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      require('./scenarios/index')
-    } catch {
-      // ignore
-    }
-  }
   return Object.values(SCENARIO_REGISTRY)
 }
 
@@ -180,6 +176,20 @@ export async function handleDemoStep(payload: {
 
   const [run] = await db.select().from(demo_runs).where(eq(demo_runs.id, runId)).limit(1)
   if (!run || run.status === 'DONE' || run.status === 'FAILED') {
+    return
+  }
+
+  // Check 15-minute wait timeout
+  const elapsedMs = Date.now() - new Date(run.created_at).getTime()
+  const maxWaitMs = 15 * 60 * 1000
+
+  if (run.status === 'WAITING_FOR_BUYER' && elapsedMs > maxWaitMs) {
+    await emit(runId, {
+      actor: 'protocol',
+      kind: 'error',
+      text: 'Timed out waiting for buyer action after 15 minutes',
+      data: { code: 'TIMEOUT_WAITING_FOR_BUYER' },
+    })
     return
   }
 

@@ -1,0 +1,13 @@
+[
+  { "type": "CONTRACT_CREATED", "actor_type": "buyer" },
+  { "type": "CONTRACT_PROPOSED", "actor_type": "buyer" },
+  { "type": "CONTRACT_ACCEPTED", "actor_type": "seller" },
+  { "type": "HOLD_AUTHORIZED", "actor_type": "buyer" },
+  { "type": "DELIVERABLE_SUBMITTED", "actor_type": "seller", "milestone_key": "m1", "attempt": 1 },
+  { "type": "VERIFICATION_COMPLETED", "actor_type": "system", "milestone_key": "m1", "decision": "PASS" },
+  { "type": "PAYMENT_CAPTURED", "actor_type": "system", "milestone_key": "m1", "amount_minor": 6000 },
+  { "type": "DELIVERABLE_SUBMITTED", "actor_type": "seller", "milestone_key": "m2", "attempt": 1 },
+  { "type": "VERIFICATION_COMPLETED", "actor_type": "system", "milestone_key": "m2", "decision": "PASS" },
+  { "type": "PAYMENT_CAPTURED", "actor_type": "system", "milestone_key": "m2", "amount_minor": 4000 },
+  { "type": "CONTRACT_COMPLETED", "actor_type": "system" }
+]

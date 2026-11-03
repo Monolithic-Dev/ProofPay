@@ -113,7 +113,7 @@ describe('Model Context Protocol (MCP) Server (§7.5)', () => {
       }),
     } as unknown as ApiClient
 
-    const tool = TOOLS['create_contract']
+    const tool = TOOLS['create_contract']!
     const result = await tool.execute(mockClient, {
       prompt: 'Need 25 products',
       seller_email: 'worker@demo.proofpay',
@@ -136,7 +136,7 @@ describe('Model Context Protocol (MCP) Server (§7.5)', () => {
       }),
     } as unknown as ApiClient
 
-    const tool = TOOLS['get_funding_link']
+    const tool = TOOLS['get_funding_link']!
     const result = await tool.execute(mockClient, {
       contract_id: '123e4567-e89b-12d3-a456-426614174000',
     })
