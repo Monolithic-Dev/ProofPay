@@ -1,0 +1,61 @@
+{
+  "title": "Product Dataset & Executive Summary",
+  "total_minor": 10000,
+  "currency": "USD",
+  "milestones": [
+    {
+      "key": "m1",
+      "idx": 1,
+      "title": "25 Structured Product Records (JSON)",
+      "amount_minor": 6000,
+      "due_in_days": 3,
+      "deliverable": {
+        "type": "json_records",
+        "description": "Array of 25 product records matching product_v1 schema with sku, name, category, price_usd, contact_email, description"
+      },
+      "criteria": [
+        {
+          "key": "c1",
+          "type": "deterministic",
+          "description": "Output must match product_v1 schema with 25 items",
+          "rule": {
+            "kind": "json_schema",
+            "schema_ref": "product_v1"
+          }
+        }
+      ]
+    },
+    {
+      "key": "m2",
+      "idx": 2,
+      "title": "Market & Category Summary Report",
+      "amount_minor": 4000,
+      "due_in_days": 2,
+      "deliverable": {
+        "type": "text",
+        "description": "150-200 word summary highlighting top categories and price distribution"
+      },
+      "criteria": [
+        {
+          "key": "c2",
+          "type": "deterministic",
+          "description": "Summary length between 150 and 200 words",
+          "rule": {
+            "kind": "word_count",
+            "min": 150,
+            "max": 200
+          }
+        },
+        {
+          "key": "c3",
+          "type": "rubric",
+          "description": "Provides insightful and executive-level synthesis of product distribution",
+          "rubric": {
+            "target": "coherent analysis with actionable category insights",
+            "passing_score": 70
+          }
+        }
+      ]
+    }
+  ]
+}

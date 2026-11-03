@@ -1,0 +1,202 @@
+[
+  {
+    "sku": "ELE-1001",
+    "name": "Wireless Noise-Canceling Headphones",
+    "category": "Electronics",
+    "price_usd": 149.99,
+    "contact_email": "support@audio-pro.example.com",
+    "description": "Premium over-ear wireless headphones with active noise cancellation, 30-hour battery life, and crystal clear microphone audio."
+  },
+  {
+    "sku": "ELE-1002",
+    "name": "Mechanical Gaming Keyboard RGB",
+    "category": "Electronics",
+    "price_usd": 89.5,
+    "contact_email": "sales@keytech.example.com",
+    "description": "Tactile blue switch mechanical keyboard with per-key customizable RGB backlighting and durable aircraft-grade aluminum alloy top plate."
+  },
+  {
+    "sku": "ELE-1003",
+    "name": "Ergonomic Vertical Mouse",
+    "category": "Electronics",
+    "price_usd": 39.99,
+    "contact_email": "help@ergogear.example.com",
+    "description": "Wireless vertical mouse designed to promote natural handshake wrist posture, reducing forearm strain and tendon stress during long hours."
+  },
+  {
+    "sku": "ELE-1004",
+    "name": "Ultra-Wide 4K Gaming Monitor 34in",
+    "category": "Electronics",
+    "price_usd": 499.0,
+    "contact_email": "displays@viewcorp.example.com",
+    "description": "Curved 34-inch panoramic IPS panel with 144Hz refresh rate, 1ms response time, and HDR400 support for immersive creative work and play."
+  },
+  {
+    "sku": "ELE-1005",
+    "name": "USB-C Multiport Docking Station 10-in-1",
+    "category": "Electronics",
+    "price_usd": 65.0,
+    "contact_email": "accessories@connecthub.example.com",
+    "description": "Dual HDMI 4K video outputs with 100W Power Delivery passthrough, gigabit ethernet, SD card reader, and three USB 3.0 superspeed ports."
+  },
+  {
+    "sku": "HOM-2001",
+    "name": "Smart Touchless Trash Can 13 Gallon",
+    "category": "Home",
+    "price_usd": 74.99,
+    "contact_email": "service@cleanhome.example.com",
+    "description": "Infrared motion sensor kitchen trash container with odor filter compartment and fingerprint-resistant brushed stainless steel finish."
+  },
+  {
+    "sku": "HOM-2002",
+    "name": "Ceramic Pour-Over Coffee Dripper Set",
+    "category": "Home",
+    "price_usd": 29.95,
+    "contact_email": "brewmaster@artisancoffee.example.com",
+    "description": "Handcrafted heat-retaining ceramic brewer with spiral interior ribs for optimal extraction and included 500ml glass serving carafe."
+  },
+  {
+    "sku": "HOM-2003",
+    "name": "Ultrasonic Cool Mist Aromatherapy Diffuser",
+    "category": "Home",
+    "price_usd": 34.5,
+    "contact_email": "aroma@wellnessliving.example.com",
+    "description": "Whisper-quiet 400ml essential oil humidifier with ambient LED lighting, automatic shut-off safety protection, and four timer settings."
+  },
+  {
+    "sku": "HOM-2004",
+    "name": "Cast Iron Pre-Seasoned Skillet 12in",
+    "category": "Home",
+    "price_usd": 42.0,
+    "contact_email": "cookware@hearthandstove.example.com",
+    "description": "Heavy-duty cast iron pan with superior heat retention and distribution, suitable for oven roasting, searing steaks, and campfires."
+  },
+  {
+    "sku": "HOM-2005",
+    "name": "Organic Egyptian Cotton Sheet Set Queen",
+    "category": "Home",
+    "price_usd": 119.0,
+    "contact_email": "comfort@linendreams.example.com",
+    "description": "Sateen weave 400 thread count breathable bedding set including deep pocket fitted sheet, flat sheet, and two matching pillowcases."
+  },
+  {
+    "sku": "FIT-3001",
+    "name": "Adjustable Quick-Select Dumbbell Pair 50lb",
+    "category": "Fitness",
+    "price_usd": 289.99,
+    "contact_email": "training@ironpower.example.com",
+    "description": "Compact home gym dumbbell set adjusting smoothly from 5 to 50 pounds with a dial turn, replacing 10 pairs of traditional weights."
+  },
+  {
+    "sku": "FIT-3002",
+    "name": "High-Density Foam Roller with Trigger Grid",
+    "category": "Fitness",
+    "price_usd": 22.95,
+    "contact_email": "rehab@bodybalance.example.com",
+    "description": "Deep tissue muscle massage roller engineered with textured nodules to relieve tightness, accelerate recovery, and improve mobility."
+  },
+  {
+    "sku": "FIT-3003",
+    "name": "Heavy-Duty Resistance Loop Bands 5-Pack",
+    "category": "Fitness",
+    "price_usd": 18.5,
+    "contact_email": "gear@fitpulse.example.com",
+    "description": "Natural latex exercise bands with progressive resistance ratings from extra-light to extra-heavy for physical therapy and strength."
+  },
+  {
+    "sku": "FIT-3004",
+    "name": "Speed Jump Rope with Ball Bearings",
+    "category": "Fitness",
+    "price_usd": 14.99,
+    "contact_email": "speed@athletix.example.com",
+    "description": "Tangle-free steel wire jump rope featuring 360-degree precision swivel bearings and non-slip aluminum knurled handles for cardio."
+  },
+  {
+    "sku": "FIT-3005",
+    "name": "Non-Slip Eco-Friendly Yoga Mat 6mm",
+    "category": "Fitness",
+    "price_usd": 48.0,
+    "contact_email": "mindful@zenyoga.example.com",
+    "description": "Cushioned TPE exercise mat providing alignment guidelines, dual-sided non-slip traction, and tear-resistant mesh for all floor poses."
+  },
+  {
+    "sku": "BEA-4001",
+    "name": "Rose Quartz Facial Sculpting Roller",
+    "category": "Beauty",
+    "price_usd": 24.0,
+    "contact_email": "glow@botanicbeauty.example.com",
+    "description": "Dual-ended natural gemstone facial massager to reduce morning puffiness, encourage lymphatic drainage, and boost serum absorption."
+  },
+  {
+    "sku": "BEA-4002",
+    "name": "Hyaluronic Acid Hydrating Face Serum 50ml",
+    "category": "Beauty",
+    "price_usd": 38.5,
+    "contact_email": "dermal@purehydra.example.com",
+    "description": "Lightweight multi-molecular weight hydrating treatment that plumps fine lines, reinforces skin moisture barrier, and absorbs fast."
+  },
+  {
+    "sku": "BEA-4003",
+    "name": "Sonic Silicone Facial Cleansing Brush",
+    "category": "Beauty",
+    "price_usd": 49.99,
+    "contact_email": "tech@radiantskin.example.com",
+    "description": "Waterproof sonic pulse beauty device with hygienic soft silicone bristles that gently unclog pores and remove makeup residue."
+  },
+  {
+    "sku": "BEA-4004",
+    "name": "Mineral Matte Broad Spectrum SPF 50",
+    "category": "Beauty",
+    "price_usd": 32.0,
+    "contact_email": "sun@shieldsuncare.example.com",
+    "description": "Non-nano zinc oxide sunscreen providing transparent UVA and UVB defense with a weightless finish suitable for sensitive skin types."
+  },
+  {
+    "sku": "BEA-4005",
+    "name": "Organic Cold-Pressed Argan Oil 100ml",
+    "category": "Beauty",
+    "price_usd": 27.5,
+    "contact_email": "morocco@organicoils.example.com",
+    "description": "100% pure Moroccan argan oil rich in vitamin E and essential fatty acids to nourish dry hair split ends and replenish facial moisture."
+  },
+  {
+    "sku": "TOY-5001",
+    "name": "Magnetic 3D Building Tiles 100-Piece Set",
+    "category": "Toys",
+    "price_usd": 59.99,
+    "contact_email": "play@geomagictiles.example.com",
+    "description": "Translucent geometric magnetic construction blocks that inspire STEM engineering skills, color recognition, and creative play for kids."
+  },
+  {
+    "sku": "TOY-5002",
+    "name": "Programmable Coding Robot for Kids",
+    "category": "Toys",
+    "price_usd": 79.95,
+    "contact_email": "stem@robokids.example.com",
+    "description": "Interactive educational robot teaching young learners foundational programming logic through tactile command blocks and obstacle courses."
+  },
+  {
+    "sku": "TOY-5003",
+    "name": "Wooden Classic Railway Train Set 55pc",
+    "category": "Toys",
+    "price_usd": 45.0,
+    "contact_email": "heritage@woodentoys.example.com",
+    "description": "FSC-certified solid beech wood track layouts with magnetic locomotives, bridges, passenger wagons, and roadside scenery elements."
+  },
+  {
+    "sku": "TOY-5004",
+    "name": "Solar-Powered Rover Exploration Model",
+    "category": "Toys",
+    "price_usd": 26.5,
+    "contact_email": "solar@futureengineers.example.com",
+    "description": "Hands-on science DIY kit that operates outdoors under direct sunlight with functioning gears, solar cell panel, and treaded wheels."
+  },
+  {
+    "sku": "TOY-5005",
+    "name": "Watercolor Painting Studio Art Kit",
+    "category": "Toys",
+    "price_usd": 31.0,
+    "contact_email": "create@youngartist.example.com",
+    "description": "Non-toxic vibrant watercolor pigment pans with water brush pens, mixing palette, and cold-pressed watercolor paper sketchpad."
+  }
+]
