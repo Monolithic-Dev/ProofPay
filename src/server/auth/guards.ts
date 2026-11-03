@@ -75,6 +75,14 @@ export async function requireParty(
     return { contract, partyRole: 'seller' }
   }
 
+  if (user.org_id && contract.buyer_org_id && contract.buyer_org_id === user.org_id) {
+    return { contract, partyRole: 'buyer' }
+  }
+
+  if (user.org_id && contract.seller_org_id && contract.seller_org_id === user.org_id) {
+    return { contract, partyRole: 'seller' }
+  }
+
   // Stranger receives 404 NOT_FOUND per security spec
   throw new NotFoundError('Contract', { contractId })
 }

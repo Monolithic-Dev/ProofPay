@@ -14,6 +14,8 @@ export interface SessionPayload {
   email: string
   role: UserRole
   is_agent: boolean
+  org_id?: string
+  org_role?: string
   iat?: number
   exp?: number
 }
@@ -34,6 +36,8 @@ export async function signSession(user: {
   role: UserRole
   is_agent: boolean
   email?: string
+  org_id?: string
+  org_role?: string
 }): Promise<string> {
   const secret = getSecret()
   const userId = user.id ?? user.sub ?? ''
@@ -42,6 +46,8 @@ export async function signSession(user: {
     email: user.email ?? '',
     role: user.role,
     is_agent: user.is_agent,
+    org_id: user.org_id,
+    org_role: user.org_role,
   })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuer('proofpay')
