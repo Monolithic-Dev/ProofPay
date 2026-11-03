@@ -27,6 +27,15 @@ export const MODEL_PRICING: Record<string, ModelPricing> = {
     inputPerMillionUsd: 0.8,
     outputPerMillionUsd: 4.0,
   },
+  // Groq Fast LPUs
+  'qwen/qwen3.8-27b': {
+    inputPerMillionUsd: 0.35,
+    outputPerMillionUsd: 0.7,
+  },
+  'groq-fast': {
+    inputPerMillionUsd: 0.35,
+    outputPerMillionUsd: 0.7,
+  },
 }
 
 /**

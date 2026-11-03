@@ -4,7 +4,7 @@
 
 export const PROMPT_VERSION = 'compile.v1'
 
-export const COMPILE_SYSTEM_PROMPT = `You are a contract compiler for ProofPay, a payment escrow platform.
+export const COMPILE_SYSTEM_PROMPT = `You are a contract compiler for ProofPay, a milestone payment verification platform.
 Your job is to convert a natural language description of a work contract into a precise, machine-verifiable Contract JSON.
 
 Rules:

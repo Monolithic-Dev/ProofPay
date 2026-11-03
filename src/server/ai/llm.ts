@@ -136,37 +136,102 @@ export async function callTool<T>(params: CallToolParams<T>): Promise<CallToolRe
     }
   }
 
-  const client = getClient()
+  const useGroq = Boolean(
+    env.GROQ_API_KEY &&
+    (!env.ANTHROPIC_API_KEY || env.ANTHROPIC_API_KEY.startsWith('mock_') || env.ANTHROPIC_API_KEY.includes('dummy'))
+  )
+
   let currentUserMessage = user
 
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      log.debug({ attempt }, 'Calling Anthropic Messages API')
-      const response = await client.messages.create({
-        model,
-        max_tokens: 4096,
-        system,
-        messages: [{ role: 'user', content: currentUserMessage }],
-        tools: [
-          {
-            name: tool.name,
-            description: tool.description ?? '',
-            input_schema: tool.input_schema as Anthropic.Tool['input_schema'],
-          },
-        ],
-        tool_choice: { type: 'tool', name: tool.name },
-        temperature,
-      })
+      let rawInput: unknown
+      let inputTokens = 0
+      let outputTokens = 0
+      let microUsd = 0
+      let effectiveModel = model
 
-      const inputTokens = response.usage.input_tokens
-      const outputTokens = response.usage.output_tokens
-      const microUsd = costMicroUsd(model, inputTokens, outputTokens)
+      if (useGroq) {
+        effectiveModel = env.GROQ_MODEL || 'qwen/qwen3.8-27b'
+        log.info({ attempt, model: effectiveModel }, 'Executing live AI inference via Groq LPU engine')
+
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${env.GROQ_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: effectiveModel,
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: currentUserMessage },
+            ],
+            tools: [
+              {
+                type: 'function',
+                function: {
+                  name: tool.name,
+                  description: tool.description ?? '',
+                  parameters: tool.input_schema,
+                },
+              },
+            ],
+            tool_choice: { type: 'function', function: { name: tool.name } },
+            temperature,
+          }),
+        })
+
+        if (!response.ok) {
+          const errText = await response.text()
+          throw new Error(`Groq API error HTTP ${response.status}: ${errText}`)
+        }
+
+        const groqData = (await response.json()) as any
+        const toolCall = groqData.choices?.[0]?.message?.tool_calls?.[0]
+        if (!toolCall) {
+          throw new Error('Groq response did not return expected tool call')
+        }
+
+        rawInput = JSON.parse(toolCall.function.arguments)
+        inputTokens = groqData.usage?.prompt_tokens ?? 0
+        outputTokens = groqData.usage?.completion_tokens ?? 0
+        microUsd = costMicroUsd(effectiveModel, inputTokens, outputTokens)
+      } else {
+        const client = getClient()
+        log.debug({ attempt }, 'Calling Anthropic Messages API')
+        const response = await client.messages.create({
+          model,
+          max_tokens: 4096,
+          system,
+          messages: [{ role: 'user', content: currentUserMessage }],
+          tools: [
+            {
+              name: tool.name,
+              description: tool.description ?? '',
+              input_schema: tool.input_schema as Anthropic.Tool['input_schema'],
+            },
+          ],
+          tool_choice: { type: 'tool', name: tool.name },
+          temperature,
+        })
+
+        inputTokens = response.usage.input_tokens
+        outputTokens = response.usage.output_tokens
+        microUsd = costMicroUsd(model, inputTokens, outputTokens)
+
+        const toolUse = response.content.find((b): b is Anthropic.ToolUseBlock => b.type === 'tool_use')
+        if (!toolUse) {
+          throw new Error('LLM response did not contain required tool_use block')
+        }
+        rawInput = toolUse.input
+      }
 
       // Record telemetry in DB
       try {
         await getDb().insert(llm_calls).values({
           purpose,
-          model,
+          model: effectiveModel,
           input_tokens: inputTokens,
           output_tokens: outputTokens,
           cost_micro_usd: microUsd,
@@ -177,13 +242,8 @@ export async function callTool<T>(params: CallToolParams<T>): Promise<CallToolRe
         log.warn({ err: dbErr }, 'Could not record llm_calls telemetry row')
       }
 
-      const toolUse = response.content.find((b): b is Anthropic.ToolUseBlock => b.type === 'tool_use')
-      if (!toolUse) {
-        throw new Error('LLM response did not contain required tool_use block')
-      }
-
       try {
-        const validated = parse ? parse(toolUse.input) : (toolUse.input as T)
+        const validated = parse ? parse(rawInput) : (rawInput as T)
         return {
           data: validated,
           usage: {
