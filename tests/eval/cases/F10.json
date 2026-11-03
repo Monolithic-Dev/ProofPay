@@ -1,0 +1,209 @@
+{
+  "id": "F10",
+  "group": "F",
+  "milestone": "m1",
+  "artifact": [
+    {
+      "sku": "ELE-1001",
+      "name": "Ergonomic Electronics Device Model 1",
+      "category": "Electronics",
+      "price_usd": 19.99,
+      "contact_email": "seller1@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Ergonomic Electronics Device Model 1 in the catalog for reliable performance."
+    },
+    {
+      "sku": "HOM-1002",
+      "name": "Pro Home Tracker Model 2",
+      "category": "Home",
+      "price_usd": 27.49,
+      "contact_email": "seller2@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Pro Home Tracker Model 2 in the catalog for reliable performance."
+    },
+    {
+      "sku": "FIT-1003",
+      "name": "Compact Fitness Blender Model 3",
+      "category": "Fitness",
+      "price_usd": 34.99,
+      "contact_email": "seller3@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Compact Fitness Blender Model 3 in the catalog for reliable performance."
+    },
+    {
+      "sku": "BEA-1004",
+      "name": "Wireless Beauty Sensor Model 4",
+      "category": "Beauty",
+      "price_usd": 42.49,
+      "contact_email": "seller4@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Wireless Beauty Sensor Model 4 in the catalog for reliable performance."
+    },
+    {
+      "sku": "TOY-1005",
+      "name": "Ultra Toys Kit Model 5",
+      "category": "Toys",
+      "price_usd": 49.99,
+      "contact_email": "seller5@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Ultra Toys Kit Model 5 in the catalog for reliable performance."
+    },
+    {
+      "sku": "ELE-1006",
+      "name": "Smart Electronics Monitor Model 6",
+      "category": "Electronics",
+      "price_usd": 57.49,
+      "contact_email": "seller6@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Smart Electronics Monitor Model 6 in the catalog for reliable performance."
+    },
+    {
+      "sku": "HOM-1007",
+      "name": "Eco-Friendly Home Brush Model 7",
+      "category": "Home",
+      "price_usd": 64.99,
+      "contact_email": "seller7@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Eco-Friendly Home Brush Model 7 in the catalog for reliable performance."
+    },
+    {
+      "sku": "FIT-1008",
+      "name": "Precision Fitness Lamp Model 8",
+      "category": "Fitness",
+      "price_usd": 72.49,
+      "contact_email": "seller8@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Precision Fitness Lamp Model 8 in the catalog for reliable performance."
+    },
+    {
+      "sku": "BEA-1009",
+      "name": "Premium Beauty Roller Model 9",
+      "category": "Beauty",
+      "price_usd": 79.99,
+      "contact_email": "seller9@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Premium Beauty Roller Model 9 in the catalog for reliable performance."
+    },
+    {
+      "sku": "TOY-1010",
+      "name": "Heavy-Duty Toys Organizer Model 10",
+      "category": "Toys",
+      "price_usd": 87.49,
+      "contact_email": "seller10@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Heavy-Duty Toys Organizer Model 10 in the catalog for reliable performance."
+    },
+    {
+      "sku": "ELE-1011",
+      "name": "Ergonomic Electronics Device Model 11",
+      "category": "Electronics",
+      "price_usd": 94.99,
+      "contact_email": "seller11@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Ergonomic Electronics Device Model 11 in the catalog for reliable performance."
+    },
+    {
+      "sku": "HOM-1012",
+      "name": "Pro Home Tracker Model 12",
+      "category": "Home",
+      "price_usd": 102.49,
+      "contact_email": "seller12@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Pro Home Tracker Model 12 in the catalog for reliable performance."
+    },
+    {
+      "sku": "FIT-1013",
+      "name": "Compact Fitness Blender Model 13",
+      "category": "Fitness",
+      "price_usd": 109.99,
+      "contact_email": "seller13@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Compact Fitness Blender Model 13 in the catalog for reliable performance."
+    },
+    {
+      "sku": "BEA-1014",
+      "name": "Wireless Beauty Sensor Model 14",
+      "category": "Beauty",
+      "price_usd": 117.49,
+      "contact_email": "seller14@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Wireless Beauty Sensor Model 14 in the catalog for reliable performance."
+    },
+    {
+      "sku": "TOY-1015",
+      "name": "Ultra Toys Kit Model 15",
+      "category": "Toys",
+      "price_usd": 124.99,
+      "contact_email": "seller15@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Ultra Toys Kit Model 15 in the catalog for reliable performance."
+    },
+    {
+      "sku": "ELE-1016",
+      "name": "Smart Electronics Monitor Model 16",
+      "category": "Electronics",
+      "price_usd": 132.49,
+      "contact_email": "seller16@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Smart Electronics Monitor Model 16 in the catalog for reliable performance."
+    },
+    {
+      "sku": "HOM-1017",
+      "name": "Eco-Friendly Home Brush Model 17",
+      "category": "Home",
+      "price_usd": 139.99,
+      "contact_email": "seller17@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Eco-Friendly Home Brush Model 17 in the catalog for reliable performance."
+    },
+    {
+      "sku": "FIT-1018",
+      "name": "Precision Fitness Lamp Model 18",
+      "category": "Fitness",
+      "price_usd": 147.49,
+      "contact_email": "seller18@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Precision Fitness Lamp Model 18 in the catalog for reliable performance."
+    },
+    {
+      "sku": "BEA-1019",
+      "name": "Premium Beauty Roller Model 19",
+      "category": "Beauty",
+      "price_usd": 154.99,
+      "contact_email": "seller19@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Premium Beauty Roller Model 19 in the catalog for reliable performance."
+    },
+    {
+      "sku": "TOY-1020",
+      "name": "Heavy-Duty Toys Organizer Model 20",
+      "category": "Toys",
+      "price_usd": 162.49,
+      "contact_email": "seller20@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Heavy-Duty Toys Organizer Model 20 in the catalog for reliable performance."
+    },
+    {
+      "sku": "ELE-1021",
+      "name": "Ergonomic Electronics Device Model 21",
+      "category": "Electronics",
+      "price_usd": 19.99,
+      "contact_email": "seller21@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Ergonomic Electronics Device Model 21 in the catalog for reliable performance."
+    },
+    {
+      "sku": "HOM-1022",
+      "name": "Pro Home Tracker Model 22",
+      "category": "Home",
+      "price_usd": 27.49,
+      "contact_email": "seller22@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Pro Home Tracker Model 22 in the catalog for reliable performance."
+    },
+    {
+      "sku": "FIT-1023",
+      "name": "Compact Fitness Blender Model 23",
+      "category": "Fitness",
+      "price_usd": 34.99,
+      "contact_email": "seller23@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Compact Fitness Blender Model 23 in the catalog for reliable performance."
+    },
+    {
+      "sku": "BEA-1024",
+      "name": "Wireless Beauty Sensor Model 24",
+      "category": "Beauty",
+      "price_usd": 42.49,
+      "contact_email": "seller24@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Wireless Beauty Sensor Model 24 in the catalog for reliable performance."
+    },
+    {
+      "sku": "TOY-1025",
+      "name": "Ultra Toys Kit Model 25",
+      "category": "Toys",
+      "price_usd": 49.99,
+      "contact_email": "seller25@catalog.proofpay.test",
+      "description": "This is a high quality standard product item created for Ultra Toys Kit Model 25 in the catalog for reliable performance."
+    }
+  ],
+  "expected": "PASS",
+  "notes": "25 valid-schema rows with template descriptions; rubric c5 optional -> PASS with warning (documented limitation)"
+}

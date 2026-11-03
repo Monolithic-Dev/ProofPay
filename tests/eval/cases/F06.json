@@ -1,0 +1,8 @@
+{
+  "id": "F06",
+  "group": "F",
+  "milestone": "m1",
+  "artifact": "INVALID_JSON_RECORD_NON_ARRAY_{truncated",
+  "expected": "REJECT",
+  "notes": "Truncated/invalid JSON string"
+}

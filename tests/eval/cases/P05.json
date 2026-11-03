@@ -1,0 +1,209 @@
+{
+  "id": "P05",
+  "group": "P",
+  "milestone": "m1",
+  "artifact": [
+    {
+      "sku": "ELE-1001",
+      "name": "Ergonomic Electronics Device Model 1",
+      "category": "Electronics",
+      "price_usd": 19.99,
+      "contact_email": "seller+vendor1@subdomain.proofpay.test",
+      "description": "The Ergonomic Electronics Device Model 1 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "HOM-1002",
+      "name": "Pro Home Tracker Model 2",
+      "category": "Home",
+      "price_usd": 27.49,
+      "contact_email": "seller+vendor2@subdomain.proofpay.test",
+      "description": "The Pro Home Tracker Model 2 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "FIT-1003",
+      "name": "Compact Fitness Blender Model 3",
+      "category": "Fitness",
+      "price_usd": 34.99,
+      "contact_email": "seller+vendor3@subdomain.proofpay.test",
+      "description": "The Compact Fitness Blender Model 3 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "BEA-1004",
+      "name": "Wireless Beauty Sensor Model 4",
+      "category": "Beauty",
+      "price_usd": 42.49,
+      "contact_email": "seller+vendor4@subdomain.proofpay.test",
+      "description": "The Wireless Beauty Sensor Model 4 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "TOY-1005",
+      "name": "Ultra Toys Kit Model 5",
+      "category": "Toys",
+      "price_usd": 49.99,
+      "contact_email": "seller+vendor5@subdomain.proofpay.test",
+      "description": "The Ultra Toys Kit Model 5 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "ELE-1006",
+      "name": "Smart Electronics Monitor Model 6",
+      "category": "Electronics",
+      "price_usd": 57.49,
+      "contact_email": "seller+vendor6@subdomain.proofpay.test",
+      "description": "The Smart Electronics Monitor Model 6 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "HOM-1007",
+      "name": "Eco-Friendly Home Brush Model 7",
+      "category": "Home",
+      "price_usd": 64.99,
+      "contact_email": "seller+vendor7@subdomain.proofpay.test",
+      "description": "The Eco-Friendly Home Brush Model 7 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "FIT-1008",
+      "name": "Precision Fitness Lamp Model 8",
+      "category": "Fitness",
+      "price_usd": 72.49,
+      "contact_email": "seller+vendor8@subdomain.proofpay.test",
+      "description": "The Precision Fitness Lamp Model 8 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "BEA-1009",
+      "name": "Premium Beauty Roller Model 9",
+      "category": "Beauty",
+      "price_usd": 79.99,
+      "contact_email": "seller+vendor9@subdomain.proofpay.test",
+      "description": "The Premium Beauty Roller Model 9 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "TOY-1010",
+      "name": "Heavy-Duty Toys Organizer Model 10",
+      "category": "Toys",
+      "price_usd": 87.49,
+      "contact_email": "seller+vendor10@subdomain.proofpay.test",
+      "description": "The Heavy-Duty Toys Organizer Model 10 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "ELE-1011",
+      "name": "Ergonomic Electronics Device Model 11",
+      "category": "Electronics",
+      "price_usd": 94.99,
+      "contact_email": "seller+vendor11@subdomain.proofpay.test",
+      "description": "The Ergonomic Electronics Device Model 11 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "HOM-1012",
+      "name": "Pro Home Tracker Model 12",
+      "category": "Home",
+      "price_usd": 102.49,
+      "contact_email": "seller+vendor12@subdomain.proofpay.test",
+      "description": "The Pro Home Tracker Model 12 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "FIT-1013",
+      "name": "Compact Fitness Blender Model 13",
+      "category": "Fitness",
+      "price_usd": 109.99,
+      "contact_email": "seller+vendor13@subdomain.proofpay.test",
+      "description": "The Compact Fitness Blender Model 13 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "BEA-1014",
+      "name": "Wireless Beauty Sensor Model 14",
+      "category": "Beauty",
+      "price_usd": 117.49,
+      "contact_email": "seller+vendor14@subdomain.proofpay.test",
+      "description": "The Wireless Beauty Sensor Model 14 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "TOY-1015",
+      "name": "Ultra Toys Kit Model 15",
+      "category": "Toys",
+      "price_usd": 124.99,
+      "contact_email": "seller+vendor15@subdomain.proofpay.test",
+      "description": "The Ultra Toys Kit Model 15 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "ELE-1016",
+      "name": "Smart Electronics Monitor Model 16",
+      "category": "Electronics",
+      "price_usd": 132.49,
+      "contact_email": "seller+vendor16@subdomain.proofpay.test",
+      "description": "The Smart Electronics Monitor Model 16 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "HOM-1017",
+      "name": "Eco-Friendly Home Brush Model 17",
+      "category": "Home",
+      "price_usd": 139.99,
+      "contact_email": "seller+vendor17@subdomain.proofpay.test",
+      "description": "The Eco-Friendly Home Brush Model 17 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "FIT-1018",
+      "name": "Precision Fitness Lamp Model 18",
+      "category": "Fitness",
+      "price_usd": 147.49,
+      "contact_email": "seller+vendor18@subdomain.proofpay.test",
+      "description": "The Precision Fitness Lamp Model 18 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "BEA-1019",
+      "name": "Premium Beauty Roller Model 19",
+      "category": "Beauty",
+      "price_usd": 154.99,
+      "contact_email": "seller+vendor19@subdomain.proofpay.test",
+      "description": "The Premium Beauty Roller Model 19 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "TOY-1020",
+      "name": "Heavy-Duty Toys Organizer Model 20",
+      "category": "Toys",
+      "price_usd": 162.49,
+      "contact_email": "seller+vendor20@subdomain.proofpay.test",
+      "description": "The Heavy-Duty Toys Organizer Model 20 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "ELE-1021",
+      "name": "Ergonomic Electronics Device Model 21",
+      "category": "Electronics",
+      "price_usd": 19.99,
+      "contact_email": "seller+vendor21@subdomain.proofpay.test",
+      "description": "The Ergonomic Electronics Device Model 21 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "HOM-1022",
+      "name": "Pro Home Tracker Model 22",
+      "category": "Home",
+      "price_usd": 27.49,
+      "contact_email": "seller+vendor22@subdomain.proofpay.test",
+      "description": "The Pro Home Tracker Model 22 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "FIT-1023",
+      "name": "Compact Fitness Blender Model 23",
+      "category": "Fitness",
+      "price_usd": 34.99,
+      "contact_email": "seller+vendor23@subdomain.proofpay.test",
+      "description": "The Compact Fitness Blender Model 23 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "BEA-1024",
+      "name": "Wireless Beauty Sensor Model 24",
+      "category": "Beauty",
+      "price_usd": 42.49,
+      "contact_email": "seller+vendor24@subdomain.proofpay.test",
+      "description": "The Wireless Beauty Sensor Model 24 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    },
+    {
+      "sku": "TOY-1025",
+      "name": "Ultra Toys Kit Model 25",
+      "category": "Toys",
+      "price_usd": 49.99,
+      "contact_email": "seller+vendor25@subdomain.proofpay.test",
+      "description": "The Ultra Toys Kit Model 25 is engineered for durability and efficiency, featuring premium grade components and verified quality assurance testing."
+    }
+  ],
+  "expected": "PASS",
+  "notes": "25 rows where emails use plus-addressing and subdomains"
+}
