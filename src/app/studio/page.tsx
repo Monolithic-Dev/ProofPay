@@ -12,21 +12,33 @@ import { PromptBox } from '@/components/studio/PromptBox'
 import { ErrorState } from '@/components/common/ErrorState'
 import { Money } from '@/components/common/Money'
 import { StatusChip } from '@/components/contract/StatusChip'
-import { useApiClient, useContracts } from '@/lib/query'
+import { useApiClient, useContracts, useCurrentUser } from '@/lib/query'
 import defaultTemplate from '@/lib/templates/dataset-summary.json'
-import { FileText, ArrowRight } from 'lucide-react'
+import { FileText, ArrowRight, Sparkles, Layers } from 'lucide-react'
 
 export default function StudioPage() {
   const router = useRouter()
   const api = useApiClient()
   const { data: contracts = [], isLoading: isLoadingContracts } = useContracts()
+  const { data: currentUser } = useCurrentUser()
   const [isCompiling, setIsCompiling] = useState(false)
   const [errorInfo, setErrorInfo] = useState<{ message: string; requestId?: string; code?: string } | null>(null)
+
+  const ensureSession = async () => {
+    if (!currentUser) {
+      await fetch('/api/v1/auth/demo-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ persona_key: 'buyer' }),
+      }).catch(() => {})
+    }
+  }
 
   const handleCompile = async (prompt: string) => {
     setIsCompiling(true)
     setErrorInfo(null)
     try {
+      await ensureSession()
       const res = await api.compileContract(prompt)
       if (res?.contract?.id) {
         router.push(`/studio/${res.contract.id}`)
@@ -43,20 +55,22 @@ export default function StudioPage() {
     }
   }
 
-  const handleUseTemplate = async () => {
+  const handleUseTemplate = async (templatePrompt?: string) => {
     setIsCompiling(true)
     setErrorInfo(null)
+    const promptToUse =
+      templatePrompt ||
+      'I need 25 product records as JSON (sku, name, category, price_usd, contact_email, description) for $60, then a high quality summary for $40.'
+
     try {
-      // Use template prompt or compile
-      const res = await api.compileContract(
-        'I need 25 product records as JSON (sku, name, category, price_usd, contact_email, description) for $60, then a high quality summary for $40.'
-      )
+      await ensureSession()
+      const res = await api.compileContract(promptToUse)
       if (res?.contract?.id) {
         router.push(`/studio/${res.contract.id}`)
       }
     } catch (err: any) {
       setErrorInfo({
-        message: 'Template loading failed. Try the demo scenarios in Judge Mode.',
+        message: err.message || 'Template loading failed. Please try again.',
         requestId: err.requestId,
         code: err.code,
       })
@@ -88,7 +102,7 @@ export default function StudioPage() {
               action={
                 <button
                   type="button"
-                  onClick={handleUseTemplate}
+                  onClick={() => handleUseTemplate()}
                   className="px-3.5 py-1.5 rounded-lg bg-brand text-white text-xs font-medium hover:opacity-95 transition-all"
                 >
                   Use a Pre-built Template

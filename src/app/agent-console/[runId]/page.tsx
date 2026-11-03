@@ -217,7 +217,7 @@ export default function AgentConsolePage() {
               <div>
                 <h2 className="text-base font-semibold text-text">Transaction Transcript</h2>
                 <p className="text-xs text-muted mt-0.5">
-                  Autonomous communication between buyer agent, worker agent, and ProofPay escrow.
+                  Autonomous communication between buyer agent, worker agent, and ProofPay protocol.
                 </p>
               </div>
               <span className="text-xs text-muted font-mono">{allEvents.length} events logged</span>
@@ -232,10 +232,10 @@ export default function AgentConsolePage() {
                   </div>
                   <div className="space-y-1">
                     <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-200">
-                      Human Escrow Approval Required
+                      Human Authorization Approval Required
                     </h3>
                     <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-                      Autonomous agents agreed on the contract terms. To authorize the PayPal hold ($100.00 USD), please approve the hold in the sandbox window. Funds remain locked in escrow until verification passes.
+                      Autonomous agents agreed on the contract terms. To authorize the PayPal hold ($100.00 USD), please approve the hold in the sandbox window. Funds remain reserved in the PayPal hold until verification passes.
                     </p>
                   </div>
                 </div>
@@ -292,7 +292,7 @@ export default function AgentConsolePage() {
                       Autonomous Scenario Execution Complete
                     </h3>
                     <p className="text-xs text-emerald-800 dark:text-emerald-300 mt-0.5">
-                      All criteria verified. Escrow releases were processed and recorded on the immutable ledger.
+                      All criteria verified. Milestone releases were processed and recorded on the immutable ledger.
                     </p>
                   </div>
                 </div>
@@ -385,7 +385,7 @@ export default function AgentConsolePage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-base font-semibold text-text">Contract State</h2>
-                <p className="text-xs text-muted mt-0.5">Live PayPal escrow hold and milestone status.</p>
+                <p className="text-xs text-muted mt-0.5">Live PayPal authorization hold and milestone status.</p>
               </div>
               {contractId && (
                 <Link
@@ -402,7 +402,7 @@ export default function AgentConsolePage() {
                 {/* Funds Bar */}
                 <div className="p-4 rounded-xl bg-surface border border-border shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-text">Escrow Balance</span>
+                    <span className="text-xs font-semibold text-text">Authorized Hold Balance</span>
                     <span className="text-xs font-mono font-bold text-text">
                       {formatMoney(contract.total_minor || 10000)}
                     </span>

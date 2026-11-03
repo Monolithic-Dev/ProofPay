@@ -8,7 +8,7 @@
 import React, { useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ShieldCheck, ArrowRight, Loader2, AlertCircle, Info, Lock } from 'lucide-react'
+import { ShieldCheck, ArrowRight, Loader2, AlertCircle, Info, Lock, QrCode, Copy, Check, Share2, CreditCard } from 'lucide-react'
 import { PageShell } from '@/components/common/PageShell'
 import { Money } from '@/components/common/Money'
 import { LoadingBlock } from '@/components/common/LoadingBlock'
@@ -26,6 +26,8 @@ export default function FundContractPage() {
 
   const [isStartingFunding, setIsStartingFunding] = useState(false)
   const [fundingError, setFundingError] = useState<string | null>(null)
+  const [copiedLink, setCopiedLink] = useState(false)
+  const [showQr, setShowQr] = useState(false)
 
   const isCancelled = searchParams?.get('cancelled') === '1'
   const urlError = searchParams?.get('error')
@@ -150,22 +152,95 @@ export default function FundContractPage() {
           </div>
 
           {/* Actions */}
-          <div className="pt-4 space-y-3">
+          <div className="pt-4 space-y-4">
             <button
               type="button"
               disabled={isStartingFunding}
               onClick={handleContinueToPayPal}
-              className="w-full py-3 px-6 rounded-lg bg-brand text-white text-sm font-semibold hover:opacity-95 transition-opacity shadow-sm flex items-center justify-center gap-2 focus:ring-2 focus:ring-brand focus:outline-none disabled:opacity-50"
+              className="w-full py-3.5 px-6 rounded-xl bg-brand text-white text-sm font-semibold hover:opacity-95 transition-opacity shadow-lg shadow-brand/20 flex items-center justify-center gap-2 focus:ring-2 focus:ring-brand focus:outline-none disabled:opacity-50"
             >
               {isStartingFunding ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Connecting to PayPal…</span>
+                  <span>Connecting to PayPal Authorization Gateway…</span>
                 </>
               ) : (
-                <span>Authorize hold on PayPal</span>
+                <>
+                  <Lock className="w-4 h-4" />
+                  <span>Authorize 29-Day Hold with PayPal</span>
+                </>
               )}
             </button>
+
+            {/* Shareable Low-Code Payment Link & Mobile QR Section */}
+            <div className="p-4 rounded-xl bg-surface-2/40 border border-border/80 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-text flex items-center gap-1.5">
+                  <Share2 className="w-3.5 h-3.5 text-brand" />
+                  Shareable Funding Link (Low-Code)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowQr(!showQr)}
+                  className="inline-flex items-center gap-1 text-[11px] text-muted hover:text-brand transition-colors font-medium"
+                >
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>{showQr ? 'Hide QR' : 'Scan Mobile QR'}</span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={typeof window !== 'undefined' ? `${window.location.origin}/contracts/${contractId}/fund` : `/contracts/${contractId}/fund`}
+                  className="w-full bg-surface-subtle border border-border rounded-lg px-3 py-1.5 text-xs font-mono text-muted select-all focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      navigator.clipboard.writeText(`${window.location.origin}/contracts/${contractId}/fund`)
+                      setCopiedLink(true)
+                      setTimeout(() => setCopiedLink(false), 2000)
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-brand/40 text-text text-xs font-semibold shrink-0 transition-all inline-flex items-center gap-1"
+                >
+                  {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedLink ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
+
+              {/* QR Code Drawer */}
+              {showQr && (
+                <div className="pt-2 pb-1 flex flex-col items-center justify-center space-y-2 border-t border-border/60">
+                  <div className="p-3 bg-white rounded-xl shadow-md">
+                    {/* High-contrast QR pattern svg */}
+                    <svg className="w-32 h-32" viewBox="0 0 100 100" fill="black">
+                      <rect x="0" y="0" width="30" height="30" fill="none" stroke="black" strokeWidth="6" />
+                      <rect x="8" y="8" width="14" height="14" />
+                      <rect x="70" y="0" width="30" height="30" fill="none" stroke="black" strokeWidth="6" />
+                      <rect x="78" y="8" width="14" height="14" />
+                      <rect x="0" y="70" width="30" height="30" fill="none" stroke="black" strokeWidth="6" />
+                      <rect x="8" y="78" width="14" height="14" />
+                      <rect x="40" y="10" width="8" height="8" />
+                      <rect x="52" y="20" width="8" height="8" />
+                      <rect x="40" y="40" width="20" height="20" />
+                      <rect x="70" y="45" width="10" height="10" />
+                      <rect x="15" y="45" width="10" height="10" />
+                      <rect x="45" y="75" width="15" height="10" />
+                      <rect x="75" y="75" width="15" height="15" />
+                    </svg>
+                  </div>
+                  <span className="text-[11px] text-muted">Scan with phone camera to approve via mobile PayPal</span>
+                </div>
+              )}
+
+              <p className="text-[11px] text-muted leading-relaxed">
+                Accepts PayPal Wallet, Linked Checking, Pay in 4 / Pay Later, and Debit/Credit cards without immediate withdrawal.
+              </p>
+            </div>
 
             <div className="text-center">
               <Link

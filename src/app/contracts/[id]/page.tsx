@@ -18,6 +18,10 @@ import {
   Lock,
   Layers,
   FlaskConical,
+  UserPlus,
+  XCircle,
+  Copy,
+  FileCode,
 } from 'lucide-react'
 import { PageShell } from '@/components/common/PageShell'
 import { FundsBar } from '@/components/contract/FundsBar'
@@ -26,6 +30,7 @@ import { StatusChip } from '@/components/contract/StatusChip'
 import { VerifiedWithPayPalBadge } from '@/components/contract/VerifiedWithPayPalBadge'
 import { MilestoneCard } from '@/components/contract/MilestoneCard'
 import { RecentEvents } from '@/components/contract/RecentEvents'
+import { ContractComments } from '@/components/contract/ContractComments'
 import { ChainBadge } from '@/components/ledger/ChainBadge'
 import { MonoText } from '@/components/common/MonoText'
 import { LoadingBlock } from '@/components/common/LoadingBlock'
@@ -54,20 +59,103 @@ export default function ContractTimelinePage() {
   const [chaosLoading, setChaosLoading] = useState(false)
   const [bannerError, setBannerError] = useState<string | null>(null)
 
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteLoading, setInviteLoading] = useState(false)
+  const [inviteLink, setInviteLink] = useState<string | null>(null)
+  const [copiedInvite, setCopiedInvite] = useState(false)
+
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
+  const [cancelReason, setCancelReason] = useState('')
+  const [cancelLoading, setCancelLoading] = useState(false)
+
+  const handleSendInvite = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!inviteEmail) return
+    setInviteLoading(true)
+    setBannerError(null)
+    try {
+      const res = await fetch(`/api/v1/contracts/${contractId}/invitations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: inviteEmail, role: 'seller' }),
+      })
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}))
+        throw new Error(errJson.error?.message || 'Failed to generate invitation')
+      }
+      const data = await res.json()
+      const origin = typeof window !== 'undefined' ? window.location.origin : ''
+      setInviteLink(`${origin}${data.invitation.invite_url}`)
+    } catch (err: any) {
+      setBannerError(err.message || 'Failed to send invitation')
+    } finally {
+      setInviteLoading(false)
+    }
+  }
+
+  const handleCancelContract = async () => {
+    setCancelLoading(true)
+    setBannerError(null)
+    try {
+      const res = await fetch(`/api/v1/contracts/${contractId}/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: cancelReason }),
+      })
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}))
+        throw new Error(errJson.error?.message || 'Failed to cancel contract')
+      }
+      setIsCancelModalOpen(false)
+      await queryClient.invalidateQueries({ queryKey: ['contract', contractId] })
+    } catch (err: any) {
+      setBannerError(err.message || 'Failed to cancel contract')
+    } finally {
+      setCancelLoading(false)
+    }
+  }
+
   if (isLoading) {
     return (
-      <PageShell title="Loading Agreement…" backHref="/studio">
+      <PageShell title="Loading Agreement…" backHref="/contracts">
         <LoadingBlock message="Connecting to contract timeline and PayPal status…" />
       </PageShell>
     )
   }
 
   if (error || !contract) {
+    const isAuthError =
+      (error as any)?.status === 401 ||
+      error?.message?.includes('UNAUTHENTICATED') ||
+      error?.message?.includes('INVALID_TOKEN')
+
     return (
-      <PageShell title="Contract Error" backHref="/studio">
+      <PageShell title={isAuthError ? 'Sign In Required' : 'Contract Error'} backHref="/contracts">
         <ErrorState
-          title="Contract Not Found"
-          message={error?.message || 'Unable to access the requested contract.'}
+          title={isAuthError ? 'Authentication Required' : 'Contract Unavailable'}
+          message={
+            isAuthError
+              ? 'You must be signed in as an authorized party (client, seller, or reviewer) to view this contract timeline and hold details.'
+              : error?.message || 'Unable to access the requested contract.'
+          }
+          action={
+            isAuthError ? (
+              <Link
+                href="/auth/login"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-brand text-white text-xs font-semibold hover:opacity-95 transition-all shadow-sm"
+              >
+                Sign In to View Agreement
+              </Link>
+            ) : (
+              <Link
+                href="/contracts"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-medium text-text hover:bg-surface-2 transition-colors"
+              >
+                Return to Contracts
+              </Link>
+            )
+          }
         />
       </PageShell>
     )
@@ -137,19 +225,36 @@ export default function ContractTimelinePage() {
     <PageShell
       title={contract.title}
       subtitle={`Contract ID: ${contract.id}`}
-      backHref="/studio"
-      backLabel="Studio"
+      backHref="/contracts"
+      backLabel="Contracts"
       actions={
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           <ChainBadge contractId={contractId} />
           <VerifiedWithPayPalBadge contractId={contractId} />
+
+          {['DRAFT', 'PROPOSED'].includes(contract.status) && (
+            <button
+              type="button"
+              onClick={() => {
+                setInviteLink(null)
+                setInviteEmail('')
+                setIsInviteModalOpen(true)
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand/10 hover:bg-brand/20 text-brand border border-brand/20 text-xs font-semibold transition-colors"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Invite Counterparty</span>
+            </button>
+          )}
+
           <Link
             href={`/contracts/${contractId}/ledger`}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface text-xs font-medium text-text hover:bg-surface-2 transition-colors"
           >
             <Layers className="w-3.5 h-3.5 text-muted" />
-            Ledger
+            <span>Ledger</span>
           </Link>
+
           <a
             href={`/api/v1/contracts/${contractId}/proof-pack?format=pdf`}
             target="_blank"
@@ -157,8 +262,40 @@ export default function ContractTimelinePage() {
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-medium text-text hover:bg-surface-2 transition-colors"
           >
             <FileDown className="w-3.5 h-3.5 text-brand" />
-            Proof Pack (PDF)
+            <span>Proof Pack (PDF)</span>
           </a>
+
+          <a
+            href={`/api/v1/contracts/${contractId}/proof-pack?format=json`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-medium text-text hover:bg-surface-2 transition-colors"
+          >
+            <FileCode className="w-3.5 h-3.5 text-purple-400" />
+            <span>JSON</span>
+          </a>
+
+          <a
+            href={`/api/v1/contracts/${contractId}/dispute-evidence`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs font-medium text-text hover:bg-surface-2 transition-colors"
+            title="Download PayPal Disputes API provide_evidence formatted payload"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
+            <span>Dispute Evidence</span>
+          </a>
+
+          {!['CANCELLED', 'COMPLETED'].includes(contract.status) && (
+            <button
+              type="button"
+              onClick={() => setIsCancelModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-500/20 bg-red-500/5 text-xs font-medium text-red-400 hover:bg-red-500/10 transition-colors"
+            >
+              <XCircle className="w-3.5 h-3.5" />
+              <span>Cancel</span>
+            </button>
+          )}
         </div>
       }
     >
@@ -371,8 +508,9 @@ export default function ContractTimelinePage() {
             </div>
           </div>
 
-          {/* Right Rail: Recent Audit Activity */}
+          {/* Right Rail: Recent Audit Activity & Discussion */}
           <div className="space-y-6">
+            <ContractComments contractId={contractId} />
             <RecentEvents
               events={ledgerData?.events}
               contractId={contractId}
@@ -380,6 +518,131 @@ export default function ContractTimelinePage() {
           </div>
         </div>
       </div>
+
+      {/* Counterparty Invite Modal */}
+      {isInviteModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface border border-border rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-text">Invite Counterparty / Seller</h3>
+              <button
+                type="button"
+                onClick={() => setIsInviteModalOpen(false)}
+                className="text-muted hover:text-text"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="text-xs text-muted leading-relaxed">
+              Generate a secure 14-day invitation link for the seller to review criteria, inspect the agreement hash, and accept terms.
+            </p>
+
+            {inviteLink ? (
+              <div className="space-y-3 pt-2">
+                <label className="text-xs font-semibold text-text block">Shareable Invitation Link</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={inviteLink}
+                    className="w-full bg-surface-subtle border border-border rounded-xl px-3 py-2 text-xs font-mono text-muted select-all focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(inviteLink)
+                      setCopiedInvite(true)
+                      setTimeout(() => setCopiedInvite(false), 2000)
+                    }}
+                    className="px-3 py-2 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-semibold shrink-0 transition-colors inline-flex items-center gap-1"
+                  >
+                    {copiedInvite ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedInvite ? 'Copied' : 'Copy'}</span>
+                  </button>
+                </div>
+                <div className="flex justify-end pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsInviteModalOpen(false)}
+                    className="px-4 py-2 rounded-xl bg-surface border border-border text-xs font-medium text-text hover:bg-surface-2 transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSendInvite} className="space-y-4 pt-2">
+                <div>
+                  <label className="text-xs font-semibold text-muted block mb-1">Seller Email Address</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="freelancer@agency.com"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                    className="w-full bg-surface-subtle border border-border rounded-xl px-3.5 py-2 text-xs text-text focus:outline-none focus:border-brand"
+                  />
+                </div>
+                <div className="flex justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsInviteModalOpen(false)}
+                    className="px-4 py-2 text-xs font-medium text-muted hover:text-text"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={inviteLoading}
+                    className="px-4 py-2 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-semibold shadow-md shadow-brand/20 transition-all disabled:opacity-50"
+                  >
+                    {inviteLoading ? 'Generating…' : 'Generate Invite Link'}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Cancellation Modal */}
+      {isCancelModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface border border-border rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h3 className="text-base font-bold text-text">Cancel Agreement</h3>
+            <p className="text-xs text-muted leading-relaxed">
+              Cancelling will terminate this contract. If funds are currently held in a PayPal authorization hold, the remaining balance will be voided back to the client immediately.
+            </p>
+            <div>
+              <label className="text-xs font-semibold text-muted block mb-1">Reason for Cancellation</label>
+              <textarea
+                rows={3}
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="e.g. Mutual client decision, milestone scope changed…"
+                className="w-full bg-surface-subtle border border-border rounded-xl p-3 text-xs text-text focus:outline-none focus:border-brand"
+              />
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsCancelModalOpen(false)}
+                className="px-4 py-2 text-xs font-medium text-muted hover:text-text"
+              >
+                Keep Active
+              </button>
+              <button
+                type="button"
+                disabled={cancelLoading}
+                onClick={handleCancelContract}
+                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold transition-colors disabled:opacity-50"
+              >
+                {cancelLoading ? 'Cancelling…' : 'Confirm Cancellation'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </PageShell>
   )
 }
