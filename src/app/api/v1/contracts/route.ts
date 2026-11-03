@@ -24,6 +24,8 @@ export const GET = apiHandler(
     const rows = await listContractsForUser(getDb(), user!.sub, {
       status: query?.status,
       limit: query?.limit,
+      orgId: user!.org_id,
+      isAdmin: user!.role === 'admin',
     })
 
     const db = getDb()
