@@ -3,10 +3,11 @@
 /**
  * ScenarioButtons Component — one-click scenario triggers for Hackathon Judges.
  * Implements phase-6-frontend.md §6.4, phase-7 §7.4 & ux-flows.md §4 (S0).
+ * Updated per docs/v2/08-current-build-review.md & 09-judging-criteria-alignment.md.
  */
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Play, Sparkles, Clock, AlertCircle, Loader2 } from 'lucide-react'
+import { Play, Sparkles, Clock, AlertCircle, Loader2, Eye, ShieldCheck } from 'lucide-react'
 import { useApiClient } from '@/lib/query'
 
 export interface ScenarioDef {
@@ -14,6 +15,8 @@ export interface ScenarioDef {
   title: string
   description: string
   duration: string
+  whatYoullSee: string
+  prerequisites: string
   isChaos?: boolean
 }
 
@@ -23,31 +26,41 @@ export const SCENARIOS: ScenarioDef[] = [
     title: 'Happy Path',
     description: 'Buyer agent proposes, worker agent accepts, human authorizes PayPal hold once, both milestones deliver and release autonomously.',
     duration: '~45s',
+    whatYoullSee: 'Automated contract proposal, PayPal authorization hold, milestone verification pass, and instant $60.00 release.',
+    prerequisites: 'Buyer approves PayPal sandbox authorization hold.',
   },
   {
     key: 'reject_then_pass',
     title: 'Self-Correction Loop',
     description: 'Worker delivers flawed schema (22 rows, malformed email); verification engine rejects with feedback; worker repairs and passes.',
     duration: '~60s',
+    whatYoullSee: 'Flawed delivery rejected with exact line citations; agent patches deliverable and triggers automated release.',
+    prerequisites: 'Pre-funded sandbox agreement.',
   },
   {
     key: 'injection_attack',
     title: 'Adversarial Grader Defense',
-    description: 'Worker injects an adversarial prompt injection into the summary; ProofPay quarantines the payload and preserves escrow.',
+    description: 'The injection attempt is ignored and flagged; the milestone is rejected and the hold stays untouched.',
     duration: '~40s',
+    whatYoullSee: 'Prompt injection flagged in verification report; malicious directive ignored; hold stays 100% untouched.',
+    prerequisites: 'Pre-funded sandbox agreement.',
   },
   {
     key: 'capture_declined',
     title: 'Payment Gateway Resilience',
-    description: 'Simulates a transient INSTRUMENT_DECLINED gateway error; ProofPay retains escrow hold and safely recovers upon retry.',
+    description: 'Simulates a transient INSTRUMENT_DECLINED gateway error; ProofPay retains authorization hold and safely recovers upon retry.',
     duration: '~50s',
+    whatYoullSee: 'Simulated gateway error caught gracefully; recovery banner shown; retry succeeds cleanly.',
+    prerequisites: 'Chaos failure mode enabled.',
     isChaos: true,
   },
   {
     key: 'silent_buyer_autorelease',
     title: 'Silent Buyer Protection',
-    description: 'Human review criterion triggers escalation; buyer remains unresponsive; protocol auto-releases escrow to protect worker compensation.',
+    description: 'If the buyer doesn\'t respond, the milestone is released automatically after the agreed wait.',
     duration: '~60s',
+    whatYoullSee: 'Escalation review countdown; automatic milestone payout to seller after non-response window expires.',
+    prerequisites: 'Buyer auto-release timer active.',
   },
 ]
 
@@ -113,7 +126,7 @@ export function ScenarioButtons({ className = '' }: { className?: string }) {
           </p>
         </div>
         <span className="text-xs font-mono px-2 py-0.5 rounded bg-surface-2 border border-border text-muted">
-          Judge Mode
+          Sandbox Playground
         </span>
       </div>
 
@@ -133,7 +146,7 @@ export function ScenarioButtons({ className = '' }: { className?: string }) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {visibleScenarios.map((s) => {
           const isLoading = runningKey === s.key
 
@@ -142,7 +155,7 @@ export function ScenarioButtons({ className = '' }: { className?: string }) {
               key={s.key}
               className="p-4 rounded-xl bg-surface border border-border shadow-sm hover:border-brand/40 transition-all flex flex-col justify-between space-y-3"
             >
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-sm text-text">{s.title}</span>
                   <span className="inline-flex items-center gap-1 text-[11px] text-muted font-mono">
@@ -151,6 +164,18 @@ export function ScenarioButtons({ className = '' }: { className?: string }) {
                   </span>
                 </div>
                 <p className="text-xs text-muted leading-relaxed">{s.description}</p>
+
+                {/* What you'll see */}
+                <div className="pt-1 space-y-1">
+                  <div className="flex items-start gap-1.5 text-[11px] text-brand/90 font-medium">
+                    <Eye className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                    <span><strong>What you'll see:</strong> {s.whatYoullSee}</span>
+                  </div>
+                  <div className="flex items-start gap-1.5 text-[10px] text-muted">
+                    <ShieldCheck className="w-3 h-3 flex-shrink-0 mt-0.5" />
+                    <span><strong>Prerequisite:</strong> {s.prerequisites}</span>
+                  </div>
+                </div>
               </div>
 
               <button

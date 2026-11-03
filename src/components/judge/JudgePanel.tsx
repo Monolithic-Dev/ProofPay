@@ -82,13 +82,13 @@ export function JudgePanel({ className = '' }: { className?: string }) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-text">Judge Mode &amp; Interactive Testing</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-text">Sandbox Playground &amp; Interactive Testing</h2>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-ok/10 text-ok border border-ok/20">
               Active
             </span>
           </div>
           <p className="text-xs sm:text-sm text-muted mt-1">
-            Simulate both sides of milestone settlements or run automated agent scenarios
+            Test both sides of milestone settlements or run automated agent scenarios
           </p>
         </div>
 

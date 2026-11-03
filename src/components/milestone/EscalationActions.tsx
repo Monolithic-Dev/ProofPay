@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * EscalationActions Component — human escrow review interface for escalated milestones.
+ * EscalationActions Component — Human Verification Review interface for escalated milestones.
  * Implements phase-6-frontend.md §6.4 & ux-flows.md §4 (S5).
  */
 import React, { useState } from 'react'
@@ -36,7 +36,7 @@ export function EscalationActions({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Eye className="w-5 h-5 text-warn" />
-            <h3 className="text-base font-bold text-text">Human Escrow Review</h3>
+            <h3 className="text-base font-bold text-text">Human Verification Review</h3>
           </div>
           <p className="text-xs text-muted">
             The automated verification was borderline. As the buyer, you have the final decision.

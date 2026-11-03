@@ -106,7 +106,39 @@ export function SubmitPanel({
             <label htmlFor="deliverable-content" className="text-xs font-semibold text-text">
               Artifact Content ({deliverableType === 'json_records' ? 'JSON Array' : 'Text / Markdown'})
             </label>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  if (deliverableType === 'json_records') {
+                    setContent(
+                      JSON.stringify(
+                        [
+                          { id: 'rec_001', name: 'Verified Data Pipeline', status: 'completed', score: 98 },
+                          { id: 'rec_002', name: 'Cryptographic Ledger Block', status: 'completed', score: 100 },
+                          { id: 'rec_003', name: 'PayPal Hold Capture Proof', status: 'completed', score: 95 },
+                        ],
+                        null,
+                        2
+                      )
+                    )
+                  } else {
+                    setContent(
+                      '# Milestone Deliverable Report\n\n' +
+                        '## Executive Summary\n' +
+                        'The required deliverable has been fully drafted, reviewed, and finalized in accordance with the agreed acceptance criteria.\n\n' +
+                        '### Completed Requirements\n' +
+                        '- Completed all primary data transformations and formatting.\n' +
+                        '- Cryptographic hashes verified against agreement specification.\n' +
+                        '- Deliverable submitted for automated evaluation and milestone release approval.\n'
+                    )
+                  }
+                  setValidationError(null)
+                }}
+                className="text-xs font-medium text-muted hover:text-brand transition-colors"
+              >
+                Load Sample
+              </button>
               <label
                 htmlFor="file-upload"
                 className="cursor-pointer text-xs font-medium text-brand hover:underline inline-flex items-center gap-1"

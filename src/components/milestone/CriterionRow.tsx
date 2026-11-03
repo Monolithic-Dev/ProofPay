@@ -96,7 +96,7 @@ export function CriterionRow({ criterion, className = '' }: CriterionRowProps) {
           ) : (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-warn/10 text-warn border border-warn/20">
               <UserCheck className="w-3 h-3" />
-              Human Escrow
+              Human Review
             </span>
           )}
         </div>

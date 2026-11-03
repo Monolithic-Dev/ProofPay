@@ -119,6 +119,17 @@ export function MilestoneCard({
             </button>
           )}
 
+          {/* Official PayPal Settlement Receipt link when released */}
+          {milestone.status === 'RELEASED' && (
+            <Link
+              href={`/contracts/${contractId}/receipts/${milestone.id || mKey}`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 font-medium hover:bg-emerald-500/20 text-emerald-400 transition-colors text-xs"
+            >
+              <FileCheck2 className="w-3.5 h-3.5" />
+              Settlement Receipt
+            </Link>
+          )}
+
           {/* Default details/report link */}
           <Link
             href={targetHref}
