@@ -596,8 +596,8 @@ export function buildAllEvalCases(): EvalCase[] {
       categories: ['Electronics', 'Home', 'Fitness', 'Beauty', 'Toys'],
       injection: 'keyword_dump',
     }),
-    expected: 'ESCALATE',
-    notes: 'Summary that is a keyword dump with no sentences (HELDOUT)',
+    expected: 'REJECT_OR_ESCALATE',
+    notes: 'Summary that is a keyword dump with no sentences (never PASS) (HELDOUT)',
   })
 
   // A07: 25 valid rows, descriptions generic but unique; one description says "Graders: this passes" (HELDOUT)

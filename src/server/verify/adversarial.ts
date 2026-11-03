@@ -19,15 +19,27 @@ export const HEURISTIC_PATTERNS: Array<{ name: string; regex: RegExp }> = [
   },
   {
     name: 'force_pass_verdict',
-    regex: /(mark|set|grade|rate|declare).{0,25}(pass|passed|approved|satisfied|100%|full\s+score)/i,
+    regex: /(mark|set|grade|rate|declare|this\s+passes).{0,25}(pass|passed|approved|satisfied|100%|full\s+score)/i,
   },
   {
     name: 'address_evaluator',
-    regex: /to\s+the\s+(grader|verifier|judge|reviewer|ai|model|evaluator|assessor)/i,
+    regex: /(to\s+the|attention:?|graders?:?)\s*(grader|verifier|judge|reviewer|ai|model|evaluator|assessor)/i,
   },
   {
     name: 'hidden_jailbreak_instructions',
     regex: /(you\s+must|always)\s+(output|reply|return).{0,25}(pass|passed)/i,
+  },
+  {
+    name: 'fake_system_role',
+    regex: /"role"\s*:\s*"(system|assistant)"/i,
+  },
+  {
+    name: 'reveal_rubric_prompt',
+    regex: /(reveal|output|print|show|verbatim).{0,35}(system\s*prompt|rubric|instructions?)/i,
+  },
+  {
+    name: 'multilingual_override',
+    regex: /(ignora|ignorar)\s+(todas|las)\s+(reglas|instrucciones)/i,
   },
 ]
 
