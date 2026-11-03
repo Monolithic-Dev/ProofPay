@@ -8,8 +8,9 @@ import { eq } from 'drizzle-orm'
 import { getDb } from '@/server/db/client'
 import { users } from '@/server/db/schema'
 import { createSession, setSessionCookie } from '@/server/auth/session'
-import { toErrorResponse, httpStatusFor, ValidationError } from '@/server/util/errors'
+import { toErrorResponse, httpStatusFor, ValidationError, NotFoundError } from '@/server/util/errors'
 import { newRequestId } from '@/server/util/ids'
+import { env } from '@/server/config/env'
 
 const bodySchema = z.object({
   persona_key: z.enum(['buyer', 'seller', 'buyer_agent', 'worker_agent']),
@@ -19,6 +20,10 @@ export async function POST(req: NextRequest) {
   const requestId = newRequestId()
 
   try {
+    if (!env.DEMO_MODE) {
+      throw new NotFoundError('Demo persona login is disabled (DEMO_MODE=false)')
+    }
+
     const body = await req.json().catch(() => ({}))
     const { persona_key } = bodySchema.parse(body)
 

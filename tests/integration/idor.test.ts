@@ -1,14 +1,285 @@
 /**
  * Integration Test: IDOR Protection & Authorization Matrix
- * Implements phase-3-auth-and-contracts.md §3.12 (Task 10.3).
+ * Implements phase-8-testing-and-hardening.md §8.4 & security-privacy.md §4, §7.
  */
 import { describe, it, expect } from 'vitest'
+import fs from 'fs'
+import path from 'path'
 import { requireParty, requireRole, forbidAgent } from '@/server/auth/guards'
-import { NotFoundError, ForbiddenError } from '@/server/util/errors'
+import { NotFoundError, ForbiddenError, UnauthorizedError } from '@/server/util/errors'
 import type { SessionUser } from '@/server/auth/session'
 import type { ContractRow } from '@/server/db/schema'
 
-describe('IDOR & Security Matrix Tests', () => {
+/**
+ * Route authorization specification table.
+ * Every route under src/app/api/v1 must be declared here.
+ */
+export interface RouteSpec {
+  path: string
+  methods: ('GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH')[]
+  auth: 'none' | 'user' | 'webhook'
+  allowedRoles?: ('buyer' | 'seller' | 'admin')[]
+  requireParty?: boolean
+  forbidAgent?: boolean
+  description: string
+}
+
+export const ROUTES: RouteSpec[] = [
+  {
+    path: 'health',
+    methods: ['GET'],
+    auth: 'none',
+    description: 'System health check and feature flags',
+  },
+  {
+    path: 'auth/demo-login',
+    methods: ['POST'],
+    auth: 'none',
+    description: 'Demo persona login (DEMO_MODE only)',
+  },
+  {
+    path: 'auth/logout',
+    methods: ['POST'],
+    auth: 'none',
+    description: 'Clear session cookie',
+  },
+  {
+    path: 'me',
+    methods: ['GET'],
+    auth: 'user',
+    description: 'Get active session user profile',
+  },
+  {
+    path: 'me/api-keys',
+    methods: ['GET', 'POST'],
+    auth: 'user',
+    description: 'List and create user API keys',
+  },
+  {
+    path: 'me/api-keys/[id]',
+    methods: ['DELETE'],
+    auth: 'user',
+    description: 'Revoke user API key',
+  },
+  {
+    path: 'contracts',
+    methods: ['GET', 'POST'],
+    auth: 'user',
+    description: 'List contracts or create new draft contract',
+  },
+  {
+    path: 'contracts/compile',
+    methods: ['POST'],
+    auth: 'user',
+    description: 'Natural language contract compilation',
+  },
+  {
+    path: 'contracts/[id]',
+    methods: ['GET'],
+    auth: 'user',
+    requireParty: true,
+    description: 'Get contract details (stranger gets 404)',
+  },
+  {
+    path: 'contracts/[id]/events',
+    methods: ['GET'],
+    auth: 'user',
+    requireParty: true,
+    description: 'SSE stream for contract ledger events',
+  },
+  {
+    path: 'contracts/[id]/ledger',
+    methods: ['GET'],
+    auth: 'user',
+    requireParty: true,
+    description: 'Get contract ledger audit events',
+  },
+  {
+    path: 'contracts/[id]/ledger/verify',
+    methods: ['GET'],
+    auth: 'user',
+    requireParty: true,
+    description: 'Verify cryptographic hash chain integrity',
+  },
+  {
+    path: 'contracts/[id]/lint',
+    methods: ['GET'],
+    auth: 'user',
+    requireParty: true,
+    allowedRoles: ['buyer', 'admin'],
+    description: 'Get lint issues for draft contract',
+  },
+  {
+    path: 'contracts/[id]/lint/apply',
+    methods: ['POST'],
+    auth: 'user',
+    requireParty: true,
+    allowedRoles: ['buyer', 'admin'],
+    description: 'Apply JSON patch fix to contract',
+  },
+  {
+    path: 'contracts/[id]/propose',
+    methods: ['POST'],
+    auth: 'user',
+    requireParty: true,
+    allowedRoles: ['buyer', 'admin'],
+    description: 'Propose contract to seller',
+  },
+  {
+    path: 'contracts/[id]/accept',
+    methods: ['POST'],
+    auth: 'user',
+    requireParty: true,
+    allowedRoles: ['seller', 'admin'],
+    description: 'Seller accepts proposed contract',
+  },
+  {
+    path: 'contracts/[id]/fund',
+    methods: ['POST'],
+    auth: 'user',
+    requireParty: true,
+    allowedRoles: ['buyer', 'admin'],
+    description: 'Initiate PayPal funding order',
+  },
+  {
+    path: 'contracts/[id]/funding-status',
+    methods: ['GET'],
+    auth: 'user',
+    requireParty: true,
+    description: 'Check PayPal authorization hold status',
+  },
+  {
+    path: 'contracts/[id]/cancel',
+    methods: ['POST'],
+    auth: 'user',
+    requireParty: true,
+    allowedRoles: ['buyer', 'admin'],
+    forbidAgent: true,
+    description: 'Cancel contract (human buyer only)',
+  },
+  {
+    path: 'contracts/[id]/chaos',
+    methods: ['POST'],
+    auth: 'user',
+    requireParty: true,
+    allowedRoles: ['buyer', 'admin'],
+    description: 'Inject PayPal chaos mock code (CHAOS_MODE only)',
+  },
+  {
+    path: 'contracts/[id]/milestones/[mid]',
+    methods: ['GET'],
+    auth: 'user',
+    requireParty: true,
+    description: 'Get milestone status and verification summary',
+  },
+  {
+    path: 'contracts/[id]/milestones/[mid]/submissions',
+    methods: ['GET', 'POST'],
+    auth: 'user',
+    requireParty: true,
+    description: 'Submit milestone artifact or get history',
+  },
+  {
+    path: 'contracts/[id]/milestones/[mid]/decision',
+    methods: ['POST'],
+    auth: 'user',
+    requireParty: true,
+    allowedRoles: ['buyer', 'admin'],
+    forbidAgent: true,
+    description: 'Escalated milestone decision (human buyer only)',
+  },
+  {
+    path: 'contracts/[id]/milestones/[mid]/retry-release',
+    methods: ['POST'],
+    auth: 'user',
+    requireParty: true,
+    allowedRoles: ['buyer', 'admin'],
+    forbidAgent: true,
+    description: 'Retry failed milestone release (human buyer only)',
+  },
+  {
+    path: 'contracts/[id]/proof-pack',
+    methods: ['GET'],
+    auth: 'user',
+    requireParty: true,
+    description: 'Download Proof Pack PDF or JSON',
+  },
+  {
+    path: 'paypal/return',
+    methods: ['GET'],
+    auth: 'none',
+    description: 'PayPal approval return redirect URL',
+  },
+  {
+    path: 'paypal/cancel',
+    methods: ['GET'],
+    auth: 'none',
+    description: 'PayPal approval cancel redirect URL',
+  },
+  {
+    path: 'webhooks/paypal',
+    methods: ['POST'],
+    auth: 'webhook',
+    description: 'PayPal webhook ingestion with signature verification',
+  },
+  {
+    path: 'admin/reconcile',
+    methods: ['POST'],
+    auth: 'user',
+    allowedRoles: ['admin'],
+    description: 'Admin manual reconciliation trigger',
+  },
+  {
+    path: 'demo/scenarios/[name]/run',
+    methods: ['POST'],
+    auth: 'user',
+    allowedRoles: ['buyer', 'admin'],
+    description: 'Start judge mode scenario run (DEMO_MODE only)',
+  },
+  {
+    path: 'demo/runs/[id]',
+    methods: ['GET'],
+    auth: 'user',
+    description: 'Get scenario run status',
+  },
+  {
+    path: 'demo/runs/[id]/events',
+    methods: ['GET'],
+    auth: 'user',
+    description: 'SSE stream for scenario run events',
+  },
+  {
+    path: 'verifications/[vid]',
+    methods: ['GET'],
+    auth: 'user',
+    requireParty: true,
+    description: 'Get verification detail report',
+  },
+]
+
+/**
+ * Recursively find all route.ts files under src/app/api/v1.
+ */
+function findApiRoutes(dir: string, baseDir: string = dir): string[] {
+  const entries = fs.readdirSync(dir, { withFileTypes: true })
+  let routes: string[] = []
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name)
+    if (entry.isDirectory()) {
+      routes = routes.concat(findApiRoutes(fullPath, baseDir))
+    } else if (entry.isFile() && entry.name === 'route.ts') {
+      const relPath = path
+        .relative(baseDir, dir)
+        .replace(/\\/g, '/')
+      routes.push(relPath)
+    }
+  }
+
+  return routes
+}
+
+describe('IDOR & Security Matrix Tests (§8.4)', () => {
   const dummyContract = {
     id: '11111111-1111-1111-1111-111111111111',
     buyer_id: 'buyer-uuid',
@@ -36,7 +307,6 @@ describe('IDOR & Security Matrix Tests', () => {
     updated_at: new Date(),
   } as ContractRow
 
-  // Mock DB for requireParty test
   const fakeDb: any = {
     select: () => ({
       from: () => ({
@@ -47,6 +317,23 @@ describe('IDOR & Security Matrix Tests', () => {
     }),
   }
 
+  it('route table covers every route file under src/app/api/v1', () => {
+    const apiDir = path.resolve(process.cwd(), 'src/app/api/v1')
+    const filesystemRoutes = findApiRoutes(apiDir).sort()
+    const tableRoutes = ROUTES.map((r) => r.path).sort()
+
+    expect(filesystemRoutes.length).toBeGreaterThan(0)
+
+    for (const fsRoute of filesystemRoutes) {
+      expect(
+        tableRoutes,
+        `Route file 'src/app/api/v1/${fsRoute}/route.ts' is missing from ROUTES security table!`
+      ).toContain(fsRoute)
+    }
+
+    expect(tableRoutes.length).toBe(filesystemRoutes.length)
+  })
+
   it('RULE 1: Strangers receive 404 NOT_FOUND instead of 403 to prevent contract enumeration', async () => {
     const strangerUser: SessionUser = {
       sub: 'stranger-uuid',
@@ -55,9 +342,7 @@ describe('IDOR & Security Matrix Tests', () => {
       is_agent: false,
     }
 
-    await expect(
-      requireParty(fakeDb, dummyContract.id, strangerUser)
-    ).rejects.toThrow(NotFoundError)
+    await expect(requireParty(fakeDb, dummyContract.id, strangerUser)).rejects.toThrow(NotFoundError)
   })
 
   it('RULE 2: Buyer and seller are recognized as legitimate parties', async () => {
@@ -111,7 +396,16 @@ describe('IDOR & Security Matrix Tests', () => {
     expect(() => forbidAgent(humanUser)).not.toThrow()
   })
 
-  it('RULE 5: requireRole rejects non-matching user roles', () => {
+  it('RULE 5: forbidAgent is declared on all money-altering and decision routes', () => {
+    const forbiddenRoutes = ROUTES.filter((r) => r.forbidAgent)
+    const forbiddenPaths = forbiddenRoutes.map((r) => r.path)
+
+    expect(forbiddenPaths).toContain('contracts/[id]/cancel')
+    expect(forbiddenPaths).toContain('contracts/[id]/milestones/[mid]/decision')
+    expect(forbiddenPaths).toContain('contracts/[id]/milestones/[mid]/retry-release')
+  })
+
+  it('RULE 6: requireRole rejects non-matching user roles', () => {
     const sellerUser: SessionUser = {
       sub: 'seller-1',
       email: 'seller@proofpay.test',
@@ -121,5 +415,20 @@ describe('IDOR & Security Matrix Tests', () => {
 
     expect(() => requireRole(sellerUser, 'buyer')).toThrow(ForbiddenError)
     expect(() => requireRole(sellerUser, 'seller')).not.toThrow()
+  })
+
+  it('RULE 7: admin-only routes reject standard buyers and sellers', () => {
+    const adminRoutes = ROUTES.filter(
+      (r) => r.allowedRoles && r.allowedRoles.length === 1 && r.allowedRoles[0] === 'admin'
+    )
+    expect(adminRoutes.map((r) => r.path)).toContain('admin/reconcile')
+
+    const buyerUser: SessionUser = {
+      sub: 'buyer-1',
+      email: 'buyer@proofpay.test',
+      role: 'buyer',
+      is_agent: false,
+    }
+    expect(() => requireRole(buyerUser, 'admin')).toThrow(ForbiddenError)
   })
 })

@@ -9,6 +9,8 @@ import { toErrorResponse, httpStatusFor, AppError } from '@/server/util/errors'
 import { requireUser, type SessionUser } from '@/server/auth/guards'
 import { rateLimit, clientIp } from '@/server/util/rate-limit'
 import { withIdempotency } from '@/server/util/idempotency'
+import { jsonDepth } from '@/server/verify/artifact'
+import { env } from '@/server/config/env'
 
 export interface HandlerConfig<TBody = unknown, TQuery = unknown> {
   auth?: 'none' | 'user'
@@ -102,11 +104,40 @@ export function apiHandler<TResponse, TBody = unknown, TQuery = unknown>(
           throw new AppError('BAD_REQUEST', 'Invalid JSON payload', 400)
         }
 
+        // Security check: JSON depth <= 20
+        if (jsonDepth(jsonPayload) > 20) {
+          throw new AppError(
+            'PAYLOAD_TOO_DEEP',
+            'JSON payload nesting depth exceeds maximum of 20',
+            400
+          )
+        }
+
         const bodyResult = config.body.safeParse(jsonPayload)
         if (!bodyResult.success) {
           throw bodyResult.error
         }
         parsedBody = bodyResult.data
+      }
+
+      // CSRF check for state-changing requests with cookie auth
+      const isStateChanging = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)
+      const authHeader = req.headers.get('authorization')
+      const isBearerKey = authHeader?.toLowerCase().startsWith('bearer pp_k_')
+
+      if (isStateChanging && !isBearerKey) {
+        const origin = req.headers.get('origin')
+        if (origin) {
+          const host = req.headers.get('host')
+          const appBase = env.APP_BASE_URL || ''
+          const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1')
+          const matchesHost = host && origin.includes(host)
+          const matchesAppBase = appBase && origin.startsWith(appBase)
+
+          if (!isLocal && !matchesHost && !matchesAppBase) {
+            throw new AppError('FORBIDDEN', 'Cross-origin request rejected (CSRF protection)', 403)
+          }
+        }
       }
 
       // 4. Query parsing
@@ -160,10 +191,20 @@ export function apiHandler<TResponse, TBody = unknown, TQuery = unknown>(
         params: resolvedParams,
       })
 
-      // Attach X-Request-Id header to response
+      // Attach security headers and request_id to response
       response.headers.set('X-Request-Id', requestId)
+      response.headers.set('X-Content-Type-Options', 'nosniff')
+      response.headers.set('X-Frame-Options', 'DENY')
+      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
       return response
     } catch (err: unknown) {
+      const securityHeaders = {
+        'X-Request-Id': requestId,
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+      }
+
       if (err instanceof ZodError) {
         const details = err.issues.map((i) => ({
           path: i.path.join('.'),
@@ -178,7 +219,7 @@ export function apiHandler<TResponse, TBody = unknown, TQuery = unknown>(
               request_id: requestId,
             },
           },
-          { status: 400, headers: { 'X-Request-Id': requestId } }
+          { status: 400, headers: securityHeaders }
         )
       }
 
@@ -186,7 +227,7 @@ export function apiHandler<TResponse, TBody = unknown, TQuery = unknown>(
       const errorBody = toErrorResponse(err, requestId)
       return NextResponse.json(errorBody, {
         status,
-        headers: { 'X-Request-Id': requestId },
+        headers: securityHeaders,
       })
     }
   }

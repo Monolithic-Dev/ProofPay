@@ -25,6 +25,10 @@ function isProduction(): boolean {
 const REDACT_PATHS = [
   '*.password',
   '*.secret',
+  '*.client_secret',
+  '*.paypal_secret',
+  '*.app_secret',
+  '*.token',
   '*.authorization',
   '*.api_key',
   '*.key_hash',
