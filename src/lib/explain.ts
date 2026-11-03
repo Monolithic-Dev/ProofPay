@@ -50,8 +50,8 @@ export function explainLedgerEvent(
     case 'AUTHORIZATION_CREATED':
       return {
         title: 'Funds Held on PayPal',
-        summary: `Funds authorized. Proof of funds active.`,
-        why: 'PayPal placed a 29-day authorization hold on the buyer’s account. Funds are guaranteed.',
+        summary: `Funds authorized on PayPal. Hold is active.`,
+        why: 'PayPal placed a 29-day authorization hold on the buyer’s account. Funds are secured.',
       }
     case 'AUTHORIZATION_REAUTHED':
       return {

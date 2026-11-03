@@ -217,6 +217,9 @@ export const UserView = z.object({
   role: UserRole,
   is_agent: z.boolean(),
   persona_key: z.string().optional(),
+  org_role: z.string().optional(),
+  org_id: z.string().optional(),
+  org_name: z.string().optional(),
 })
 export type UserView = z.infer<typeof UserView>
 

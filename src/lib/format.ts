@@ -62,3 +62,14 @@ export function relativeTime(isoOrDate: string | Date | undefined | null): strin
   if (diffSec < 172800) return 'yesterday'
   return `${Math.floor(diffSec / 86400)}d ago`
 }
+
+/**
+ * Formats integer minor cents into formatted USD string.
+ */
+export function formatUsd(minor: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format((minor || 0) / 100)
+}
+

@@ -64,6 +64,7 @@ async function request<T>(
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
     signal,
+    credentials: 'include',
   })
 
   const requestId = res.headers.get('X-Request-Id') ?? 'unknown'
