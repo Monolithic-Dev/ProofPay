@@ -85,7 +85,7 @@ export const silentBuyerAutoreleaseScenario: ScenarioDefinition = {
           await ctx.emit({
             actor: 'protocol',
             kind: 'step',
-            text: 'Milestone 1 PASSED verification. $60.00 USD released from PayPal escrow hold.',
+            text: 'Milestone 1 PASSED verification. $60.00 USD released from PayPal authorization hold.',
             data: { milestone: 'm1', status: 'RELEASED' },
           })
           return { next: 'continue' }

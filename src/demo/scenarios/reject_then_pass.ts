@@ -145,7 +145,7 @@ export const rejectThenPassScenario: ScenarioDefinition = {
           await ctx.emit({
             actor: 'protocol',
             kind: 'step',
-            text: 'Milestone 1 PASSED verification on attempt 2! $60.00 USD released and captured from PayPal escrow hold.',
+            text: 'Milestone 1 PASSED verification on attempt 2! $60.00 USD released and captured from PayPal authorization hold.',
             data: { milestone: 'm1', status: 'RELEASED', attempt: 2, amount_minor: 6000 },
           })
           return { next: 'continue' }

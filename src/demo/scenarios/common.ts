@@ -102,7 +102,7 @@ export async function stepWorkerAccept(ctx: ScenarioContext): Promise<StepResult
   await ctx.emit({
     actor: 'worker_agent',
     kind: 'message',
-    text: `SynthetixBot accepted contract terms (${accepted.milestones?.length || 2} milestones). Ready to execute upon PayPal escrow funding.`,
+    text: `SynthetixBot accepted contract terms (${accepted.milestones?.length || 2} milestones). Ready to execute upon PayPal hold funding.`,
     data: { contract_id: ctx.contractId, status: accepted.status },
   })
 

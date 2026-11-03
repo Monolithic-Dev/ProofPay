@@ -27,7 +27,7 @@ export const happyPathScenario: ScenarioDefinition = {
   name: 'happy_path',
   title: 'Happy Path: Autonomous End-to-End Execution',
   description:
-    'ProcureBot proposes a contract to SynthetixBot, human authorizes PayPal escrow hold once, and both milestones are delivered, verified, and captured autonomously.',
+    'ProcureBot proposes a contract to SynthetixBot, human authorizes PayPal authorization hold once, and both milestones are delivered, verified, and captured autonomously.',
   steps: [
     // Step 0: Create and propose contract
     {
@@ -83,7 +83,7 @@ export const happyPathScenario: ScenarioDefinition = {
           await ctx.emit({
             actor: 'protocol',
             kind: 'step',
-            text: 'Milestone 1 PASSED verification! ProofPay protocol captured $60.00 USD from PayPal authorization escrow.',
+            text: 'Milestone 1 PASSED verification! ProofPay protocol captured $60.00 USD from PayPal authorization hold.',
             data: { milestone: 'm1', status: 'RELEASED', amount_minor: 6000 },
           })
           return { next: 'continue' }

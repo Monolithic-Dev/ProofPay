@@ -144,7 +144,7 @@ export const TOOLS: Record<string, ToolDefinition> = {
   get_funding_link: {
     name: 'get_funding_link',
     description:
-      'Generates the PayPal escrow authorization URL. A human payer must open this link to approve the authorization hold.',
+      'Generates the PayPal authorization hold URL. A human payer must open this link to approve the authorization hold.',
     schema: GetFundingLinkInput,
     inputSchema: zodToJsonSchema(GetFundingLinkInput) as Record<string, unknown>,
     execute: async (client, args) => {
@@ -197,7 +197,7 @@ export const TOOLS: Record<string, ToolDefinition> = {
   get_contract_status: {
     name: 'get_contract_status',
     description:
-      'Retrieves current contract state, live escrow funds breakdown, and milestone progress.',
+      'Retrieves current contract state, live funds hold breakdown, and milestone progress.',
     schema: GetContractStatusInput,
     inputSchema: zodToJsonSchema(GetContractStatusInput) as Record<string, unknown>,
     execute: async (client, args) => {

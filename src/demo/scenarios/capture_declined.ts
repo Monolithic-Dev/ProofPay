@@ -4,7 +4,7 @@
  *
  * Demonstrates payment resilience:
  * 1. Simulates PayPal payment instrument decline during Milestone 1 capture.
- * 2. ProofPay records RELEASE_FAILED without losing escrow hold or failing contract.
+ * 2. ProofPay records RELEASE_FAILED without losing authorization hold or failing contract.
  * 3. Once instrument issue is resolved, release retry captures successfully.
  */
 import {
@@ -23,7 +23,7 @@ export const captureDeclinedScenario: ScenarioDefinition = {
   name: 'capture_declined',
   title: 'Capture Declined: Payment Decline Resilience',
   description:
-    'Injects a PayPal INSTRUMENT_DECLINED error during capture. ProofPay flags RELEASE_FAILED without voiding the escrow hold, clears the decline, and successfully retries capture.',
+    'Injects a PayPal INSTRUMENT_DECLINED error during capture. ProofPay flags RELEASE_FAILED without voiding the authorization hold, clears the decline, and successfully retries capture.',
   steps: [
     // Step 0: Create and propose contract
     {
@@ -96,7 +96,7 @@ export const captureDeclinedScenario: ScenarioDefinition = {
           await ctx.emit({
             actor: 'protocol',
             kind: 'step',
-            text: 'CAPTURE DECLINED: PayPal returned INSTRUMENT_DECLINED. Hold remains safely locked in escrow; funds are NOT forfeited. Status marked RELEASE_FAILED for operator remediation.',
+            text: 'CAPTURE DECLINED: PayPal returned INSTRUMENT_DECLINED. Hold remains safely reserved with PayPal; funds are NOT forfeited. Status marked RELEASE_FAILED for operator remediation.',
             data: {
               milestone: 'm1',
               status: 'RELEASE_FAILED',
@@ -143,7 +143,7 @@ export const captureDeclinedScenario: ScenarioDefinition = {
           await ctx.emit({
             actor: 'protocol',
             kind: 'step',
-            text: 'Retry capture SUCCEEDED! $60.00 USD released to SynthetixBot. Escrow ledger reflects successful recovery.',
+            text: 'Retry capture SUCCEEDED! $60.00 USD released to SynthetixBot. Audit ledger reflects successful recovery.',
             data: { milestone: 'm1', status: 'RELEASED', recovered: true },
           })
           return { next: 'continue' }
