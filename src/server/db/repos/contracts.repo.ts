@@ -58,12 +58,22 @@ export async function getContractForParty(
 export async function listContractsForUser(
   db: Db | Tx,
   userId: string,
-  options?: { status?: ContractStatus; limit?: number }
+  options?: { status?: ContractStatus; limit?: number; orgId?: string; isAdmin?: boolean }
 ): Promise<ContractRow[]> {
   const limit = options?.limit ?? 50
-  const conditions = [
-    sql`(${contracts.buyer_id} = ${userId} OR ${contracts.seller_id} = ${userId})`,
-  ]
+  const conditions = []
+
+  if (!options?.isAdmin) {
+    if (options?.orgId) {
+      conditions.push(
+        sql`(${contracts.buyer_id} = ${userId} OR ${contracts.seller_id} = ${userId} OR ${contracts.buyer_org_id} = ${options.orgId} OR ${contracts.seller_org_id} = ${options.orgId})`
+      )
+    } else {
+      conditions.push(
+        sql`(${contracts.buyer_id} = ${userId} OR ${contracts.seller_id} = ${userId})`
+      )
+    }
+  }
 
   if (options?.status) {
     conditions.push(eq(contracts.status, options.status))
@@ -72,7 +82,7 @@ export async function listContractsForUser(
   return db
     .select()
     .from(contracts)
-    .where(and(...conditions))
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
     .orderBy(desc(contracts.created_at))
     .limit(limit)
 }

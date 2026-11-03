@@ -18,10 +18,12 @@ export const envSchema = z.object({
   PAYPAL_CLIENT_SECRET: z.string().min(1),
   PAYPAL_WEBHOOK_ID: z.string().optional(),
 
-  // Anthropic
+  // Anthropic & Groq
   ANTHROPIC_API_KEY: z.string().min(1),
   ANTHROPIC_MODEL: z.string().default('claude-sonnet-4-5'),
   ANTHROPIC_MODEL_FAST: z.string().default('claude-haiku-4-5'),
+  GROQ_API_KEY: z.string().optional(),
+  GROQ_MODEL: z.string().default('qwen/qwen3.8-27b'),
   LLM_DAILY_BUDGET_USD: z.coerce.number().positive().default(5),
 
   // Auth

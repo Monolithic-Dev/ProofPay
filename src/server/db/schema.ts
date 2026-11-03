@@ -128,6 +128,8 @@ export const contracts = pgTable(
       .notNull()
       .references(() => users.id),
     seller_id: uuid('seller_id').references(() => users.id),
+    buyer_org_id: uuid('buyer_org_id'),
+    seller_org_id: uuid('seller_org_id'),
     title: text('title').notNull(),
     status: contractStatusEnum('status').notNull().default('DRAFT'),
     contract_json: jsonb('contract_json').notNull(),
@@ -410,10 +412,313 @@ export const kv = pgTable('kv', {
 })
 
 // ---------------------------------------------------------------------------
+// 3.14 organizations (v2)
+// ---------------------------------------------------------------------------
+export const organizations = pgTable('organizations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(),
+  slug: text('slug').notNull().unique(),
+  logo_url: text('logo_url'),
+  funding_approval_threshold_minor: integer('funding_approval_threshold_minor'),
+  members_can_accept_contracts: boolean('members_can_accept_contracts').notNull().default(false),
+  default_auto_release_hours: integer('default_auto_release_hours').notNull().default(48),
+  created_at: timestamptz('created_at').notNull().defaultNow(),
+  updated_at: timestamptz('updated_at').notNull().defaultNow(),
+})
+
+// ---------------------------------------------------------------------------
+// 3.15 org_members (v2 RBAC)
+// ---------------------------------------------------------------------------
+export const org_members = pgTable(
+  'org_members',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    org_id: uuid('org_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    user_id: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    role: text('role').notNull().default('member'), // 'owner' | 'admin' | 'finance' | 'member' | 'viewer'
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('org_members_org_user_uniq').on(t.org_id, t.user_id),
+    index('org_members_user_idx').on(t.user_id),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// 3.16 org_invitations (v2)
+// ---------------------------------------------------------------------------
+export const org_invitations = pgTable('org_invitations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  org_id: uuid('org_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  email: text('email').notNull(),
+  role: text('role').notNull().default('member'),
+  token_hash: text('token_hash').notNull().unique(),
+  invited_by_id: uuid('invited_by_id')
+    .notNull()
+    .references(() => users.id),
+  expires_at: timestamptz('expires_at').notNull(),
+  accepted_at: timestamptz('accepted_at'),
+  created_at: timestamptz('created_at').notNull().defaultNow(),
+})
+
+// ---------------------------------------------------------------------------
+// 3.17 contract_comments (v2 Collaboration)
+// ---------------------------------------------------------------------------
+export const contract_comments = pgTable(
+  'contract_comments',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    contract_id: uuid('contract_id')
+      .notNull()
+      .references(() => contracts.id, { onDelete: 'cascade' }),
+    milestone_id: uuid('milestone_id').references(() => milestones.id, { onDelete: 'set null' }),
+    user_id: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    content: text('content').notNull(),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [index('contract_comments_contract_idx').on(t.contract_id, t.created_at)]
+)
+
+// ---------------------------------------------------------------------------
+// 3.18 contract_invitations (v2 Counterparties)
+// ---------------------------------------------------------------------------
+export const contract_invitations = pgTable('contract_invitations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  contract_id: uuid('contract_id')
+    .notNull()
+    .references(() => contracts.id, { onDelete: 'cascade' }),
+  email: text('email').notNull(),
+  role: text('role').notNull().default('seller'),
+  token_hash: text('token_hash').notNull().unique(),
+  expires_at: timestamptz('expires_at').notNull(),
+  accepted_at: timestamptz('accepted_at'),
+  created_at: timestamptz('created_at').notNull().defaultNow(),
+})
+
+// ---------------------------------------------------------------------------
+// 3.19 audit_events (v2 Org Activity & Governance)
+// ---------------------------------------------------------------------------
+export const audit_events = pgTable(
+  'audit_events',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    org_id: uuid('org_id').references(() => organizations.id, { onDelete: 'set null' }),
+    actor_type: text('actor_type').notNull(),
+    actor_id: text('actor_id').notNull(),
+    action: text('action').notNull(),
+    target_type: text('target_type'),
+    target_id: text('target_id'),
+    metadata: jsonb('metadata').notNull().default(sql`'{}'::jsonb`),
+    ip: text('ip'),
+    user_agent: text('user_agent'),
+    request_id: text('request_id'),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [index('audit_events_org_idx').on(t.org_id, t.created_at)]
+)
+
+// ---------------------------------------------------------------------------
+// 3.20 notifications (v2 In-App Alerts)
+// ---------------------------------------------------------------------------
+export const notifications = pgTable(
+  'notifications',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    user_id: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    org_id: uuid('org_id').references(() => organizations.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    body: text('body').notNull(),
+    link: text('link'),
+    type: text('type').notNull(),
+    read_at: timestamptz('read_at'),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [index('notifications_user_idx').on(t.user_id, t.read_at)]
+)
+
+// ---------------------------------------------------------------------------
+// 3.21 counterparties (v2 Directory)
+// ---------------------------------------------------------------------------
+export const counterparties = pgTable(
+  'counterparties',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organization_id: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    email: text('email').notNull(),
+    notes: text('notes'),
+    linked_organization_id: uuid('linked_organization_id').references(() => organizations.id, { onDelete: 'set null' }),
+    created_by: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('counterparties_org_email_uniq').on(t.organization_id, t.email),
+    index('counterparties_org_idx').on(t.organization_id),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// 3.22 contract_versions (v2 Versioning)
+// ---------------------------------------------------------------------------
+export const contract_versions = pgTable(
+  'contract_versions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    contract_id: uuid('contract_id')
+      .notNull()
+      .references(() => contracts.id, { onDelete: 'cascade' }),
+    version: integer('version').notNull(),
+    contract_json: jsonb('contract_json').notNull(),
+    contract_hash: text('contract_hash').notNull(),
+    change_note: text('change_note'),
+    created_by: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('contract_versions_contract_version_uniq').on(t.contract_id, t.version),
+    index('contract_versions_contract_idx').on(t.contract_id),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// 3.23 funding_approvals (v2 Four-Eyes Governance)
+// ---------------------------------------------------------------------------
+export const funding_approvals = pgTable(
+  'funding_approvals',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    contract_id: uuid('contract_id')
+      .notNull()
+      .references(() => contracts.id, { onDelete: 'cascade' }),
+    organization_id: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    requested_by: uuid('requested_by')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    total_minor: integer('total_minor').notNull(),
+    status: text('status').notNull().default('PENDING'), // 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXPIRED'
+    decided_by: uuid('decided_by').references(() => users.id, { onDelete: 'set null' }),
+    decision_note: text('decision_note'),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+    decided_at: timestamptz('decided_at'),
+  },
+  (t) => [
+    index('funding_approvals_contract_idx').on(t.contract_id),
+    index('funding_approvals_org_idx').on(t.organization_id, t.status),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// 3.24 templates (v2 Contract Templates Library)
+// ---------------------------------------------------------------------------
+export const templates = pgTable(
+  'templates',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organization_id: uuid('organization_id').references(() => organizations.id, { onDelete: 'cascade' }), // NULL = system template
+    slug: text('slug'),
+    name: text('name').notNull(),
+    description: text('description'),
+    category: text('category').notNull(),
+    contract_json: jsonb('contract_json').notNull(),
+    variables: jsonb('variables').notNull().default(sql`'[]'::jsonb`),
+    version: integer('version').notNull().default(1),
+    is_active: boolean('is_active').notNull().default(true),
+    created_by: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    index('templates_org_idx').on(t.organization_id),
+    index('templates_category_idx').on(t.category),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// 3.25 service_accounts (v2 AI Agents & Machine Identities)
+// ---------------------------------------------------------------------------
+export const service_accounts = pgTable(
+  'service_accounts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organization_id: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    description: text('description'),
+    scopes: jsonb('scopes').notNull().default(sql`'[]'::jsonb`),
+    max_contract_total_minor: integer('max_contract_total_minor'),
+    max_open_holds_minor: integer('max_open_holds_minor'),
+    created_by: uuid('created_by').references(() => users.id, { onDelete: 'set null' }),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+    disabled_at: timestamptz('disabled_at'),
+  },
+  (t) => [
+    uniqueIndex('service_accounts_org_name_uniq').on(t.organization_id, t.name),
+  ]
+)
+
+// ---------------------------------------------------------------------------
+// 3.26 support_tickets (v2 Customer Support)
+// ---------------------------------------------------------------------------
+export const support_tickets = pgTable(
+  'support_tickets',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    user_id: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+    organization_id: uuid('organization_id').references(() => organizations.id, { onDelete: 'set null' }),
+    contract_id: uuid('contract_id').references(() => contracts.id, { onDelete: 'set null' }),
+    email: text('email').notNull(),
+    subject: text('subject').notNull(),
+    body: text('body').notNull(),
+    status: text('status').notNull().default('OPEN'),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [index('support_tickets_status_idx').on(t.status)]
+)
+
+// ---------------------------------------------------------------------------
+// 3.27 paypal_connections (v2 PayPal Merchant Connections)
+// ---------------------------------------------------------------------------
+export const paypal_connections = pgTable(
+  'paypal_connections',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organization_id: uuid('organization_id')
+      .notNull()
+      .references(() => organizations.id, { onDelete: 'cascade' }),
+    mode: text('mode').notNull().default('PLATFORM_ACCOUNT'),
+    status: text('status').notNull().default('ACTIVE'),
+    paypal_merchant_id: text('paypal_merchant_id'),
+    paypal_email: text('paypal_email'),
+    connected_at: timestamptz('connected_at'),
+    created_at: timestamptz('created_at').notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('paypal_connections_org_uniq').on(t.organization_id)]
+)
+
+// ---------------------------------------------------------------------------
 // Type exports
 // ---------------------------------------------------------------------------
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
+export type Organization = typeof organizations.$inferSelect
+export type NewOrganization = typeof organizations.$inferInsert
+export type OrgMember = typeof org_members.$inferSelect
+export type NewOrgMember = typeof org_members.$inferInsert
+export type OrgInvitation = typeof org_invitations.$inferSelect
 export type Contract = typeof contracts.$inferSelect
 export type ContractRow = Contract
 export type NewContract = typeof contracts.$inferInsert
@@ -441,3 +746,19 @@ export type DemoRun = typeof demo_runs.$inferSelect
 export type Dispute = typeof disputes.$inferSelect
 export type IdempotencyKey = typeof idempotency_keys.$inferSelect
 export type Kv = typeof kv.$inferSelect
+export type ContractComment = typeof contract_comments.$inferSelect
+export type NewContractComment = typeof contract_comments.$inferInsert
+export type AuditEvent = typeof audit_events.$inferSelect
+export type Notification = typeof notifications.$inferSelect
+export type Counterparty = typeof counterparties.$inferSelect
+export type NewCounterparty = typeof counterparties.$inferInsert
+export type ContractVersion = typeof contract_versions.$inferSelect
+export type FundingApproval = typeof funding_approvals.$inferSelect
+export type NewFundingApproval = typeof funding_approvals.$inferInsert
+export type Template = typeof templates.$inferSelect
+export type NewTemplate = typeof templates.$inferInsert
+export type ServiceAccount = typeof service_accounts.$inferSelect
+export type NewServiceAccount = typeof service_accounts.$inferInsert
+export type SupportTicket = typeof support_tickets.$inferSelect
+export type PaypalConnection = typeof paypal_connections.$inferSelect
+
