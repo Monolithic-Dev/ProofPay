@@ -33,19 +33,18 @@ export async function createAndPropose(
     if (errorIssues.length === 0) break
 
     const fixable = errorIssues.find((i) => i.suggested_fix)
-    if (!fixable || !fixable.suggested_fix) {
+    if (!fixable) {
       break
     }
 
-    const fixed = await client.applyLintFix(contract.id, fixable.suggested_fix)
-    contract = fixed.contract
+    contract = await client.applyLintFix(contract.id, fixable.code)
     iterations++
   }
 
   // 3. Propose to worker agent
   const proposed = await client.proposeContract(contract.id, sellerEmail)
   return {
-    contract: proposed.contract,
+    contract: proposed,
     iterations,
   }
 }
@@ -79,10 +78,10 @@ export async function waitForFunded(
   const startTime = Date.now()
 
   while (Date.now() - startTime < timeoutMs) {
-    const res = await client.getContract(contractId)
-    const status = res.contract.status
+    const contract = await client.getContract(contractId)
+    const status = contract.status
     if (status === 'FUNDED' || status === 'IN_PROGRESS' || status === 'COMPLETED') {
-      return res.contract
+      return contract
     }
     await new Promise((resolve) => setTimeout(resolve, pollIntervalMs))
   }

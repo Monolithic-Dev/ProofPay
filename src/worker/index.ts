@@ -11,6 +11,7 @@ import { handleVoidRemaining } from '@/server/jobs/handlers/void-remaining'
 import { handleReconcilePaypal } from '@/server/jobs/handlers/reconcile-paypal'
 import { handleReauthCheck } from '@/server/jobs/handlers/reauth-check'
 import { handleExpireContract } from '@/server/jobs/handlers/expire-contract'
+import { handleDemoStep } from '@/demo/runner'
 import { scheduleSweeps } from './schedulers'
 import { logger } from '@/server/util/logger'
 import { kv } from '@/server/db/schema'
@@ -81,9 +82,12 @@ export async function dispatchJob(job: {
       await handleExpireContract(payload as unknown as Parameters<typeof handleExpireContract>[0])
       break
 
-    case 'PURGE_DEMO_DATA':
     case 'DEMO_STEP':
-      log.warn({ type: job.type }, 'Job type handler not yet implemented — skipping')
+      await handleDemoStep(payload as unknown as Parameters<typeof handleDemoStep>[0])
+      break
+
+    case 'PURGE_DEMO_DATA':
+      log.warn({ type: job.type }, 'PURGE_DEMO_DATA not yet implemented — skipping')
       break
 
     default:

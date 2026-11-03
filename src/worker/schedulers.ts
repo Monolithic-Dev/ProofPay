@@ -83,6 +83,14 @@ export async function scheduleSweeps(referenceTime?: Date): Promise<{
     log.debug({ err: String(err), key: expireDedupeKey }, 'Expire sweep already queued or failed')
   }
 
+  // 4. Sweep orphan demo runs
+  try {
+    const { sweepOrphanRuns } = await import('@/demo/runner')
+    await sweepOrphanRuns()
+  } catch (err) {
+    log.debug({ err: String(err) }, 'sweepOrphanRuns failed')
+  }
+
   return {
     reconcileKey: reconcileDedupeKey,
     reauthKey: reauthDedupeKey,

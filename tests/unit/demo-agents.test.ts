@@ -89,10 +89,12 @@ describe('Demo Agents & Deliverables (§7.2)', () => {
         }
       }),
       applyLintFix: vi.fn().mockResolvedValue({
-        contract: { id: 'c123', title: 'Test Fixed' },
+        id: 'c123',
+        title: 'Test Fixed',
       }),
       proposeContract: vi.fn().mockResolvedValue({
-        contract: { id: 'c123', status: 'PROPOSED' },
+        id: 'c123',
+        status: 'PROPOSED',
       }),
     } as unknown as ApiClient
 
