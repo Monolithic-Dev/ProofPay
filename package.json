@@ -26,7 +26,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "spike:paypal": "tsx scripts/paypal-spike.ts",
-    "test:load": "tsx scripts/smoke-load.ts"
+    "test:load": "tsx scripts/smoke-load.ts",
+    "check:copy": "node scripts/check-copy.mjs"
   },
   "dependencies": {
     "next": "15.3.3",
