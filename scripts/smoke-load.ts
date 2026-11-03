@@ -31,7 +31,7 @@ if (fs.existsSync(envPath)) {
 }
 
 // 2. Ensure fallback test environment variables BEFORE importing any modules
-process.env['NODE_ENV'] = process.env['NODE_ENV'] || 'test'
+;(process.env as any)['NODE_ENV'] = (process.env as any)['NODE_ENV'] || 'test'
 process.env['DATABASE_URL'] =
   process.env['DATABASE_URL'] || 'postgresql://proofpay:proofpay@localhost:5435/proofpay'
 process.env['PAYPAL_ENV'] = process.env['PAYPAL_ENV'] || 'sandbox'

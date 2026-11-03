@@ -49,20 +49,18 @@ export async function createChaosContract(opts?: {
       {
         id: buyerId,
         email: 'chaos-buyer@test.proofpay',
-        displayName: 'Chaos Buyer',
-        role: 'buyer',
-        isAgent: false,
+        display_name: 'Chaos Buyer',
+        role: 'buyer' as const,
+        is_agent: false,
         created_at: now(),
-        updated_at: now(),
       },
       {
         id: sellerId,
         email: 'chaos-seller@test.proofpay',
-        displayName: 'Chaos Seller',
-        role: 'seller',
-        isAgent: false,
+        display_name: 'Chaos Seller',
+        role: 'seller' as const,
+        is_agent: false,
         created_at: now(),
-        updated_at: now(),
       },
     ])
   }
@@ -120,10 +118,8 @@ export async function createChaosContract(opts?: {
           description: `Chaos step deliverable ${key}`,
         },
         status: 'PASSED', // Ready for release testing
-        due_date: new Date(Date.now() + (idx + 1) * 86400000),
+        due_at: new Date(Date.now() + (idx + 1) * 86400000),
         release_attempts: 0,
-        created_at: now(),
-        updated_at: now(),
       })
 
       await tx.insert(criteria).values({
@@ -134,7 +130,6 @@ export async function createChaosContract(opts?: {
         check_name: 'word_count',
         spec_json: { min: 5, max: 100 },
         required: true,
-        created_at: now(),
       })
 
       msList.push({

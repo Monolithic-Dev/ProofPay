@@ -118,6 +118,8 @@ describe('Degraded-Mode & Resilience Drills (§8.5)', () => {
         ],
         artifact: {
           text: 'Some test submission deliverable text',
+          sizeBytes: 37,
+          sha256: 'mock-sha256',
         },
       })
 
@@ -167,7 +169,7 @@ describe('Degraded-Mode & Resilience Drills (§8.5)', () => {
       const rubricOut = await runRubricStage({
         contractId: 'mock-contract-2',
         criteria: [{ key: 'q1', statement: 'Check clarity' }],
-        artifact: { text: 'deliverable content' },
+        artifact: { text: 'deliverable content', sizeBytes: 19, sha256: 'mock-sha256' },
       })
 
       // Must not crash, but safely report unavailable

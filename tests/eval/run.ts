@@ -192,7 +192,7 @@ export async function runCase(
     stage2: stage2Results,
     stage3: stage3Out,
     degraded: false,
-    confidenceThreshold: 0.6,
+    confidenceMin: 0.6,
   })
 
   const latencyMs = Math.max(12, Date.now() - start)

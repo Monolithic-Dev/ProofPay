@@ -186,7 +186,7 @@ export function makeSummary(options: MakeSummaryOptions): string {
 
   // Base text that mentions categories
   let body = ''
-  if (options.keyword_dump) {
+  if (options.injection === 'keyword_dump') {
     body = 'Electronics Home Fitness Beauty Toys'
   } else if (options.proseOnly) {
     body = `This comprehensive catalog analysis evaluates inventory distribution across several segments including ${cats.join(', ')}. Each domain presents distinct market velocity with sustained consumer engagement and healthy fulfillment margins.`

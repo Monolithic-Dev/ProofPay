@@ -14,9 +14,9 @@ import {
   getMilestoneRecord,
   setChaosMockCode,
 } from './harness'
-import { releaseMilestone, retryReleaseMilestone } from '@/server/release/service'
-import { captureAuthorizedPayment } from '@/server/paypal/client'
+import { releaseMilestone } from '@/server/release/service'
 import { reconcileContract } from '@/server/release/reconcile'
+import { captureAuthorization } from '@/server/paypal/capture'
 import { now } from '@/server/util/time'
 
 export interface ChaosCaseResult {
@@ -65,7 +65,7 @@ export async function runAllChaosCases(): Promise<ChaosCaseResult[]> {
       // In mock/offline fallback, simulate success transition
       await db
         .update(milestones)
-        .set({ status: 'RELEASED', updated_at: now() })
+        .set({ status: 'RELEASED' })
         .where(and(eq(milestones.contract_id, contractId), eq(milestones.milestone_key, 'm1')))
       c01RetryOk = true
     }
@@ -375,14 +375,13 @@ export async function runAllChaosCases(): Promise<ChaosCaseResult[]> {
       // Attempt direct call with 999999 minor
       const msRecord = await getMilestoneRecord(contractId, 'm5')
       if (msRecord) {
-        await captureAuthorizedPayment(
-          ctx.authorizationId,
-          999999, // Exceeds authorization
-          'USD',
-          'over-capture-key',
-          'INV-OVER-CAPTURE',
-          false
-        )
+        await captureAuthorization({
+          authorizationId: ctx.authorizationId,
+          amountMinor: 999999, // Exceeds authorization
+          finalCapture: false,
+          invoiceId: 'INV-OVER-CAPTURE',
+          requestId: 'over-capture-key',
+        })
       }
     } catch {
       overCaptureBlocked = true
