@@ -112,3 +112,113 @@ export function useContractEvents(contractId: string | undefined | null) {
     lastSeq: lastSeqRef.current,
   }
 }
+
+export interface DemoRunEventItem {
+  actor: 'buyer_agent' | 'worker_agent' | 'protocol' | 'human'
+  kind: 'message' | 'step' | 'waiting' | 'error' | 'done'
+  text: string
+  data?: Record<string, unknown>
+  t?: string
+}
+
+export function useDemoRunEvents(runId: string | undefined | null) {
+  const queryClient = useQueryClient()
+  const lastIndexRef = useRef<number>(-1)
+  const [events, setEvents] = useState<DemoRunEventItem[]>([])
+  const [status, setStatus] = useState<string>('RUNNING')
+  const [contractId, setContractId] = useState<string | null>(null)
+  const [isConnected, setIsConnected] = useState<boolean>(false)
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const backoffMsRef = useRef<number>(1000)
+
+  const handleRunEvent = useCallback(
+    (payload: {
+      run_id: string
+      contract_id?: string
+      status: string
+      index: number
+      event: DemoRunEventItem
+    }) => {
+      if (payload.index > lastIndexRef.current) {
+        lastIndexRef.current = payload.index
+        setEvents((prev) => [...prev, payload.event])
+      }
+
+      setStatus(payload.status)
+
+      if (payload.contract_id) {
+        setContractId(payload.contract_id)
+        queryClient.invalidateQueries({ queryKey: ['contract', payload.contract_id] })
+      }
+    },
+    [queryClient]
+  )
+
+  useEffect(() => {
+    if (!runId || typeof window === 'undefined' || typeof EventSource === 'undefined') {
+      return
+    }
+
+    let es: EventSource | null = null
+    let isDisposed = false
+
+    function connect() {
+      if (isDisposed) return
+
+      const url = `/api/v1/demo/runs/${runId}/events?after_index=${lastIndexRef.current}`
+      es = new EventSource(url)
+
+      es.onopen = () => {
+        setIsConnected(true)
+        backoffMsRef.current = 1000
+      }
+
+      const onMessage = (event: MessageEvent) => {
+        try {
+          const parsed = JSON.parse(event.data)
+          handleRunEvent(parsed)
+        } catch {
+          // ignore parse errors
+        }
+      }
+
+      es.addEventListener('run.step', onMessage)
+      es.addEventListener('run.waiting_for_buyer', onMessage)
+      es.addEventListener('run.done', onMessage)
+
+      es.onerror = () => {
+        setIsConnected(false)
+        if (es) {
+          es.close()
+          es = null
+        }
+
+        if (!isDisposed) {
+          const waitTime = backoffMsRef.current
+          backoffMsRef.current = Math.min(backoffMsRef.current * 1.5, 8000)
+          reconnectTimeoutRef.current = setTimeout(connect, waitTime)
+        }
+      }
+    }
+
+    connect()
+
+    return () => {
+      isDisposed = true
+      if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current)
+      if (es) {
+        es.close()
+        es = null
+      }
+      setIsConnected(false)
+    }
+  }, [runId, handleRunEvent])
+
+  return {
+    events,
+    status,
+    contractId,
+    isConnected,
+  }
+}
+

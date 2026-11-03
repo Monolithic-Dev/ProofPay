@@ -225,6 +225,7 @@ export type UserView = z.infer<typeof UserView>
 // ---------------------------------------------------------------------------
 export const DemoRunView = z.object({
   id: z.string().uuid(),
+  run_id: z.string().uuid().optional(),
   scenario: z.enum([
     'happy_path',
     'reject_then_pass',
