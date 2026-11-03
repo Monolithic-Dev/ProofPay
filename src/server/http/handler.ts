@@ -38,8 +38,9 @@ export function apiHandler<TResponse, TBody = unknown, TQuery = unknown>(
   config: HandlerConfig<TBody, TQuery>,
   fn: (ctx: HandlerContext<TBody, TQuery>) => Promise<NextResponse<TResponse> | Response>
 ) {
-  return async (req: NextRequest, { params }: { params?: Promise<Record<string, string>> | Record<string, string> } = {}): Promise<Response> => {
+  return async (req: NextRequest, context: any = {}): Promise<Response> => {
     const requestId = newRequestId()
+    const params = context?.params
     const resolvedParams = params ? (params instanceof Promise ? await params : params) : {}
 
     try {

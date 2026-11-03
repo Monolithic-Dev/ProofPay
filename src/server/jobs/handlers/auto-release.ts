@@ -2,7 +2,7 @@
  * AUTO_RELEASE Job Handler.
  * Implements phase-4-verification-engine.md §4.8.
  *
- * Automatically releases escrow when a buyer remains silent during the review window.
+ * Automatically releases milestone hold when a buyer remains silent during the review window.
  */
 import { eq } from 'drizzle-orm'
 import { withTx, lockContract } from '@/server/db/client'
