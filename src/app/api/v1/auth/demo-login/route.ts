@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { eq } from 'drizzle-orm'
 import { getDb } from '@/server/db/client'
-import { users } from '@/server/db/schema'
+import { users, organizations, org_members } from '@/server/db/schema'
 import { createSession, setSessionCookie } from '@/server/auth/session'
 import { toErrorResponse, httpStatusFor, ValidationError, NotFoundError } from '@/server/util/errors'
 import { newRequestId } from '@/server/util/ids'
@@ -38,11 +38,44 @@ export async function POST(req: NextRequest) {
       throw new ValidationError(`Demo persona '${persona_key}' not found. Run: npm run seed`)
     }
 
+    // Ensure Demo Workspace organization exists per v2 spec
+    let [org] = await db.select().from(organizations).where(eq(organizations.slug, 'demo-workspace')).limit(1)
+    if (!org) {
+      const [createdOrg] = await db
+        .insert(organizations)
+        .values({
+          name: 'Demo Workspace',
+          slug: 'demo-workspace',
+        })
+        .returning()
+      org = createdOrg
+    }
+
+    const orgRole =
+      persona_key === 'buyer'
+        ? 'owner'
+        : persona_key === 'seller'
+        ? 'member'
+        : 'admin'
+
+    if (org) {
+      await db
+        .insert(org_members)
+        .values({
+          org_id: org.id,
+          user_id: user.id,
+          role: orgRole,
+        })
+        .onConflictDoNothing()
+    }
+
     const token = await createSession({
       sub: user.id,
       email: user.email,
       role: user.role as 'buyer' | 'seller' | 'admin',
       is_agent: user.is_agent,
+      org_id: org?.id,
+      org_role: orgRole,
     })
 
     await setSessionCookie(token)
@@ -54,6 +87,8 @@ export async function POST(req: NextRequest) {
       role: user.role,
       is_agent: user.is_agent,
       persona_key: user.persona_key,
+      org_id: org?.id,
+      org_role: orgRole,
     }, { headers: { 'X-Request-Id': requestId } })
   } catch (err) {
     return NextResponse.json(
