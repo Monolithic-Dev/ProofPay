@@ -68,7 +68,7 @@ export class InvalidTransitionError extends AppError {
 
 export class BudgetExceededError extends AppError {
   constructor() {
-    super('BUDGET_EXCEEDED', 'Daily LLM budget exceeded. Try again tomorrow.', 503)
+    super('BUDGET_EXCEEDED', 'Daily LLM budget exceeded. Try again tomorrow.', 429)
   }
 }
 

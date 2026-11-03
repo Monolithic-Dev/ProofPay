@@ -13,7 +13,7 @@ import { withTx, lockContract } from '@/server/db/client'
 import { insertDraftContract } from '@/server/db/repos/contracts.repo'
 import { appendLedgerEvent } from '@/server/ledger/append'
 import { sha256Hex } from '@/server/contracts/canonical'
-import { AppError, ValidationError } from '@/server/util/errors'
+import { AppError, ValidationError, BudgetExceededError } from '@/server/util/errors'
 import type { LintIssue } from '@/shared/types'
 
 export function buildCompilePrompt(params: { prompt: string; nonce: string; budgetCapMinor?: number }) {
@@ -80,6 +80,9 @@ export async function compileContract(params: CompileParams): Promise<CompileRes
     })
     rawContract = res.data
   } catch (err: unknown) {
+    if (err instanceof BudgetExceededError) {
+      throw err
+    }
     throw new AppError('UPSTREAM_LLM', `Failed to compile contract from prompt: ${String(err)}`, 502)
   }
 

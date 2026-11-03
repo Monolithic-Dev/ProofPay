@@ -129,7 +129,10 @@ export async function runRubricStage(params: {
       contractId,
       temperature: 0,
     })
-    rawResults = Array.isArray(res.data?.results) ? res.data.results : []
+    if (!res.data || !Array.isArray(res.data.results)) {
+      throw new Error('LLM output missing valid results array')
+    }
+    rawResults = res.data.results
   } catch {
     // If budget exhausted or upstream LLM unavailable, return unavailable flag
     return {
