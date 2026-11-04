@@ -66,3 +66,4 @@ describe('Criteria Clarity Score', () => {
     expect(res.reasons.some((r) => r.includes('exceeds PayPal'))).toBe(true)
   })
 })
+

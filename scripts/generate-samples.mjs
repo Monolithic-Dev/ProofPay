@@ -170,3 +170,4 @@ const paypalActivity = {
 
 fs.writeFileSync('docs/paypal-activity-sample.json', JSON.stringify(paypalActivity, null, 2))
 console.log('✓ Wrote docs/paypal-activity-sample.json')
+

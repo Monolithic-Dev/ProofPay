@@ -148,3 +148,4 @@ export function PayPalActivity({ events = [], className = '' }: PayPalActivityPr
     </div>
   )
 }
+

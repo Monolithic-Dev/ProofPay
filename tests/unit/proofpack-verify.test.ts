@@ -71,3 +71,4 @@ describe('Offline Proof Pack Verifier', () => {
     expect(res.error).toMatch(/Tampering detected at event #1/)
   })
 })
+

@@ -46,3 +46,4 @@ describe('Money Invariant (fundsSummary)', () => {
     expect(summary.remainingMinor).toBe(7500)
   })
 })
+

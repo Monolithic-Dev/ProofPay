@@ -146,3 +146,4 @@ export async function verifyProofPack(pack: any): Promise<VerificationResult> {
     contractHashValid,
   }
 }
+
