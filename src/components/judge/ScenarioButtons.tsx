@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 /**
  * ScenarioButtons Component — one-click scenario triggers for Hackathon Judges.
@@ -169,7 +169,7 @@ export function ScenarioButtons({ className = '' }: { className?: string }) {
                 <div className="pt-1 space-y-1">
                   <div className="flex items-start gap-1.5 text-[11px] text-brand/90 font-medium">
                     <Eye className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                    <span><strong>What you'll see:</strong> {s.whatYoullSee}</span>
+                    <span><strong>What you&apos;ll see:</strong> {s.whatYoullSee}</span>
                   </div>
                   <div className="flex items-start gap-1.5 text-[10px] text-muted">
                     <ShieldCheck className="w-3 h-3 flex-shrink-0 mt-0.5" />

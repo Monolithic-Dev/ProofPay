@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import Link from 'next/link'
@@ -182,7 +182,7 @@ export default function TrustCenterPage() {
           </div>
 
           <div className="p-3 rounded-lg bg-surface-2 border border-border text-[11px] text-muted leading-relaxed">
-            <strong>Rule-of-Three Statistical Bound:</strong> With 0 false passes across 19 non-pass test cases, the 95% upper bound on the true false-pass rate is bounded by approximately <strong>3 / 19 &asymp; 15.8%</strong>. We report empirical measurements and bounds rather than unverified "100% accuracy" marketing claims.
+            <strong>Rule-of-Three Statistical Bound:</strong> With 0 false passes across 19 non-pass test cases, the 95% upper bound on the true false-pass rate is bounded by approximately <strong>3 / 19 &asymp; 15.8%</strong>. We report empirical measurements and bounds rather than unverified &quot;100% accuracy&quot; marketing claims.
           </div>
         </section>
 

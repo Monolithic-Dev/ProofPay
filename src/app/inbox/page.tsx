@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import Link from 'next/link'
@@ -118,7 +118,7 @@ export default function InboxPage() {
             <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center">
               <CheckCircle2 className="w-6 h-6" />
             </div>
-            <h3 className="text-lg font-bold text-text">You're All Caught Up</h3>
+            <h3 className="text-lg font-bold text-text">You&apos;re All Caught Up</h3>
             <p className="text-xs text-muted max-w-sm mx-auto">
               No pending milestone escalations, funding approvals, or unreviewed contract proposals requiring your immediate attention.
             </p>

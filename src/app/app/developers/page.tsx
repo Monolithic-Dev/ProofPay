@@ -445,7 +445,7 @@ export default function DevelopersPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-text">Claude Desktop & Cursor MCP Config</h3>
-                    <p className="text-xs text-muted">Connect your favorite LLM interface directly to ProofPay's 6 tools via Model Context Protocol.</p>
+                    <p className="text-xs text-muted">Connect your favorite LLM interface directly to ProofPay&apos;s 6 tools via Model Context Protocol.</p>
                   </div>
                 </div>
                 <button

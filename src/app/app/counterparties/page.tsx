@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -247,7 +247,7 @@ export default function CounterpartiesPage() {
                       {/* Notes if any */}
                       {cp.notes && (
                         <p className="text-[11px] text-muted line-clamp-2 italic pt-1">
-                          "{cp.notes}"
+                          &quot;{cp.notes}&quot;
                         </p>
                       )}
                     </div>

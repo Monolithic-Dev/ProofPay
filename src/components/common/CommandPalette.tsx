@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -166,7 +166,7 @@ export function CommandPalette() {
             <div className="max-h-96 overflow-y-auto p-2 space-y-1">
               {combinedResults.length === 0 ? (
                 <div className="p-8 text-center text-xs text-muted">
-                  No matching results found for "{query}".
+                  No matching results found for &quot;{query}&quot;.
                 </div>
               ) : (
                 combinedResults.map((item, index) => {

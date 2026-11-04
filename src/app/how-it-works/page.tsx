@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import Link from 'next/link'
@@ -128,7 +128,7 @@ export default function HowItWorksPage() {
               ProofPay is <strong className="text-text">not a traditional escrow service</strong>, bank, or licensed money transmitter. ProofPay never holds, stores, or pools customer funds.
             </p>
             <p>
-              All money movements are executed directly through PayPal's authorization and capture APIs. PayPal holds the customer commitment, PayPal verifies buyer identity, and PayPal processes the capture or void transaction.
+              All money movements are executed directly through PayPal&apos;s authorization and capture APIs. PayPal holds the customer commitment, PayPal verifies buyer identity, and PayPal processes the capture or void transaction.
             </p>
           </div>
           <div className="pt-4 flex gap-4">

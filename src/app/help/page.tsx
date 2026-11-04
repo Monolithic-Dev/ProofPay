@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import Link from 'next/link'
@@ -158,7 +158,7 @@ export default function HelpPage() {
                   <span>Support Ticket Submitted (#{submittedTicket.id.slice(0, 8)})</span>
                 </div>
                 <p className="text-muted leading-relaxed">
-                  Thank you! We have received your inquiry regarding <strong>"{submittedTicket.subject}"</strong>. A confirmation has been logged and a support representative will follow up with you at <strong>{submittedTicket.email}</strong>.
+                  Thank you! We have received your inquiry regarding <strong>&quot;{submittedTicket.subject}&quot;</strong>. A confirmation has been logged and a support representative will follow up with you at <strong>{submittedTicket.email}</strong>.
                 </p>
                 <button
                   onClick={() => setSubmittedTicket(null)}
