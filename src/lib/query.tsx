@@ -151,3 +151,28 @@ export function useCurrentUser() {
     staleTime: 30000,
   })
 }
+
+export interface SystemHealthData {
+  status: 'ok' | 'degraded' | 'down'
+  db: string
+  db_latency_ms: number
+  worker_lag_seconds: number
+  pending_jobs: number
+  stuck_jobs: number
+  worker?: {
+    last_heartbeat: string | null
+  }
+}
+
+export function useSystemHealth() {
+  return useQuery<SystemHealthData>({
+    queryKey: ['system-health'],
+    queryFn: async () => {
+      const res = await fetch('/api/v1/health')
+      if (!res.ok && res.status !== 503) throw new Error('Health check failed')
+      return res.json()
+    },
+    refetchInterval: 10000,
+    staleTime: 5000,
+  })
+}

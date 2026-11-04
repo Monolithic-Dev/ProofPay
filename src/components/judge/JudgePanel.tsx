@@ -11,6 +11,7 @@ import { UserCheck, Shield, Bot, Video, FileText, CheckCircle2, Loader2 } from '
 import { useApiClient, useCurrentUser } from '@/lib/query'
 import { SandboxCredsBanner } from './SandboxCredsBanner'
 import { ScenarioButtons } from './ScenarioButtons'
+import { WorkerStatusBanner } from './WorkerStatusBanner'
 
 interface PersonaConfig {
   key: string
@@ -202,6 +203,9 @@ export function JudgePanel({ className = '' }: { className?: string }) {
 
       {/* PayPal Sandbox Credentials Banner */}
       <SandboxCredsBanner />
+
+      {/* Worker Status Indicator */}
+      <WorkerStatusBanner />
 
       {/* 5 Scenario Buttons */}
       <ScenarioButtons />
