@@ -13,7 +13,7 @@ For each criterion:
  - verdict "pass" only if you can quote verbatim evidence from the submission that supports it.
  - verdict "fail" if the evidence shows it is not satisfied (quote it).
  - verdict "cannot_verify" if the submission lacks enough information to decide.
-Evidence quotes must be copied EXACTLY (≤ 200 characters each, max 3 per criterion). Do not paraphrase inside quotes.
+Evidence quotes must be copied EXACTLY (8 to 200 characters each, max 3 per criterion). Do not paraphrase inside quotes.
 Return results through the tool only.`
 
 export interface BuildRubricPromptParams {
