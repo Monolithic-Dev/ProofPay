@@ -23,6 +23,7 @@ export function HeaderNav() {
     { href: '/app/developers', label: 'Developers' },
     { href: '/trust', label: 'Trust' },
     { href: '/verify', label: 'Verify' },
+    { href: '/transparency', label: 'Transparency' },
     { href: '/help', label: 'Help' },
     {
       href: '/ledger',

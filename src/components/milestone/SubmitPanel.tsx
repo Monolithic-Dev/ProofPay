@@ -4,12 +4,23 @@
  * SubmitPanel Component — seller submission form for milestone deliverables.
  * Enforces <= 1 MiB payload limit and client-side JSON record array checks.
  * Displays per-attempt Idempotency-Key for replay safety.
- * Implements phase-6-frontend.md §6.4 & ux-flows.md §4 (S5).
+ * Enhanced with Pre-Flight Validation (docs/v2/01-NEXT-LEVEL-STRATEGY.md F2-lite).
  */
 import React, { useState, useEffect } from 'react'
-import { Upload, Send, FileText, AlertCircle, Loader2, Key } from 'lucide-react'
+import {
+  Upload,
+  Send,
+  FileText,
+  AlertCircle,
+  Loader2,
+  Key,
+  ShieldCheck,
+  CheckCircle2,
+  Sparkles
+} from 'lucide-react'
 
 export interface SubmitPanelProps {
+  contractId?: string
   milestoneKey: string
   deliverableType: 'json_records' | 'text' | string
   deliverableDesc?: string
@@ -24,6 +35,7 @@ export interface SubmitPanelProps {
 }
 
 export function SubmitPanel({
+  contractId,
   milestoneKey,
   deliverableType,
   deliverableDesc,
@@ -35,6 +47,8 @@ export function SubmitPanel({
   const [note, setNote] = useState('')
   const [idempotencyKey, setIdempotencyKey] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)
+  const [isPreflighting, setIsPreflighting] = useState(false)
+  const [preflightResult, setPreflightResult] = useState<any | null>(null)
 
   // Generate a fresh idempotency key per submission attempt
   useEffect(() => {
@@ -58,6 +72,45 @@ export function SubmitPanel({
       setValidationError(null)
     }
     reader.readAsText(file)
+  }
+
+  const handleRunPreflight = async () => {
+    const trimmed = content.trim()
+    if (!trimmed) {
+      setValidationError('Please provide deliverable content before running pre-flight check.')
+      return
+    }
+
+    if (!contractId) {
+      setValidationError('Pre-flight requires an active contract ID.')
+      return
+    }
+
+    setIsPreflighting(true)
+    setValidationError(null)
+
+    try {
+      const res = await fetch(`/api/v1/contracts/${contractId}/milestones/${milestoneKey}/preflight`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content_type: deliverableType === 'json_records' ? 'json_records' : 'text',
+          content: trimmed,
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.message || 'Pre-flight check failed')
+      }
+
+      const data = await res.json()
+      setPreflightResult(data)
+    } catch (err: any) {
+      setValidationError(err.message || 'Pre-flight validation failed')
+    } finally {
+      setIsPreflighting(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -134,6 +187,7 @@ export function SubmitPanel({
                     )
                   }
                   setValidationError(null)
+                  setPreflightResult(null)
                 }}
                 className="text-xs font-medium text-muted hover:text-brand transition-colors"
               >
@@ -174,6 +228,48 @@ export function SubmitPanel({
           />
         </div>
 
+        {/* Pre-Flight Inspection Result Card */}
+        {preflightResult && (
+          <div
+            className={`p-4 rounded-xl border text-xs space-y-2.5 transition-all ${
+              preflightResult.ready
+                ? 'bg-ok/5 border-ok/30 text-ok'
+                : 'bg-warn/5 border-warn/30 text-warn'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-semibold flex items-center gap-1.5">
+                {preflightResult.ready ? (
+                  <CheckCircle2 className="w-4 h-4 text-ok" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-warn" />
+                )}
+                {preflightResult.ready
+                  ? 'Pre-Flight Passed: Ready for Submission'
+                  : 'Pre-Flight Warning: Fix Required Before Submission'}
+              </span>
+              <span className="text-[11px] font-mono text-muted">
+                0 attempts consumed
+              </span>
+            </div>
+
+            <p className="text-muted text-[11px] leading-relaxed">
+              Passed {preflightResult.passed_count} of {preflightResult.deterministic_checks_count} deterministic checks.{' '}
+              {preflightResult.pii?.redactions_detected > 0
+                ? `PII Shield detected and masked ${preflightResult.pii.redactions_detected} sensitive tokens.`
+                : 'PII Shield: 0 sensitive leaks detected.'}
+            </p>
+
+            {preflightResult.reasons && preflightResult.reasons.length > 0 && (
+              <ul className="list-disc list-inside text-bad text-[11px] space-y-0.5">
+                {preflightResult.reasons.map((r: string, idx: number) => (
+                  <li key={idx}>{r}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
         {/* Seller Note */}
         <div className="space-y-1.5">
           <label htmlFor="submission-note" className="text-xs font-semibold text-text">
@@ -210,8 +306,27 @@ export function SubmitPanel({
           </div>
         )}
 
-        {/* Submit button */}
-        <div className="pt-2">
+        {/* Action Buttons: Preflight + Submit */}
+        <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+          <button
+            type="button"
+            onClick={handleRunPreflight}
+            disabled={isSubmitting || isPreflighting || !content.trim()}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-surface-2 hover:bg-surface border border-border text-xs font-semibold text-text transition-colors disabled:opacity-50"
+          >
+            {isPreflighting ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Checking deliverable…</span>
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="w-3.5 h-3.5 text-brand" />
+                <span>Run Pre-Flight Check (0 Penalty)</span>
+              </>
+            )}
+          </button>
+
           <button
             type="submit"
             disabled={isSubmitting || !content.trim()}

@@ -156,6 +156,7 @@ export default function MilestoneDetailPage() {
         {/* Deliverable Submission Panel (if PENDING or REJECTED) */}
         {(milestone.status === 'PENDING' || milestone.status === 'REJECTED') && (
           <SubmitPanel
+            contractId={contractId}
             milestoneKey={milestone.milestone_key || (milestone as any).key || mid || 'm1'}
             deliverableType={deliverableType}
             deliverableDesc={deliverableDesc}

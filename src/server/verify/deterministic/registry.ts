@@ -1,7 +1,8 @@
 /**
  * Deterministic check registry — Stage 1 of the ProofPay verification pipeline.
  * Dispatches to individual check engines and unifies DetResult shapes.
- * Implements phase-4-verification-engine.md §4.2 & ai-pipeline.md §3 Stage 1.
+ * Implements phase-4-verification-engine.md §4.2, ai-pipeline.md §3 Stage 1,
+ * and docs/v2/01-NEXT-LEVEL-STRATEGY.md F6 (Criteria Library v2).
  */
 import { parseArtifact, type ParsedArtifact } from '../artifact'
 import { checkJsonSchema, type CheckJsonSchemaSpec } from './json-schema'
@@ -10,6 +11,9 @@ import { checkUniqueField, type CheckUniqueFieldSpec } from './unique-field'
 import { checkRegexField, type CheckRegexFieldSpec } from './regex-field'
 import { checkWordCount, type CheckWordCountSpec, countWords } from './word-count'
 import { checkRequiredKeywords, type CheckRequiredKeywordsSpec } from './required-keywords'
+import { checkCsvSchema, type CheckCsvSchemaSpec } from './csv-schema'
+import { checkForbiddenTerms, type CheckForbiddenTermsSpec } from './forbidden-terms'
+import { checkLinkCheck, type CheckLinkCheckSpec } from './link-check'
 import { NAMED_PATTERNS } from './patterns'
 
 export {
@@ -19,6 +23,9 @@ export {
   checkRegexField,
   checkWordCount,
   checkRequiredKeywords,
+  checkCsvSchema,
+  checkForbiddenTerms,
+  checkLinkCheck,
   countWords,
   NAMED_PATTERNS,
 }
@@ -99,11 +106,23 @@ export function runDeterministicCheck(
       rawRes = checkRequiredKeywords(parsedArt, spec as unknown as CheckRequiredKeywordsSpec)
       break
 
+    case 'csv_schema':
+      rawRes = checkCsvSchema(parsedArt, spec as unknown as CheckCsvSchemaSpec)
+      break
+
+    case 'forbidden_terms':
+      rawRes = checkForbiddenTerms(parsedArt, spec as unknown as CheckForbiddenTermsSpec)
+      break
+
+    case 'link_check':
+      rawRes = checkLinkCheck(parsedArt, spec as unknown as CheckLinkCheckSpec)
+      break
+
     default:
       rawRes = {
         status: 'fail',
         observed: checkName,
-        expected: 'json_schema | row_count | unique_field | regex_field | word_count | required_keywords',
+        expected: 'json_schema | row_count | unique_field | regex_field | word_count | required_keywords | csv_schema | forbidden_terms | link_check',
         message: `Unknown check: "${checkName}".`,
       }
       break
