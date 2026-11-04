@@ -21,6 +21,8 @@ export function HeaderNav() {
     { href: '/app/templates', label: 'Templates' },
     { href: '/app/counterparties', label: 'Contacts' },
     { href: '/app/developers', label: 'Developers' },
+    { href: '/trust', label: 'Trust' },
+    { href: '/verify', label: 'Verify' },
     { href: '/help', label: 'Help' },
     {
       href: '/ledger',

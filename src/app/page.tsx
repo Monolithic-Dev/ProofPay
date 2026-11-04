@@ -529,6 +529,8 @@ export default function HomePage() {
                 <li><Link href="/legal/terms" className="hover:text-text transition-colors">Terms of Service</Link></li>
                 <li><Link href="/legal/privacy" className="hover:text-text transition-colors">Privacy Policy</Link></li>
                 <li><Link href="/help" className="hover:text-text transition-colors">Help &amp; Support</Link></li>
+                <li><Link href="/trust" className="hover:text-text transition-colors text-brand font-medium">Trust Center &amp; Benchmarks</Link></li>
+                <li><Link href="/verify" className="hover:text-text transition-colors">Offline Proof Pack Verifier</Link></li>
                 <li><Link href="/pricing" className="hover:text-text transition-colors">Pricing &amp; Plans</Link></li>
               </ul>
             </div>

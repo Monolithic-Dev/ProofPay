@@ -30,6 +30,7 @@ import { StatusChip } from '@/components/contract/StatusChip'
 import { VerifiedWithPayPalBadge } from '@/components/contract/VerifiedWithPayPalBadge'
 import { MilestoneCard } from '@/components/contract/MilestoneCard'
 import { RecentEvents } from '@/components/contract/RecentEvents'
+import { PayPalActivity } from '@/components/contract/PayPalActivity'
 import { ContractComments } from '@/components/contract/ContractComments'
 import { ChainBadge } from '@/components/ledger/ChainBadge'
 import { MonoText } from '@/components/common/MonoText'
@@ -510,6 +511,7 @@ export default function ContractTimelinePage() {
 
           {/* Right Rail: Recent Audit Activity & Discussion */}
           <div className="space-y-6">
+            <PayPalActivity events={ledgerData?.events} />
             <ContractComments contractId={contractId} />
             <RecentEvents
               events={ledgerData?.events}
