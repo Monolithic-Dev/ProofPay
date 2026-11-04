@@ -13,6 +13,7 @@ import { contracts, milestones, criteria } from '@/server/db/schema'
 import { parseArtifact } from '@/server/verify/artifact'
 import { runDeterministicCheck } from '@/server/verify/deterministic/registry'
 import { maskPii } from '@/lib/pii'
+import { requireParty } from '@/server/auth/guards'
 import { AppError } from '@/server/util/errors'
 
 const PreflightBodySchema = z.object({
@@ -31,11 +32,8 @@ export const POST = apiHandler(
     const milestoneKey = params['mid']!
     const db = getDb()
 
-    // 1. Verify contract & milestone exist
-    const [contract] = await db.select().from(contracts).where(eq(contracts.id, contractId))
-    if (!contract) {
-      throw new AppError('NOT_FOUND', `Contract ${contractId} not found`, 404)
-    }
+    // 1. Verify contract & ensure user is party or admin (Zero-Trust IDOR guard)
+    const { contract } = await requireParty(db, contractId, user!)
 
     const [milestone] = await db
       .select()

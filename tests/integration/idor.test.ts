@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Integration Test: IDOR Protection & Authorization Matrix
  * Implements phase-8-testing-and-hardening.md §8.4 & security-privacy.md §4, §7.
  */
@@ -254,7 +254,151 @@ export const ROUTES: RouteSpec[] = [
     auth: 'user',
     requireParty: true,
     description: 'Get verification detail report',
-  },
+    },
+    {
+      path: 'auth/login',
+      methods: ['POST'],
+      auth: 'none',
+      description: 'User login with email/password',
+    },
+    {
+      path: 'auth/register',
+      methods: ['POST'],
+      auth: 'none',
+      description: 'User registration',
+    },
+    {
+      path: 'contracts/[id]/comments',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      requireParty: true,
+      description: 'Contract collaboration comments',
+    },
+    {
+      path: 'contracts/[id]/dispute-evidence',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      requireParty: true,
+      description: 'Dispute evidence uploads',
+    },
+    {
+      path: 'contracts/[id]/funding-approvals',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      requireParty: true,
+      description: 'Contract funding approvals',
+    },
+    {
+      path: 'contracts/[id]/invitations',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      requireParty: true,
+      description: 'Invite counterparties to contract',
+    },
+    {
+      path: 'contracts/[id]/milestones/[mid]/preflight',
+      methods: ['POST'],
+      auth: 'user',
+      requireParty: true,
+      description: 'Milestone submission preflight check',
+    },
+    {
+      path: 'counterparties',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      description: 'Counterparty directory',
+    },
+    {
+      path: 'funding-approvals/[id]/decision',
+      methods: ['POST'],
+      auth: 'user',
+      forbidAgent: true,
+      description: 'Approve or reject funding request',
+    },
+    {
+      path: 'invitations/[token]',
+      methods: ['GET', 'POST'],
+      auth: 'none',
+      description: 'Accept contract invitation by token',
+    },
+    {
+      path: 'ledger',
+      methods: ['GET'],
+      auth: 'user',
+      description: 'Global audit ledger',
+    },
+    {
+      path: 'ledger/elastic',
+      methods: ['GET'],
+      auth: 'user',
+      description: 'Elastic ledger queries',
+    },
+    {
+      path: 'notifications',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      description: 'User notifications',
+    },
+    {
+      path: 'openapi',
+      methods: ['GET'],
+      auth: 'none',
+      description: 'OpenAPI 3.1 specification',
+    },
+    {
+      path: 'organizations',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      description: 'Organization workspace management',
+    },
+    {
+      path: 'organizations/[id]/members',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      description: 'Organization members list and invite',
+    },
+    {
+      path: 'organizations/[id]/members/[memberId]',
+      methods: ['DELETE', 'PATCH'],
+      auth: 'user',
+      description: 'Manage organization member',
+    },
+    {
+      path: 'payments',
+      methods: ['GET'],
+      auth: 'user',
+      description: 'User payment ledger',
+    },
+    {
+      path: 'payments/summary',
+      methods: ['GET'],
+      auth: 'user',
+      description: 'User payments summary',
+    },
+    {
+      path: 'service-accounts',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      description: 'Service accounts for AI agents',
+    },
+    {
+      path: 'support/tickets',
+      methods: ['POST'],
+      auth: 'none',
+      description: 'Submit support ticket',
+    },
+    {
+      path: 'templates',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      description: 'Contract template library',
+    },
+    {
+      path: 'webhooks/outbound',
+      methods: ['GET', 'POST'],
+      auth: 'user',
+      description: 'Outbound webhook subscriptions',
+    },
 ]
 
 /**
