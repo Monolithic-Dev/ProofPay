@@ -38,3 +38,4 @@ describe('Signed Decision Attestations & Merkle Transparency Log (F1)', () => {
     expect(tree.root.length).toBe(64)
   })
 })
+

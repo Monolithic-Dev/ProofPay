@@ -63,3 +63,4 @@ export function evaluateConsensus(
     rationale: `Model disagreement (${primary.provider}: ${primary.verdict} vs ${secondary.provider}: ${secondary.verdict}). Safely escalated to human buyer review.`,
   }
 }
+

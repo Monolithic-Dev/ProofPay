@@ -66,3 +66,4 @@ describe('Bounded Agent Negotiation Mandates (F5)', () => {
     expect(check.violations[0]).toContain('Mandated quality criterion "c_min_rows" cannot be removed')
   })
 })
+
