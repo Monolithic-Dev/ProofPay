@@ -16,6 +16,8 @@
 > 
 > **Architectural Invariant:** *AI reads and explains; code decides; PayPal moves the money.*
 
+📖 **[Read the Complete End-to-End Implementation & Architecture Guide](docs/PROOFPAY_COMPLETE_GUIDE.md)** for a deep dive into every subsystem, API route, and security guardrail.
+
 ---
 
 ## 1. The Problem & Architecture
