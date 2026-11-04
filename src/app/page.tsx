@@ -171,7 +171,7 @@ export default function HomePage() {
               <div className="p-3 rounded-xl bg-surface-2 border border-border/60 text-xs text-muted space-y-1">
                 <p className="font-semibold text-text">Up to 29-day authorization window</p>
                 <p className="text-[11px]">
-                  Funds stay with the buyer’s PayPal account until verified. If deliverables aren't approved within the agreed window, hold voids back automatically.
+                  Funds stay with the buyer&apos;s PayPal account until verified. If deliverables aren't approved within the agreed window, hold voids back automatically.
                 </p>
               </div>
             </div>
@@ -206,7 +206,7 @@ export default function HomePage() {
                   </div>
                   <div className="p-2 rounded-lg bg-surface border border-border font-mono text-[11px] text-text">
                     <span className="text-muted">Evidence quote: </span>
-                    <span className="text-brand">"Verified all 124 merchant records with active OAuth2 scopes."</span>
+                    <span className="text-brand">&quot;Verified all 124 merchant records with active OAuth2 scopes.&quot;</span>
                   </div>
                 </div>
 
