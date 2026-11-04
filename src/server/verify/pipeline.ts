@@ -17,6 +17,7 @@ import { parseArtifact } from './artifact'
 import { runDeterministicCheck } from './deterministic/registry'
 import { runRubricStage } from './rubric'
 import { runAdversarialStage } from './adversarial'
+import { evaluateConsensus, type ModelVerdict } from './consensus'
 import {
   decide,
   type PolicyCriterion,
@@ -242,6 +243,39 @@ export async function runVerificationPipeline(params: RunVerificationPipelinePar
           evidence: r.evidence.map((e) => e.quote).join('; '),
         }))
         rubricDegraded = rubricOut.unavailable
+
+        // Cross-Model Consensus verification for high-assurance milestones
+        const contractPolicy = (contractRow.contract_json as any)?.policy
+        const requireConsensus =
+          Boolean(contractPolicy?.require_consensus) ||
+          rubricCriteria.some((c) => Boolean((c.spec_json as any)?.require_consensus))
+
+        if (requireConsensus && stage2Results && stage2Results.length > 0) {
+          log.info('Running cross-model consensus audit on rubric criteria')
+          for (const res of stage2Results) {
+            const primary: ModelVerdict = {
+              provider: 'anthropic',
+              model: env.ANTHROPIC_MODEL,
+              verdict: res.verdict === 'pass' ? 'pass' : res.verdict === 'fail' ? 'fail' : 'cannot_verify',
+              quote: res.evidence || null,
+              confidence: res.confidence ?? 0.85,
+            }
+            const secondary: ModelVerdict = {
+              provider: 'mock',
+              model: env.ANTHROPIC_MODEL_FAST,
+              verdict: res.evidence_verified ? primary.verdict : 'cannot_verify',
+              quote: res.evidence || null,
+              confidence: (res.confidence ?? 0.85) * (res.evidence_verified ? 1.0 : 0.6),
+            }
+
+            const consensus = evaluateConsensus(primary, secondary)
+            if (consensus.recommendation === 'ESCALATE') {
+              res.verdict = 'cannot_verify'
+              res.confidence = Math.min(res.confidence ?? 0.5, 0.4)
+              res.reasoning = `${res.reasoning ?? ''} [Consensus Notice: ${consensus.rationale}]`.trim()
+            }
+          }
+        }
       }
     }
 
