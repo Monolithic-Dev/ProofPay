@@ -399,6 +399,13 @@ export const ROUTES: RouteSpec[] = [
       auth: 'user',
       description: 'Outbound webhook subscriptions',
     },
+    {
+      path: 'transparency/checkpoints',
+      methods: ['GET'],
+      auth: 'none',
+      description: 'Public Merkle transparency checkpoints',
+    },
+
 ]
 
 /**

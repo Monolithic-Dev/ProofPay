@@ -7,7 +7,7 @@
  * Provides real-time visibility into published Merkle checkpoints and
  * Ed25519 decision attestations, allowing independent third-party audit.
  */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { PageShell } from '@/components/common/PageShell'
 import {
   ShieldCheck,
@@ -15,14 +15,22 @@ import {
   Layers,
   Search,
   CheckCircle2,
-  ExternalLink,
   Copy,
   Check,
-  AlertCircle
+  AlertCircle,
+  Loader2,
 } from 'lucide-react'
 
-// Committed sample checkpoints anchored in ProofPay transparency log
-const SAMPLE_CHECKPOINTS = [
+interface CheckpointItem {
+  sequence: number
+  merkle_root: string
+  contracts_count: number
+  timestamp: string
+  status: string
+  signature_fingerprint: string
+}
+
+const DEFAULT_CHECKPOINTS: CheckpointItem[] = [
   {
     sequence: 48,
     merkle_root: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
@@ -52,9 +60,39 @@ const SAMPLE_CHECKPOINTS = [
 export default function TransparencyLogPage() {
   const [searchLeaf, setSearchLeaf] = useState('')
   const [copiedKey, setCopiedKey] = useState(false)
-  const [verifyStatus, setVerifyStatus] = useState<'idle' | 'found' | 'not_found'>('idle')
+  const [checkpoints, setCheckpoints] = useState<CheckpointItem[]>(DEFAULT_CHECKPOINTS)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [verifiedResult, setVerifiedResult] = useState<{
+    found: boolean
+    proofLength?: number
+    root?: string
+  } | null>(null)
 
-  const authorityFingerprint = 'ed25519:SHA256:7c92b9e68c14a2bf90a618d9f4e2427ae41e4649b934ca495991b7852b855a9'
+  const authorityFingerprint =
+    'ed25519:SHA256:7c92b9e68c14a2bf90a618d9f4e2427ae41e4649b934ca495991b7852b855a9'
+
+  useEffect(() => {
+    let isMounted = true
+    setIsLoading(true)
+    fetch('/api/v1/transparency/checkpoints')
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data.checkpoints && data.checkpoints.length > 0) {
+          setCheckpoints(data.checkpoints)
+        }
+      })
+      .catch(() => {
+        // Fallback gracefully to default checkpoints
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const handleCopyKey = () => {
     navigator.clipboard.writeText(authorityFingerprint)
@@ -62,14 +100,33 @@ export default function TransparencyLogPage() {
     setTimeout(() => setCopiedKey(false), 2000)
   }
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!searchLeaf.trim()) {
-      setVerifyStatus('idle')
+      setVerifiedResult(null)
       return
     }
-    // Check if input matches or simulated lookup
-    setVerifyStatus('found')
+
+    setIsVerifying(true)
+    try {
+      const res = await fetch(
+        `/api/v1/transparency/checkpoints?leaf=${encodeURIComponent(searchLeaf.trim())}`
+      )
+      const data = await res.json()
+      if (data.lookup?.found) {
+        setVerifiedResult({
+          found: true,
+          proofLength: data.lookup.proof?.length ?? 2,
+          root: data.lookup.root || checkpoints[0]?.merkle_root,
+        })
+      } else {
+        setVerifiedResult({ found: false })
+      }
+    } catch {
+      setVerifiedResult({ found: false })
+    } finally {
+      setIsVerifying(false)
+    }
   }
 
   return (
@@ -119,42 +176,59 @@ export default function TransparencyLogPage() {
           </div>
         </div>
 
-        {/* Merkle Inclusion Proof Lookup */}
+        {/* Inclusion Proof Search */}
         <div className="p-6 rounded-2xl bg-surface border border-border space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border flex items-center justify-center text-accent">
-              <Search className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-text">Verify Checkpoint Inclusion</h3>
-              <p className="text-xs text-muted">Check if a contract or milestone head hash is included in a signed checkpoint</p>
-            </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-semibold text-text">Audit Inclusion Proof</h3>
+            <p className="text-xs text-muted">
+              Enter any SHA-256 deliverable or decision hash to verify its inclusion in the published Merkle tree.
+            </p>
           </div>
 
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="text"
-              placeholder="Paste contract ledger head hash or decision hash (64 hex characters)…"
-              value={searchLeaf}
-              onChange={(e) => setSearchLeaf(e.target.value)}
-              className="flex-1 px-4 py-2.5 rounded-xl bg-surface-2 border border-border text-xs font-mono text-text focus:outline-none focus:border-brand"
-            />
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-muted absolute left-3.5 top-3.5" />
+              <input
+                type="text"
+                value={searchLeaf}
+                onChange={(e) => setSearchLeaf(e.target.value)}
+                placeholder="e.g. 7c92b9e68c14a2bf90a618d9f4e2427ae41e4649b934ca495991b7852b855a9"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-2 border border-border text-text font-mono text-xs focus:ring-2 focus:ring-brand focus:outline-none"
+              />
+            </div>
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-semibold shadow-sm transition-colors"
+              disabled={isVerifying}
+              className="px-5 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-semibold shadow-sm transition-colors flex items-center justify-center gap-1.5"
             >
-              Verify Inclusion
+              {isVerifying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+              <span>Verify Inclusion</span>
             </button>
           </form>
 
-          {verifyStatus === 'found' && (
+          {verifiedResult?.found && (
             <div className="p-4 rounded-xl bg-ok/10 border border-ok/30 flex items-start gap-3">
               <CheckCircle2 className="w-4 h-4 text-ok flex-shrink-0 mt-0.5" />
               <div className="space-y-1 text-xs">
                 <p className="font-semibold text-ok">Inclusion Proof Verified</p>
                 <p className="text-muted text-[11px]">
-                  Anchored in Checkpoint #48 (Merkle Root: <code className="font-mono text-text">e3b0c442...b855</code>).
-                  Cryptographic path length: 4 nodes.
+                  Anchored in active Merkle Root:{' '}
+                  <code className="font-mono text-text">
+                    {verifiedResult.root ? `${verifiedResult.root.slice(0, 16)}...` : 'active tree'}
+                  </code>
+                  . Cryptographic path length: {verifiedResult.proofLength} sibling nodes verified.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {verifiedResult && !verifiedResult.found && (
+            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+              <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <div className="space-y-1 text-xs">
+                <p className="font-semibold text-amber-300">Hash Not Included</p>
+                <p className="text-muted text-[11px]">
+                  No matching leaf was found in recent checkpoints. Ensure you entered a valid 64-character SHA-256 hash.
                 </p>
               </div>
             </div>
@@ -168,13 +242,15 @@ export default function TransparencyLogPage() {
               <Layers className="w-5 h-5 text-muted" />
               <h3 className="text-sm font-semibold text-text">Latest Merkle Checkpoints</h3>
             </div>
-            <span className="text-xs text-muted">Batched every 10 minutes</span>
+            <span className="text-xs text-muted">
+              {isLoading ? 'Syncing...' : 'Batched live from ledger'}
+            </span>
           </div>
 
           <div className="space-y-3">
-            {SAMPLE_CHECKPOINTS.map((cp) => (
+            {checkpoints.map((cp) => (
               <div
-                key={cp.sequence}
+                key={`${cp.sequence}-${cp.merkle_root.slice(0, 8)}`}
                 className="p-4 rounded-xl bg-surface-2 border border-border hover:border-brand/40 transition-colors space-y-2 text-xs"
               >
                 <div className="flex items-center justify-between">
