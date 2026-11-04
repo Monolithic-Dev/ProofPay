@@ -2,9 +2,9 @@
 
 /**
  * Contract Studio Inspection & Propose Page — /studio/[contractId]
- * Implements phase-6-frontend.md §6.4 & ux-flows.md §4 (S1).
+ * Implements phase-6-frontend.md §6.4 & docs/v2/PROOFPAY-WINNING-PLAN.md B5.
  */
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { PageShell } from '@/components/common/PageShell'
 import { ContractEditor } from '@/components/studio/ContractEditor'
@@ -14,6 +14,8 @@ import { LoadingBlock } from '@/components/common/LoadingBlock'
 import { ErrorState } from '@/components/common/ErrorState'
 import { useContract, useApiClient } from '@/lib/query'
 import { useQueryClient } from '@tanstack/react-query'
+import { computeClarityScore } from '@/lib/clarity'
+import { Sparkles, ShieldAlert, CheckCircle2, AlertTriangle, Info } from 'lucide-react'
 
 export default function StudioContractDetailPage() {
   const params = useParams()
@@ -27,6 +29,11 @@ export default function StudioContractDetailPage() {
   const [isProposing, setIsProposing] = useState(false)
   const [isSavingJson, setIsSavingJson] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
+
+  const clarity = useMemo(() => {
+    if (!contract) return null
+    return computeClarityScore(contract.contract_json || contract)
+  }, [contract])
 
   if (isLoading) {
     return (
@@ -113,6 +120,65 @@ export default function StudioContractDetailPage() {
             message={actionError}
             onRetry={() => setActionError(null)}
           />
+        )}
+
+        {/* Criteria Clarity Score Header Banner */}
+        {clarity && (
+          <div className="p-5 rounded-2xl bg-surface border border-border/80 shadow-sm space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg font-mono border ${
+                    clarity.score >= 90
+                      ? 'bg-ok/10 text-ok border-ok/30'
+                      : clarity.score >= 75
+                      ? 'bg-brand/10 text-brand border-brand/30'
+                      : 'bg-amber-500/10 text-amber-500 border-amber-500/30'
+                  }`}
+                >
+                  {clarity.score}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-bold text-text">Criteria Clarity Score</h2>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                        clarity.rating === 'EXCELLENT'
+                          ? 'bg-ok/10 text-ok border-ok/20'
+                          : clarity.rating === 'GOOD'
+                          ? 'bg-brand/10 text-brand border-brand/20'
+                          : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                      }`}
+                    >
+                      {clarity.rating}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted">
+                    Dispute Risk:{' '}
+                    <span
+                      className={`font-semibold ${
+                        clarity.disputeRisk === 'LOW'
+                          ? 'text-ok'
+                          : clarity.disputeRisk === 'MEDIUM'
+                          ? 'text-amber-500'
+                          : 'text-bad'
+                      }`}
+                    >
+                      {clarity.disputeRisk}
+                    </span>{' '}
+                    &bull; {clarity.metrics.deterministicPct}% deterministic checks
+                  </p>
+                </div>
+              </div>
+
+              {clarity.score < 100 && (
+                <div className="text-xs text-muted max-w-sm sm:text-right">
+                  <p className="font-medium text-text text-[11px]">Why not 100?</p>
+                  <p className="text-[10px] text-muted line-clamp-2">{clarity.reasons[0]}</p>
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
