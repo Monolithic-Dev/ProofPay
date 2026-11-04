@@ -4,15 +4,11 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
-  Shield,
-  ArrowRight,
-  User,
-  Briefcase,
-  Bot,
-  Sparkles,
-  CheckCircle2,
   Lock,
+  ArrowRight,
+  Shield,
   Layers,
+  Sparkles,
 } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -59,30 +55,6 @@ export default function LoginPage() {
     }
   }
 
-  const handleQuickPersona = async (personaKey: 'buyer' | 'seller' | 'buyer_agent' | 'worker_agent') => {
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await fetch('/api/v1/auth/demo-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ persona_key: personaKey }),
-      })
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error?.message || 'Quick login failed')
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ['me'] })
-      router.push('/contracts')
-    } catch (err: any) {
-      setError(err.message || 'Quick login failed')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md space-y-8">
@@ -99,87 +71,6 @@ export default function LoginPage() {
               ? 'Access your agreements, milestone proof, and PayPal holds'
               : 'Start locking authorization holds or delivering verified work'}
           </p>
-        </div>
-
-        {/* Quick Switch for Judges / Evaluators */}
-        <div className="p-4 rounded-xl bg-surface border border-border/80 shadow-sm space-y-3">
-          <div className="flex items-center justify-between text-xs font-semibold text-muted tracking-wider uppercase">
-            <span>Quick Sign-In by Role</span>
-            <span className="text-[10px] bg-brand/10 text-brand px-2 py-0.5 rounded-full font-medium lowercase">
-              for testing
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => handleQuickPersona('buyer')}
-              disabled={loading}
-              className="flex items-center gap-2.5 p-2.5 rounded-lg border border-border bg-surface-2 hover:border-brand/40 hover:bg-surface transition-all text-left group"
-            >
-              <div className="w-8 h-8 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                <Briefcase className="w-4 h-4" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-text truncate">Sarah Buyer</p>
-                <p className="text-[10px] text-muted truncate">Client / Funds Authorization</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickPersona('seller')}
-              disabled={loading}
-              className="flex items-center gap-2.5 p-2.5 rounded-lg border border-border bg-surface-2 hover:border-brand/40 hover:bg-surface transition-all text-left group"
-            >
-              <div className="w-8 h-8 rounded-md bg-emerald-500/10 text-emerald-500 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                <User className="w-4 h-4" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-text truncate">Alex Seller</p>
-                <p className="text-[10px] text-muted truncate">Provider / Delivers Work</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickPersona('buyer_agent')}
-              disabled={loading}
-              className="flex items-center gap-2.5 p-2.5 rounded-lg border border-border bg-surface-2 hover:border-brand/40 hover:bg-surface transition-all text-left group"
-            >
-              <div className="w-8 h-8 rounded-md bg-purple-500/10 text-purple-500 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                <Bot className="w-4 h-4" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-text truncate">ProcureBot</p>
-                <p className="text-[10px] text-muted truncate">Autonomous Buyer</p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickPersona('worker_agent')}
-              disabled={loading}
-              className="flex items-center gap-2.5 p-2.5 rounded-lg border border-border bg-surface-2 hover:border-brand/40 hover:bg-surface transition-all text-left group"
-            >
-              <div className="w-8 h-8 rounded-md bg-amber-500/10 text-amber-500 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                <Sparkles className="w-4 h-4" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-text truncate">SynthetixBot</p>
-                <p className="text-[10px] text-muted truncate">Autonomous Worker</p>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-bg px-2 text-muted">Or continue with email</span>
-          </div>
         </div>
 
         {/* Auth Form Card */}
@@ -284,6 +175,21 @@ export default function LoginPage() {
                 : 'Already have an account? Sign in here'}
             </button>
           </div>
+        </div>
+
+        {/* Dedicated Sandbox / Judge Notice */}
+        <div className="p-4 rounded-xl bg-surface-2 border border-border text-center space-y-2">
+          <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-muted">
+            <Sparkles className="w-3.5 h-3.5 text-brand" />
+            <span>Testing the PayPal Sandbox or Judge Mode?</span>
+          </div>
+          <p className="text-xs text-muted leading-relaxed">
+            Visit the{' '}
+            <Link href="/demo" className="text-brand font-medium hover:underline">
+              Interactive Judge Sandbox &rarr;
+            </Link>{' '}
+            for one-click scenario testing and pre-configured personas.
+          </p>
         </div>
       </div>
     </div>

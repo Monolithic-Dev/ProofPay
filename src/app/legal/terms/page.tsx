@@ -11,6 +11,16 @@ export default function TermsOfServicePage() {
       subtitle="Version 2.1-sandbox • Effective November 3, 2026"
     >
       <div className="space-y-8 max-w-3xl text-sm text-text/80 leading-relaxed pb-16">
+        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs flex items-start gap-2.5">
+          <Scale className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold">Hackathon Prototype Notice &bull; Draft &bull; Not Legal Advice</p>
+            <p className="text-[11px] opacity-90 mt-0.5">
+              These terms are provided for hackathon demonstration purposes only. ProofPay does not provide legal, financial, or tax counsel.
+            </p>
+          </div>
+        </div>
+
         <div className="p-4 rounded-xl bg-surface border border-border/80 flex items-center gap-3">
           <Scale className="w-5 h-5 text-brand" />
           <span className="text-xs text-muted">

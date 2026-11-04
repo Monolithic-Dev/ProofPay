@@ -32,8 +32,8 @@ ProofPay is a purpose-built payment rails and verification infrastructure design
 
 ### The Problem It Solves
 - **Client/Buyer Risk**: Paying upfront for deliverables that might be incomplete, hallucinated, or non-functional.
-- **Contractor/Agent Risk**: Delivering work on net-30 terms without cryptographic or banking assurance that funds are locked.
-- **Escrow Inefficiency**: Traditional escrow requires state-by-state money transmitter licensing, takes high percentages, and cannot handle autonomous micro-settlements.
+- **Contractor/Agent Risk**: Delivering work on net-30 terms without confirmation that the buyer has authorized payment on PayPal.
+- **Escrow Inefficiency**: Custodial escrow models introduce substantial regulatory overhead and licensing friction, making micro-milestone and autonomous agent payments impractical.
 
 ### Architectural Tenet
 $$\text{\textbf{AI reads and explains; code decides; PayPal moves the money.}}$$
@@ -44,7 +44,7 @@ $$\text{\textbf{AI reads and explains; code decides; PayPal moves the money.}}$$
 
 ProofPay operates with strict regulatory compliance:
 1. **Zero Fund Custody**: ProofPay never touches, pools, or transmits funds. Funds remain on the buyer's credit/debit card or PayPal balance under an **authorization hold** until explicit capture.
-2. **Up to 29-Day Hold Window**: Built strictly on PayPal's native `AUTHORIZE` flow. If no capture occurs, the hold expires or is voided with zero processing fees.
+2. **Up to 29-Day Hold Window**: Built strictly on PayPal's native `AUTHORIZE` flow. If no capture occurs, the hold expires or is voided with zero commercial processing fees (standard PayPal terms apply).
 3. **Automated Copy Enforcement**: The project includes `scripts/check-copy.mjs` running in CI to enforce zero usage of forbidden terms (`escrow`, `trustee`, `money pool`), maintaining strict regulatory compliance.
 
 ---
@@ -304,7 +304,7 @@ stateDiagram-v2
 
 ### Money Conservation Invariant
 For every contract $C$:
-$$\text{TotalAuthorized}(C) = \sum_{m \in M} \text{Captured}(m) + \sum_{m \in M} \text{RemainingHold}(m) + \text{Voided}(C)$$
+$\text{AuthorizedMinor} = \text{CapturedMinor} + \text{VoidedMinor} + \text{RemainingMinor}, \quad \text{where } \text{RemainingMinor} \ge 0 \text{ and } \text{CapturedMinor} \le \text{AuthorizedMinor}$
 
 ---
 
@@ -325,7 +325,7 @@ $$\text{TotalAuthorized}(C) = \sum_{m \in M} \text{Captured}(m) + \sum_{m \in M}
 └───────────────────────────┬────────────────────────────┘
                             ▼
 ┌────────────────────────────────────────────────────────┐
-│ 4. Structured LLM Policy Decision (Groq / Anthropic)   │
+│ 4. Rule Engine Decision (LLM supplies code-verified evidence) │
 └────────────────────────────────────────────────────────┘
 ```
 
@@ -334,10 +334,16 @@ $$\text{TotalAuthorized}(C) = \sum_{m \in M} \text{Captured}(m) + \sum_{m \in M}
 ## 10. Autonomous Agent Architecture & Model Context Protocol (MCP)
 
 ### Registered Tools in `src/mcp/server.ts`
-1. `proofpay_create_contract`: Compiles goals into milestones and creates draft.
-2. `proofpay_get_status`: Inspects active hold amounts, days remaining, and verification logs.
-3. `proofpay_submit_milestone`: Uploads files or JSON payloads directly from an agent's runtime.
-4. `proofpay_request_release`: Formally requests settlement upon meeting criteria.
+ProofPay exposes exactly six autonomous tools with strict money guardrails:
+1. `create_contract`: Compiles a natural language prompt into a formal contract structure and proposals.
+2. `accept_contract`: Worker/Seller agent locks contract terms and computes the canonical contract hash.
+3. `get_funding_link`: Returns the PayPal authorization URL (a human payer must approve the hold in PayPal).
+4. `submit_deliverable`: Submits text or JSON deliverable artifacts for automated multi-tier verification.
+5. `get_verification_report`: Retrieves deterministic metrics, evidence quotes, and rule engine decisions.
+6. `get_contract_status`: Queries live contract state, remaining authorization hold, and milestone progress.
+
+> [!IMPORTANT]
+> **Zero Autonomous Money Movement:** No MCP tool can capture, approve, refund, or cancel funds. Those capabilities are strictly restricted to authenticated human signers or verified policy rules.
 
 ---
 
@@ -374,14 +380,18 @@ Validates actor capabilities based on:
 
 ## 13. Double-Entry Immutable Ledger with SHA-256 Chain
 
-Every financial transaction writes two balanced entries (Debit and Credit) to `ledger_entries`:
-- Buyer Authorized Hold $\rightarrow$ Contract Hold Account
-- Contract Hold Account $\rightarrow$ Contractor Cash Account (on Capture)
-- Contract Hold Account $\rightarrow$ Buyer Card (on Void/Refund)
+Every financial state change appends an immutable, hash-chained record of PayPal-reported facts (`ledger_events`):
+- `PAYPAL_AUTHORIZATION_CREATED` (reported hold on buyer funding source)
+- `PAYPAL_CAPTURE_COMPLETED` (reported milestone payout to seller merchant account)
+- `PAYPAL_AUTHORIZATION_VOIDED` (reported cancellation of remaining authorization hold)
+- `PAYPAL_REFUND_COMPLETED` (reported dispute resolution)
+
+ProofPay never acts as a money custodian and holds zero deposit balances. The ledger represents an auditable, append-only timeline of PayPal-reported events.
 
 ### Tamper-Evidence Invariant
-$$\text{Checksum}_i = \text{SHA256}(\text{Checksum}_{i-1} + \text{EntryID} + \text{Amount} + \text{Timestamp})$$
-A verification endpoint (`GET /api/v1/contracts/:id/ledger/verify`) recomputes the chain from genesis and flags any database tampering.
+The hash chain covers the complete canonical JSON payload, contract ID, sequence, event type, and timestamp:
+$\text{Hash}_i = \text{SHA256}(\text{prev\_hash} \parallel \text{contract\_id} \parallel \text{seq} \parallel \text{type} \parallel \text{canonical(payload)} \parallel \text{created\_at\_iso})$
+The verification endpoint (`GET /api/v1/contracts/:id/ledger/verify`) and offline verifier (`/verify`) recompute the chain from genesis and flag any database tampering.
 
 ---
 
@@ -389,7 +399,7 @@ A verification endpoint (`GET /api/v1/contracts/:id/ledger/verify`) recomputes t
 
 The standalone worker process (`src/worker/index.ts`) polls and processes jobs with exponential backoff:
 - `VERIFY_SUBMISSION`: Runs the multi-tier AI evaluation pipeline.
-- `AUTO_RELEASE_MILESTONE`: Auto-captures held funds when a buyer remains silent after 72 hours.
+- `AUTO_RELEASE_MILESTONE`: Applies strictly to ESCALATED milestones where deterministic checks passed, after the configured reminder window (default 48h).
 - `DISPATCH_WEBHOOK`: Delivers signed JSON payloads to subscriber URLs.
 - `SWEEP_EXPIRED_HOLDS`: Identifies holds nearing PayPal's 29-day limit and alerts finance teams.
 
@@ -411,7 +421,7 @@ Accessible at `/demo` with pre-configured personas:
 - **177 Unit Tests**: 100% passing across 23 test suites.
 - **Copy Policy Checker**: 0 violations across all files.
 - **IDOR Route Scanner**: Exhaustive check ensuring cross-org requests return 404/403.
-- **Chaos Injection**: Proves 0 duplicate charges under simulated network partition.
+- **Chaos Injection**: 0 duplicate captures observed across 100 concurrency chaos runs.
 
 ---
 
