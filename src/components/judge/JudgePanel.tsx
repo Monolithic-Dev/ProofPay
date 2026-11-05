@@ -3,11 +3,25 @@
 /**
  * JudgePanel Component — full judge dashboard for testing ProofPay personas & scenarios.
  * Implements phase-6-frontend.md §6.4 & ux-flows.md §4 (S0).
+ * Enhanced with Express Judge Lane (docs/v2/PROOFPAY-FULL-AUDIT-AND-IMPROVEMENTS.md I-5 & H-1).
  */
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
-import { UserCheck, Shield, Bot, Video, FileText, CheckCircle2, Loader2 } from 'lucide-react'
+import {
+  UserCheck,
+  Shield,
+  Bot,
+  Video,
+  FileText,
+  CheckCircle2,
+  Loader2,
+  Zap,
+  Play,
+  ArrowRight,
+  Clock,
+  Sparkles
+} from 'lucide-react'
 import { useApiClient, useCurrentUser } from '@/lib/query'
 import { SandboxCredsBanner } from './SandboxCredsBanner'
 import { ScenarioButtons } from './ScenarioButtons'
@@ -63,6 +77,8 @@ export function JudgePanel({ className = '' }: { className?: string }) {
   const queryClient = useQueryClient()
   const { data: currentUser } = useCurrentUser()
   const [switchingPersona, setSwitchingPersona] = useState<string | null>(null)
+  const [isLaunchingExpress, setIsLaunchingExpress] = useState(false)
+  const [expressError, setExpressError] = useState<string | null>(null)
 
   const handleSwitchPersona = async (personaKey: string) => {
     try {
@@ -74,6 +90,24 @@ export function JudgePanel({ className = '' }: { className?: string }) {
       console.error('Failed to switch persona:', err)
     } finally {
       setSwitchingPersona(null)
+    }
+  }
+
+  const handleLaunchExpressLane = async () => {
+    try {
+      setIsLaunchingExpress(true)
+      setExpressError(null)
+      const res = await api.runScenario('happy_path')
+      if (res?.contract_id) {
+        router.push(`/contracts/${res.contract_id}`)
+      } else {
+        router.push('/contracts')
+      }
+    } catch (err: any) {
+      console.error('Express lane error:', err)
+      setExpressError(err.message || 'Express lane execution failed')
+    } finally {
+      setIsLaunchingExpress(false)
     }
   }
 
@@ -115,6 +149,51 @@ export function JudgePanel({ className = '' }: { className?: string }) {
             </a>
           )}
         </div>
+      </div>
+
+      {/* Express Judge Lane (90 Seconds End-to-End) */}
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-brand/10 via-surface to-accent/10 border border-brand/30 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-brand" />
+              <span className="text-xs font-bold text-text uppercase tracking-wider">
+                Express Judge Lane • 90-Second Walkthrough
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-brand/10 text-brand text-[10px] font-mono font-semibold">
+                1-Click
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-muted max-w-2xl leading-relaxed">
+              Short on time? Run a complete, pre-authorized flow end-to-end:
+              Agent negotiation &rarr; PayPal authorization hold &rarr; Deterministic schema evaluation &rarr; PayPal capture &rarr; Offline Proof Pack.
+              <strong> No manual PayPal login required for this lane.</strong>
+            </p>
+          </div>
+
+          <button
+            type="button"
+            disabled={isLaunchingExpress}
+            onClick={handleLaunchExpressLane}
+            className="px-6 py-3 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 flex-shrink-0 disabled:opacity-50"
+          >
+            {isLaunchingExpress ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Running Express Pipeline…</span>
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4 fill-white" />
+                <span>Launch 90s Express Lane</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {expressError && (
+          <p className="text-xs text-bad">{expressError}</p>
+        )}
       </div>
 
       {/* Persona Switcher */}

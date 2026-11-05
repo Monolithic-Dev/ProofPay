@@ -2,15 +2,19 @@
 
 /**
  * FixList Component — actionable bullet list of exact fixes required on rejected deliverables.
- * Implements phase-6-frontend.md §6.4 & ux-flows.md §4 (S5).
+ * Implements phase-6-frontend.md §6.4 & docs/v2/01-NEW-FEATURES-SECURITY-AI-PRODUCT.md A5.
  */
 import React from 'react'
-import { AlertCircle, Wrench } from 'lucide-react'
+import { AlertCircle, Wrench, Sparkles } from 'lucide-react'
+import { computeFixHint } from '@/lib/fix-hints'
 
 export interface FixItem {
   code: string
   criterion_key?: string
   message: string
+  observed?: unknown
+  expected?: unknown
+  check?: string
 }
 
 export interface FixListProps {
@@ -30,22 +34,42 @@ export function FixList({ reasons = [], className = '' }: FixListProps) {
         <h4 className="font-semibold text-sm">Required Fixes Before Resubmission</h4>
       </div>
 
-      <ul className="space-y-2 text-xs">
-        {reasons.map((r, idx) => (
-          <li
-            key={idx}
-            className="flex items-start gap-2.5 p-2.5 rounded-lg bg-surface border border-bad/15 text-text"
-          >
-            <AlertCircle className="w-4 h-4 text-bad flex-shrink-0 mt-0.5" />
-            <div className="space-y-0.5">
-              <span className="font-medium text-text">{r.message}</span>
-              <div className="flex items-center gap-2 text-[10px] font-mono text-muted">
-                <span>Code: {r.code}</span>
-                {r.criterion_key && <span>• Criterion: {r.criterion_key}</span>}
+      <ul className="space-y-2.5 text-xs">
+        {reasons.map((r, idx) => {
+          const hint = computeFixHint({
+            criterion_key: r.criterion_key || r.code,
+            check: r.check,
+            observed: r.observed,
+            expected: r.expected,
+            message: r.message,
+          })
+
+          return (
+            <li
+              key={idx}
+              className="p-3 rounded-xl bg-surface border border-bad/15 space-y-2 text-text"
+            >
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-bad flex-shrink-0 mt-0.5" />
+                <div className="space-y-0.5 flex-1">
+                  <span className="font-medium text-text">{r.message}</span>
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-muted">
+                    <span>Code: {r.code}</span>
+                    {r.criterion_key && <span>• Criterion: {r.criterion_key}</span>}
+                  </div>
+                </div>
               </div>
-            </div>
-          </li>
-        ))}
+
+              {hint && (
+                <div className="ml-6 p-2 rounded-lg bg-surface-2 border border-border flex items-center gap-2 text-[11px]">
+                  <Sparkles className="w-3.5 h-3.5 text-brand flex-shrink-0" />
+                  <span className="text-text font-semibold">{hint.action}</span>
+                  <span className="text-muted">({hint.minimal_delta})</span>
+                </div>
+              )}
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

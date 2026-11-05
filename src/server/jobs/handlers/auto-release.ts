@@ -1,12 +1,14 @@
 /**
  * AUTO_RELEASE Job Handler.
- * Implements phase-4-verification-engine.md §4.8.
+ * Implements phase-4-verification-engine.md §4.8 and
+ * docs/v2/PROOFPAY-FULL-AUDIT-AND-IMPROVEMENTS.md M-10 & AIP-12.
  *
- * Automatically releases milestone hold when a buyer remains silent during the review window.
+ * Automatically releases milestone hold when a buyer remains silent during the review window,
+ * with strict exploit guards preventing auto-release if manipulation or injection was flagged.
  */
 import { eq } from 'drizzle-orm'
 import { withTx, lockContract } from '@/server/db/client'
-import { milestones } from '@/server/db/schema'
+import { milestones, verifications } from '@/server/db/schema'
 import { assertMilestoneTransition } from '@/server/contracts/transitions'
 import { appendLedgerEvent } from '@/server/ledger/append'
 import { enqueueJob } from '@/server/jobs/queue'
@@ -51,6 +53,32 @@ export async function handleAutoRelease(payload: AutoReleasePayload): Promise<vo
         'handleAutoRelease: triggered before auto_release_at deadline; skipping'
       )
       return
+    }
+
+    // Exploit Guard (M-10 / AIP-12): Verify that deliverable did not trigger an adversarial flag
+    if (verification_id) {
+      const [verif] = await tx
+        .select()
+        .from(verifications)
+        .where(eq(verifications.id, verification_id))
+
+      if (verif && verif.manipulation_severity && verif.manipulation_severity !== 'NONE') {
+        log.warn(
+          { verification_id, severity: verif.manipulation_severity },
+          'handleAutoRelease: blocked due to manipulation flag; routing to manual dispute'
+        )
+        await appendLedgerEvent(tx, {
+          contractId: contract_id,
+          type: 'AUTO_RELEASE_BLOCKED_SECURITY_RISK',
+          actorType: 'system',
+          payload: {
+            milestone_id,
+            verification_id,
+            reason: 'Manipulation flagged during verification; requires human adjudication',
+          },
+        })
+        return
+      }
     }
 
     // Transition ESCALATED → PASSED
