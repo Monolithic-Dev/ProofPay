@@ -27,3 +27,4 @@ describe('SSRF-Safe HTTP Client (safeFetch)', () => {
     )
   })
 })
+

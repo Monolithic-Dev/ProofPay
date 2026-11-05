@@ -42,3 +42,4 @@ describe('Counterfactual Fix Hints (A5)', () => {
     expect(hint?.action).toContain('Add missing header columns: email')
   })
 })
+

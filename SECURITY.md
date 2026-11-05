@@ -37,3 +37,4 @@ Every verification outcome generates an Ed25519-signed attestation. Anyone can i
 * **Offline Verifier:** [`https://proofpay.dev/verify`](https://proofpay.dev/verify)
 * **Public Transparency Log:** [`https://proofpay.dev/transparency`](https://proofpay.dev/transparency)
 * **Public Trust Center:** [`https://proofpay.dev/trust`](https://proofpay.dev/trust)
+
