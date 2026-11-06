@@ -7,6 +7,7 @@ import { callTool } from '@/server/ai/llm'
 import { COMPILE_SYSTEM_PROMPT } from '@/server/ai/prompts/compile.v1'
 import { contractTool } from '@/server/ai/tools'
 import { parseContract, type Contract } from '@/server/contracts/schema'
+import { validateBuyerOfferAgainstMandate } from '@/lib/negotiation/policy'
 import { runDeterministicLint } from '@/server/contracts/lint/rules'
 import { runAiLint } from '@/server/contracts/lint/ai-lint'
 import { withTx, lockContract } from '@/server/db/client'
@@ -97,6 +98,35 @@ export async function compileContract(params: CompileParams): Promise<CompileRes
       path: '/',
       message: 'Prompt contained instruction-override patterns; contract compiled with strict isolation.',
     })
+  }
+
+  if (budgetCapMinor) {
+    const allCriteriaKeys = contract.milestones.flatMap((m) => m.criteria.map((c) => c.key))
+    const maxDueDays = Math.max(...contract.milestones.map((m) => m.due_in_days), 0)
+    const policyCheck = validateBuyerOfferAgainstMandate(
+      {
+        proposer_role: 'buyer',
+        total_minor: contract.total_minor,
+        due_days: maxDueDays,
+        milestones_count: contract.milestones.length,
+        criteria_keys: allCriteriaKeys,
+      },
+      {
+        max_total_minor: budgetCapMinor,
+        max_milestones: 10,
+        max_due_days: 28,
+        required_criteria_keys: [],
+      }
+    )
+
+    for (const violation of policyCheck.violations) {
+      detIssues.push({
+        code: 'NEGOTIATION_MANDATE_VIOLATION',
+        severity: contract.total_minor > budgetCapMinor ? 'error' : 'warn',
+        path: '/total_minor',
+        message: violation,
+      })
+    }
   }
 
   const aiIssues = await runAiLint(contract, detIssues)
