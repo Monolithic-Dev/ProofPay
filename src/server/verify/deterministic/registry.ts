@@ -14,6 +14,7 @@ import { checkRequiredKeywords, type CheckRequiredKeywordsSpec } from './require
 import { checkCsvSchema, type CheckCsvSchemaSpec } from './csv-schema'
 import { checkForbiddenTerms, type CheckForbiddenTermsSpec } from './forbidden-terms'
 import { checkLinkCheck, type CheckLinkCheckSpec } from './link-check'
+import { checkJunkDetector, type CheckJunkDetectorSpec, calculateShannonEntropy } from './junk-detector'
 import { NAMED_PATTERNS } from './patterns'
 
 export {
@@ -26,6 +27,8 @@ export {
   checkCsvSchema,
   checkForbiddenTerms,
   checkLinkCheck,
+  checkJunkDetector,
+  calculateShannonEntropy,
   countWords,
   NAMED_PATTERNS,
 }
@@ -118,11 +121,15 @@ export function runDeterministicCheck(
       rawRes = checkLinkCheck(parsedArt, spec as unknown as CheckLinkCheckSpec)
       break
 
+    case 'junk_detector':
+      rawRes = checkJunkDetector(parsedArt, spec as unknown as CheckJunkDetectorSpec)
+      break
+
     default:
       rawRes = {
         status: 'fail',
         observed: checkName,
-        expected: 'json_schema | row_count | unique_field | regex_field | word_count | required_keywords | csv_schema | forbidden_terms | link_check',
+        expected: 'json_schema | row_count | unique_field | regex_field | word_count | required_keywords | csv_schema | forbidden_terms | link_check | junk_detector',
         message: `Unknown check: "${checkName}".`,
       }
       break
