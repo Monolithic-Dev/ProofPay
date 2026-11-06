@@ -1,0 +1,125 @@
+name: Security & Supply Chain Gates
+
+on:
+  push:
+    branches: [development, main]
+  pull_request:
+    branches: [development, main]
+  schedule:
+    - cron: '0 4 * * 1' # Weekly Monday at 04:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  security-audit:
+    name: security-audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f525247833795be322dca4 # v4.0.2
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+  codeql:
+    name: codeql
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@48ab28a6f5dab2a725c1001912937b960f8922b9 # v3.24.6
+        with:
+          languages: javascript-typescript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@48ab28a6f5dab2a725c1001912937b960f8922b9 # v3.24.6
+
+  gitleaks:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks secret scanner
+        uses: gitleaks/gitleaks-action@e85cb32fdb4a5595c517f8db85a6a68f6a988d84 # v2.3.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sbom:
+    name: sbom
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f525247833795be322dca4 # v4.0.2
+        with:
+          node-version: 20
+
+      - name: Generate CycloneDX SBOM
+        run: npx @cyclonedx/cyclonedx-npm --omit dev --output-file sbom.json
+
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+        with:
+          name: sbom-cyclonedx
+          path: sbom.json
+          if-no-files-found: error
+
+  license-check:
+    name: license-check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f525247833795be322dca4 # v4.0.2
+        with:
+          node-version: 20
+
+      - name: Check dependency licenses
+        run: |
+          npx license-checker --production --onlyAllow 'MIT;ISC;Apache-2.0;BSD-2-Clause;BSD-3-Clause;0BSD;BlueOak-1.0.0;CC0-1.0;Python-2.0' --summary
+
+  self-audit:
+    name: self-audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f525247833795be322dca4 # v4.0.2
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Run Self-Audit Script
+        run: bash scripts/self-audit.sh

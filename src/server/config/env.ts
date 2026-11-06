@@ -49,6 +49,25 @@ export const envSchema = z.object({
   // Sandbox buyer for Judge Mode automation
   SANDBOX_BUYER_EMAIL: z.string().optional(),
   SANDBOX_BUYER_PASSWORD: z.string().optional(),
+  ALLOW_TIME_SCALE_IN_PROD: boolEnv.default('false'),
+}).superRefine((data, ctx) => {
+  // PLAT-10: Demo time-scale safety guard
+  if (data.DEMO_TIME_SCALE > 1) {
+    if (!data.DEMO_MODE) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['DEMO_TIME_SCALE'],
+        message: 'DEMO_TIME_SCALE > 1 is only permitted when DEMO_MODE=true',
+      })
+    }
+    if (data.NODE_ENV === 'production' && !data.ALLOW_TIME_SCALE_IN_PROD) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['DEMO_TIME_SCALE'],
+        message: 'DEMO_TIME_SCALE > 1 is forbidden in production unless ALLOW_TIME_SCALE_IN_PROD=true',
+      })
+    }
+  }
 })
 
 export function parseEnv(raw: NodeJS.ProcessEnv) {
