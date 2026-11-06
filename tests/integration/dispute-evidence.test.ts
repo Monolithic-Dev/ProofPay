@@ -43,21 +43,21 @@ describe('Dispute Evidence Dossier & Submission API', () => {
     })
   })
 
-  function makeRequest(
+  async function makeRequest(
     method: 'GET' | 'POST',
     contractId: string,
     user: any,
     body?: any
   ) {
-    const sessionToken = createSessionToken({
+    const sessionToken = await createSessionToken({
       sub: user.id,
       email: user.email,
-      name: user.name,
-      role: 'user',
+      role: (user.role as 'buyer' | 'seller' | 'admin') ?? 'buyer',
+      is_agent: false,
     })
 
     const headers: Record<string, string> = {
-      cookie: `proofpay_session=${sessionToken}`,
+      cookie: `pp_session=${sessionToken}`,
     }
     if (body) {
       headers['content-type'] = 'application/json'
@@ -74,12 +74,12 @@ describe('Dispute Evidence Dossier & Submission API', () => {
     if (!dbActive) return
 
     // Stranger GET
-    const getReq = makeRequest('GET', contract.id, stranger)
+    const getReq = await makeRequest('GET', contract.id, stranger)
     const getRes = await getDisputeEvidenceRoute(getReq, { params: Promise.resolve({ id: contract.id }) })
     expect(getRes.status).toBe(404)
 
     // Stranger POST
-    const postReq = makeRequest('POST', contract.id, stranger, { note: 'malicious note' })
+    const postReq = await makeRequest('POST', contract.id, stranger, { note: 'malicious note' })
     const postRes = await postDisputeEvidenceRoute(postReq, { params: Promise.resolve({ id: contract.id }) })
     expect(postRes.status).toBe(404)
   })
@@ -87,7 +87,7 @@ describe('Dispute Evidence Dossier & Submission API', () => {
   it('returns structured PAYPAL_DISPUTES_V1_EVIDENCE dossier to authorized party', async () => {
     if (!dbActive) return
 
-    const req = makeRequest('GET', contract.id, buyer)
+    const req = await makeRequest('GET', contract.id, buyer)
     const res = await getDisputeEvidenceRoute(req, { params: Promise.resolve({ id: contract.id }) })
 
     expect(res.status).toBe(200)
@@ -111,7 +111,7 @@ describe('Dispute Evidence Dossier & Submission API', () => {
     const db = getDb()
 
     const disputeId = 'PP-DISPUTE-TEST-9988'
-    const postReq = makeRequest('POST', contract.id, seller, {
+    const postReq = await makeRequest('POST', contract.id, seller, {
       paypal_dispute_id: disputeId,
       note: 'Seller fulfilled all requirements under verified cryptographic milestone hash.',
     })
