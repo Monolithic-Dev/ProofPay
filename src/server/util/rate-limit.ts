@@ -1,13 +1,16 @@
 /**
- * In-memory sliding window rate limiter.
+ * Sliding window rate limiter with persistent DB backing and bounded in-memory fallback.
  * Implements phase-3-auth-and-contracts.md §3.2 & security-privacy.md SP-1.
- * (Assumes single web instance per deployment spec).
+ * Prevents memory exhaustion attacks via bounded LRU/FIFO eviction.
  */
+import type { Tx, Db } from '@/server/db/client'
+import { kvGet, kvSet } from '@/server/db/repos/kv.repo'
 
 interface RateLimitEntry {
   timestamps: number[]
 }
 
+export const MAX_STORE_KEYS = 50_000
 const rateLimitStore = new Map<string, RateLimitEntry>()
 
 // Periodic cleanup of stale entries every 5 minutes
@@ -22,6 +25,20 @@ setInterval(() => {
   }
 }, CLEANUP_INTERVAL_MS).unref?.()
 
+/**
+ * Resets the in-memory rate limit store (used in testing).
+ */
+export function clearRateLimits(): void {
+  rateLimitStore.clear()
+}
+
+/**
+ * Inspects total keys tracked in-memory.
+ */
+export function getRateLimitStoreSize(): number {
+  return rateLimitStore.size
+}
+
 export interface RateLimitOptions {
   key: string
   limit: number
@@ -34,6 +51,10 @@ export interface RateLimitResult {
   resetAt: number
 }
 
+/**
+ * Fast synchronous sliding window rate limiter.
+ * Caps maximum store capacity to prevent memory exhaustion / DoS attacks.
+ */
 export function rateLimit(options: RateLimitOptions): RateLimitResult {
   const { key, limit, windowMs } = options
   const now = Date.now()
@@ -41,6 +62,11 @@ export function rateLimit(options: RateLimitOptions): RateLimitResult {
 
   let entry = rateLimitStore.get(key)
   if (!entry) {
+    // Evict oldest entry if at capacity
+    if (rateLimitStore.size >= MAX_STORE_KEYS) {
+      const oldestKey = rateLimitStore.keys().next().value
+      if (oldestKey) rateLimitStore.delete(oldestKey)
+    }
     entry = { timestamps: [] }
     rateLimitStore.set(key, entry)
   }
@@ -66,6 +92,47 @@ export function rateLimit(options: RateLimitOptions): RateLimitResult {
     ok: true,
     remaining,
     resetAt,
+  }
+}
+
+/**
+ * Persistent distributed sliding window rate limiter backed by the PostgreSQL kv table.
+ * Falls back transparently to in-memory rate limiting if database is unavailable.
+ */
+export async function rateLimitPersistent(
+  options: RateLimitOptions,
+  db?: Tx | Db
+): Promise<RateLimitResult> {
+  const { key, limit, windowMs } = options
+  const kvKey = `rl:${key}`
+  const now = Date.now()
+  const windowStart = now - windowMs
+
+  try {
+    const existing = await kvGet<{ timestamps: number[] }>(kvKey, db)
+    const rawTimestamps = Array.isArray(existing?.timestamps) ? existing.timestamps : []
+    const validTimestamps = rawTimestamps.filter((ts) => typeof ts === 'number' && ts > windowStart)
+
+    if (validTimestamps.length >= limit) {
+      const oldest = validTimestamps[0] ?? now
+      return {
+        ok: false,
+        remaining: 0,
+        resetAt: oldest + windowMs,
+      }
+    }
+
+    validTimestamps.push(now)
+    await kvSet(kvKey, { timestamps: validTimestamps }, db)
+
+    return {
+      ok: true,
+      remaining: Math.max(0, limit - validTimestamps.length),
+      resetAt: now + windowMs,
+    }
+  } catch {
+    // If DB read/write fails, fallback to bounded in-memory limiter
+    return rateLimit(options)
   }
 }
 
