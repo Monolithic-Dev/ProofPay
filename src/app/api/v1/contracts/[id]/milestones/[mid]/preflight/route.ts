@@ -1,8 +1,9 @@
 /**
  * Pre-Flight Verification Route — POST /api/v1/contracts/[id]/milestones/[mid]/preflight
- * Implements docs/v2/01-NEXT-LEVEL-STRATEGY.md F2-lite.
+ * Implements docs/v2/01-NEXT-LEVEL-STRATEGY.md F2-lite & Judge Simulation.
  *
- * Runs deterministic checks and PII guards without consuming an attempt or altering state.
+ * Runs deterministic checks, PII guards, and adversarial injection detection
+ * without consuming an attempt or altering contract state.
  */
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -15,6 +16,7 @@ import { runDeterministicCheck } from '@/server/verify/deterministic/registry'
 import { maskPii } from '@/lib/pii'
 import { requireParty } from '@/server/auth/guards'
 import { AppError } from '@/server/util/errors'
+import { HEURISTIC_PATTERNS } from '@/server/verify/adversarial'
 
 const PreflightBodySchema = z.object({
   content_type: z.enum(['json_records', 'text']),
@@ -78,8 +80,21 @@ export const POST = apiHandler(
     // 5. PII scan
     const piiScan = maskPii(parsed.text)
 
-    const ready = failedRequired.length === 0
+    // 6. Adversarial injection scan (Threat Defense)
+    const matchedPatterns: string[] = []
+    for (const pat of HEURISTIC_PATTERNS) {
+      if (pat.regex.test(parsed.text)) {
+        matchedPatterns.push(pat.name)
+      }
+    }
+    const hasAdversarial = matchedPatterns.length > 0
+
     const reasons = failedRequired.map((f) => `Required check ${f.criterion_key} failed: ${f.result.message}`)
+    if (hasAdversarial) {
+      reasons.push(`Prompt injection detected: ${matchedPatterns.join(', ')}`)
+    }
+
+    const ready = failedRequired.length === 0 && !hasAdversarial
 
     return NextResponse.json({
       ready,
@@ -94,6 +109,10 @@ export const POST = apiHandler(
         message: cr.result.message,
       })),
       reasons,
+      adversarial: {
+        detected: hasAdversarial,
+        patterns: matchedPatterns,
+      },
       pii: {
         redactions_detected: piiScan.redactionCount,
         breakdown: piiScan.redactionsByType,
