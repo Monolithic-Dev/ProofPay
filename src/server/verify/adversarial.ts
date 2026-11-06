@@ -7,6 +7,7 @@ import { randomBytes } from 'crypto'
 import { callTool } from '@/server/ai/llm'
 import { env } from '@/server/config/env'
 import { verifyQuote } from './evidence'
+import { normalizeForScan } from './context-facts'
 
 export const HEURISTIC_PATTERNS: Array<{ name: string; regex: RegExp }> = [
   {
@@ -157,7 +158,16 @@ export async function runAdversarialStage(params: {
   const { contractId, artifactText } = params
 
   // 1. Run deterministic heuristics
-  const heuristics = heuristicScan(artifactText)
+  const normalized = normalizeForScan(artifactText)
+  const rawScan = heuristicScan(artifactText)
+  const normScan = heuristicScan(normalized)
+  const allHits = [...rawScan.hits]
+  for (const h of normScan.hits) {
+    if (!allHits.some((existing) => existing.pattern === h.pattern)) {
+      allHits.push(h)
+    }
+  }
+  const heuristics = { hits: allHits, zeroWidthClusters: rawScan.zeroWidthClusters + normScan.zeroWidthClusters }
   const heuristicHitCount = heuristics.hits.length + (heuristics.zeroWidthClusters > 0 ? 1 : 0)
 
   // 2. Run fast LLM classification pass

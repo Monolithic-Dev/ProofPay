@@ -1,6 +1,7 @@
 /**
  * Deterministic lint rules engine for ProofPay contracts.
- * Implements phase-3-auth-and-contracts.md §3.7 & PRD FR-4…FR-7.
+ * Implements phase-3-auth-and-contracts.md §3.7 & PRD FR-4…FR-7,
+ * and AIP-11 Satisfiability Linter.
  */
 import { sha256Hex } from '@/server/contracts/canonical'
 import { findVagueTerms } from './vague-terms'
@@ -20,7 +21,6 @@ export function runDeterministicLint(contract: any, options?: LintOptions): Lint
     message: string
     fix?: string
   }) {
-    const id = sha256Hex(`${params.code}:${params.path}`).slice(0, 10)
     issues.push({
       code: params.code,
       severity: params.severity,
@@ -101,9 +101,26 @@ export function runDeterministicLint(contract: any, options?: LintOptions): Lint
       })
     }
 
+    // AIP-11: Cross-criteria checks per milestone
+    let rowCountCheck: any = null
+    let wordCountCheck: any = null
+    let jsonSchemaCheck: any = null
+    let uniqueFieldCheck: any = null
+    let keywordsCheck: any = null
+    let hasJunkFree = false
+
     // Scan individual criteria
     criteriaList.forEach((c: any, cIdx: number) => {
       const cPath = `${mPath}/criteria/${cIdx}`
+
+      if (c?.type === 'deterministic') {
+        if (c.check === 'row_count') rowCountCheck = c
+        if (c.check === 'word_count') wordCountCheck = c
+        if (c.check === 'json_schema') jsonSchemaCheck = c
+        if (c.check === 'unique_field') uniqueFieldCheck = c
+        if (c.check === 'required_keywords') keywordsCheck = c
+        if (c.check === 'junk_free') hasJunkFree = true
+      }
 
       // LINT_RUBRIC_NO_THRESHOLD
       if (c?.type === 'rubric' && (c?.pass_threshold === undefined || c?.pass_threshold === null)) {
@@ -144,6 +161,7 @@ export function runDeterministicLint(contract: any, options?: LintOptions): Lint
         'regex_field',
         'word_count',
         'required_keywords',
+        'junk_free',
       ]
       if (c?.type === 'deterministic' && c?.check && !VALID_CHECKS.includes(c.check)) {
         addIssue({
@@ -151,6 +169,22 @@ export function runDeterministicLint(contract: any, options?: LintOptions): Lint
           severity: 'error',
           path: `${cPath}/check`,
           message: `Unknown deterministic check '${c.check}'. Supported: ${VALID_CHECKS.join(', ')}`,
+        })
+      }
+
+      // AIP-11: 1. LINT_UNSATISFIABLE_RANGE
+      if (
+        c?.type === 'deterministic' &&
+        (c.check === 'row_count' || c.check === 'word_count') &&
+        c.spec?.min !== undefined &&
+        c.spec?.max !== undefined &&
+        Number(c.spec.min) > Number(c.spec.max)
+      ) {
+        addIssue({
+          code: 'LINT_UNSATISFIABLE_RANGE',
+          severity: 'error',
+          path: `${cPath}/spec`,
+          message: `Unsatisfiable range: min (${c.spec.min}) cannot be greater than max (${c.spec.max})`,
         })
       }
 
@@ -166,6 +200,76 @@ export function runDeterministicLint(contract: any, options?: LintOptions): Lint
         })
       }
     })
+
+    // AIP-11: 2. LINT_SCHEMA_COUNT_CONFLICT
+    if (jsonSchemaCheck && rowCountCheck) {
+      const schemaMin = jsonSchemaCheck.spec?.schema?.minItems
+      const schemaMax = jsonSchemaCheck.spec?.schema?.maxItems
+      const rowMin = rowCountCheck.spec?.min
+      const rowMax = rowCountCheck.spec?.max
+
+      if (schemaMin !== undefined && rowMax !== undefined && Number(schemaMin) > Number(rowMax)) {
+        addIssue({
+          code: 'LINT_SCHEMA_COUNT_CONFLICT',
+          severity: 'error',
+          path: `${mPath}/criteria`,
+          message: `Schema minItems (${schemaMin}) exceeds row_count max (${rowMax})`,
+        })
+      }
+      if (schemaMax !== undefined && rowMin !== undefined && Number(schemaMax) < Number(rowMin)) {
+        addIssue({
+          code: 'LINT_SCHEMA_COUNT_CONFLICT',
+          severity: 'error',
+          path: `${mPath}/criteria`,
+          message: `Schema maxItems (${schemaMax}) is less than row_count min (${rowMin})`,
+        })
+      }
+    }
+
+    // AIP-11: 3. LINT_UNIQUE_CARDINALITY
+    if (uniqueFieldCheck && rowCountCheck && jsonSchemaCheck) {
+      const fieldName = uniqueFieldCheck.spec?.field
+      const rowMin = Number(rowCountCheck.spec?.min || 0)
+      const properties = jsonSchemaCheck.spec?.schema?.items?.properties || jsonSchemaCheck.spec?.schema?.properties
+      const propDef = properties?.[fieldName]
+      if (propDef && Array.isArray(propDef.enum)) {
+        const enumCapacity = propDef.enum.length
+        if (rowMin > enumCapacity) {
+          addIssue({
+            code: 'LINT_UNIQUE_CARDINALITY',
+            severity: 'error',
+            path: `${mPath}/criteria`,
+            message: `Unique field '${fieldName}' has only ${enumCapacity} enum values but row_count requires at least ${rowMin} rows`,
+          })
+        }
+      }
+    }
+
+    // AIP-11: 4. LINT_KEYWORDS_EXCEED_WORDS
+    if (keywordsCheck && wordCountCheck) {
+      const keywords = Array.isArray(keywordsCheck.spec?.keywords) ? keywordsCheck.spec.keywords : []
+      const totalKeywordWords = keywords.reduce((sum: number, kw: string) => sum + kw.trim().split(/\s+/).length, 0)
+      const maxWords = Number(wordCountCheck.spec?.max)
+      if (!isNaN(maxWords) && totalKeywordWords > maxWords) {
+        addIssue({
+          code: 'LINT_KEYWORDS_EXCEED_WORDS',
+          severity: 'error',
+          path: `${mPath}/criteria`,
+          message: `Required keywords require ${totalKeywordWords} words, exceeding word_count max of ${maxWords}`,
+        })
+      }
+    }
+
+    // AIP-11: 5. LINT_NO_JUNK_CHECK
+    const isDatasetOrContent = m?.deliverable?.format === 'csv' || m?.deliverable?.format === 'json' || m?.deliverable?.format === 'markdown'
+    if (isDatasetOrContent && !hasJunkFree) {
+      addIssue({
+        code: 'LINT_NO_JUNK_CHECK',
+        severity: 'info',
+        path: `${mPath}/criteria`,
+        message: 'Dataset / document deliverable has no junk_free check; consider adding junk_free to guard against lorem ipsum or placeholder rows',
+      })
+    }
   })
 
   // Scan contract summary for vague terms (warn only, not error)
