@@ -1,3 +1,26 @@
+---
+generated_at: 2026-11-06T18:30:00.000Z
+git_sha: HEAD
+models:
+  - claude-3-5-haiku-20241022
+  - fast-adversarial-classifier
+sets:
+  - dev
+  - heldout
+prompt_hashes:
+  compile: 479c7cfae86eef355d2d51684d937a3bb483380cd8df29978676b4100218c05c
+  rubric: e10a83c0ae9f0de719f2e179b460861eb42d46af770df183b01807a73f705103
+  adversarial: ff398ffdaeca103a2d097b2cf72df7376677bf262e4d8180eaf1de14ac16f236
+  policy: 5e13ed9afe2d8d9ab925ddd438b75755724e1ee1d92da67472b5852af830d01d
+metrics:
+  false_passes_non_pass: 0
+  non_pass_cases: 19
+  false_rejects: 0
+  escalation_rate: 0.033
+  p95_latency_ms: 7213
+  mean_cost_usd: 0.0107
+---
+
 # ProofPay Verifier Evaluation Results
 
 > **Evaluation Baseline & Benchmarks (Phase 8)**

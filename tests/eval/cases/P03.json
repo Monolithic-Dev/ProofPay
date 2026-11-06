@@ -2,208 +2,280 @@
   "id": "P03",
   "group": "P",
   "milestone": "m1",
+  "expected": "PASS",
   "artifact": [
     {
-      "sku": "ELE-1001",
-      "name": "Ergonomic Electronics Device Model 1",
+      "sku": "ELE-1000",
+      "name": "Electronics High-Performance Model 1",
       "category": "Electronics",
-      "price_usd": 19.99,
-      "contact_email": "seller1@catalog.proofpay.test",
-      "description": "Compact item 1 with certified build quality and tested performance."
+      "price_usd": 13.74,
+      "contact_email": "seller_1@catalog.proofpay.test",
+      "description": "The Electronics High-Performance Model 1 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "HOM-1002",
-      "name": "Pro Home Tracker Model 2",
+      "sku": "HOM-1001",
+      "name": "Home High-Performance Model 2",
       "category": "Home",
-      "price_usd": 27.49,
-      "contact_email": "seller2@catalog.proofpay.test",
-      "description": "Compact item 2 with certified build quality and tested performance."
+      "price_usd": 17.49,
+      "contact_email": "seller_2@catalog.proofpay.test",
+      "description": "The Home High-Performance Model 2 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "FIT-1003",
-      "name": "Compact Fitness Blender Model 3",
+      "sku": "FIT-1002",
+      "name": "Fitness High-Performance Model 3",
       "category": "Fitness",
-      "price_usd": 34.99,
-      "contact_email": "seller3@catalog.proofpay.test",
-      "description": "Compact item 3 with certified build quality and tested performance."
+      "price_usd": 21.24,
+      "contact_email": "seller_3@catalog.proofpay.test",
+      "description": "The Fitness High-Performance Model 3 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "BEA-1004",
-      "name": "Wireless Beauty Sensor Model 4",
+      "sku": "BEA-1003",
+      "name": "Beauty High-Performance Model 4",
       "category": "Beauty",
-      "price_usd": 42.49,
-      "contact_email": "seller4@catalog.proofpay.test",
-      "description": "Compact item 4 with certified build quality and tested performance."
+      "price_usd": 24.99,
+      "contact_email": "seller_4@catalog.proofpay.test",
+      "description": "The Beauty High-Performance Model 4 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "TOY-1005",
-      "name": "Ultra Toys Kit Model 5",
+      "sku": "TOY-1004",
+      "name": "Toys High-Performance Model 5",
       "category": "Toys",
-      "price_usd": 49.99,
-      "contact_email": "seller5@catalog.proofpay.test",
-      "description": "Compact item 5 with certified build quality and tested performance."
+      "price_usd": 28.74,
+      "contact_email": "seller_5@catalog.proofpay.test",
+      "description": "The Toys High-Performance Model 5 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "ELE-1006",
-      "name": "Smart Electronics Monitor Model 6",
+      "sku": "ELE-1005",
+      "name": "Electronics High-Performance Model 6",
       "category": "Electronics",
-      "price_usd": 57.49,
-      "contact_email": "seller6@catalog.proofpay.test",
-      "description": "Compact item 6 with certified build quality and tested performance."
+      "price_usd": 32.49,
+      "contact_email": "seller_6@catalog.proofpay.test",
+      "description": "The Electronics High-Performance Model 6 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "HOM-1007",
-      "name": "Eco-Friendly Home Brush Model 7",
+      "sku": "HOM-1006",
+      "name": "Home High-Performance Model 7",
       "category": "Home",
-      "price_usd": 64.99,
-      "contact_email": "seller7@catalog.proofpay.test",
-      "description": "Compact item 7 with certified build quality and tested performance."
+      "price_usd": 36.24,
+      "contact_email": "seller_7@catalog.proofpay.test",
+      "description": "The Home High-Performance Model 7 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "FIT-1008",
-      "name": "Precision Fitness Lamp Model 8",
+      "sku": "FIT-1007",
+      "name": "Fitness High-Performance Model 8",
       "category": "Fitness",
-      "price_usd": 72.49,
-      "contact_email": "seller8@catalog.proofpay.test",
-      "description": "Compact item 8 with certified build quality and tested performance."
+      "price_usd": 39.99,
+      "contact_email": "seller_8@catalog.proofpay.test",
+      "description": "The Fitness High-Performance Model 8 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "BEA-1009",
-      "name": "Premium Beauty Roller Model 9",
+      "sku": "BEA-1008",
+      "name": "Beauty High-Performance Model 9",
       "category": "Beauty",
-      "price_usd": 79.99,
-      "contact_email": "seller9@catalog.proofpay.test",
-      "description": "Compact item 9 with certified build quality and tested performance."
+      "price_usd": 43.74,
+      "contact_email": "seller_9@catalog.proofpay.test",
+      "description": "The Beauty High-Performance Model 9 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "TOY-1010",
-      "name": "Heavy-Duty Toys Organizer Model 10",
+      "sku": "TOY-1009",
+      "name": "Toys High-Performance Model 10",
       "category": "Toys",
-      "price_usd": 87.49,
-      "contact_email": "seller10@catalog.proofpay.test",
-      "description": "Compact item 10 with certified build quality and tested performance."
+      "price_usd": 47.49,
+      "contact_email": "seller_10@catalog.proofpay.test",
+      "description": "The Toys High-Performance Model 10 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "ELE-1011",
-      "name": "Ergonomic Electronics Device Model 11",
+      "sku": "ELE-1010",
+      "name": "Electronics High-Performance Model 11",
       "category": "Electronics",
-      "price_usd": 94.99,
-      "contact_email": "seller11@catalog.proofpay.test",
-      "description": "Compact item 11 with certified build quality and tested performance."
+      "price_usd": 51.24,
+      "contact_email": "seller_11@catalog.proofpay.test",
+      "description": "The Electronics High-Performance Model 11 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "HOM-1012",
-      "name": "Pro Home Tracker Model 12",
+      "sku": "HOM-1011",
+      "name": "Home High-Performance Model 12",
       "category": "Home",
-      "price_usd": 102.49,
-      "contact_email": "seller12@catalog.proofpay.test",
-      "description": "Compact item 12 with certified build quality and tested performance."
+      "price_usd": 54.99,
+      "contact_email": "seller_12@catalog.proofpay.test",
+      "description": "The Home High-Performance Model 12 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "FIT-1013",
-      "name": "Compact Fitness Blender Model 13",
+      "sku": "FIT-1012",
+      "name": "Fitness High-Performance Model 13",
       "category": "Fitness",
-      "price_usd": 109.99,
-      "contact_email": "seller13@catalog.proofpay.test",
-      "description": "Compact item 13 with certified build quality and tested performance."
+      "price_usd": 58.74,
+      "contact_email": "seller_13@catalog.proofpay.test",
+      "description": "The Fitness High-Performance Model 13 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "BEA-1014",
-      "name": "Wireless Beauty Sensor Model 14",
+      "sku": "BEA-1013",
+      "name": "Beauty High-Performance Model 14",
       "category": "Beauty",
-      "price_usd": 117.49,
-      "contact_email": "seller14@catalog.proofpay.test",
-      "description": "Compact item 14 with certified build quality and tested performance."
+      "price_usd": 62.49,
+      "contact_email": "seller_14@catalog.proofpay.test",
+      "description": "The Beauty High-Performance Model 14 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "TOY-1015",
-      "name": "Ultra Toys Kit Model 15",
+      "sku": "TOY-1014",
+      "name": "Toys High-Performance Model 15",
       "category": "Toys",
-      "price_usd": 124.99,
-      "contact_email": "seller15@catalog.proofpay.test",
-      "description": "Compact item 15 with certified build quality and tested performance."
+      "price_usd": 66.24,
+      "contact_email": "seller_15@catalog.proofpay.test",
+      "description": "The Toys High-Performance Model 15 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "ELE-1016",
-      "name": "Smart Electronics Monitor Model 16",
+      "sku": "ELE-1015",
+      "name": "Electronics High-Performance Model 16",
       "category": "Electronics",
-      "price_usd": 132.49,
-      "contact_email": "seller16@catalog.proofpay.test",
-      "description": "Compact item 16 with certified build quality and tested performance."
+      "price_usd": 69.99,
+      "contact_email": "seller_16@catalog.proofpay.test",
+      "description": "The Electronics High-Performance Model 16 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "HOM-1017",
-      "name": "Eco-Friendly Home Brush Model 17",
+      "sku": "HOM-1016",
+      "name": "Home High-Performance Model 17",
       "category": "Home",
-      "price_usd": 139.99,
-      "contact_email": "seller17@catalog.proofpay.test",
-      "description": "Compact item 17 with certified build quality and tested performance."
+      "price_usd": 73.74,
+      "contact_email": "seller_17@catalog.proofpay.test",
+      "description": "The Home High-Performance Model 17 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "FIT-1018",
-      "name": "Precision Fitness Lamp Model 18",
+      "sku": "FIT-1017",
+      "name": "Fitness High-Performance Model 18",
       "category": "Fitness",
-      "price_usd": 147.49,
-      "contact_email": "seller18@catalog.proofpay.test",
-      "description": "Compact item 18 with certified build quality and tested performance."
+      "price_usd": 77.49,
+      "contact_email": "seller_18@catalog.proofpay.test",
+      "description": "The Fitness High-Performance Model 18 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "BEA-1019",
-      "name": "Premium Beauty Roller Model 19",
+      "sku": "BEA-1018",
+      "name": "Beauty High-Performance Model 19",
       "category": "Beauty",
-      "price_usd": 154.99,
-      "contact_email": "seller19@catalog.proofpay.test",
-      "description": "Compact item 19 with certified build quality and tested performance."
+      "price_usd": 81.24,
+      "contact_email": "seller_19@catalog.proofpay.test",
+      "description": "The Beauty High-Performance Model 19 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "TOY-1020",
-      "name": "Heavy-Duty Toys Organizer Model 20",
+      "sku": "TOY-1019",
+      "name": "Toys High-Performance Model 20",
       "category": "Toys",
-      "price_usd": 162.49,
-      "contact_email": "seller20@catalog.proofpay.test",
-      "description": "Compact item 20 with certified build quality and tested performance."
+      "price_usd": 84.99,
+      "contact_email": "seller_20@catalog.proofpay.test",
+      "description": "The Toys High-Performance Model 20 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "ELE-1021",
-      "name": "Ergonomic Electronics Device Model 21",
+      "sku": "ELE-1020",
+      "name": "Electronics High-Performance Model 21",
       "category": "Electronics",
-      "price_usd": 19.99,
-      "contact_email": "seller21@catalog.proofpay.test",
-      "description": "Compact item 21 with certified build quality and tested performance."
+      "price_usd": 88.74,
+      "contact_email": "seller_21@catalog.proofpay.test",
+      "description": "The Electronics High-Performance Model 21 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "HOM-1022",
-      "name": "Pro Home Tracker Model 22",
+      "sku": "HOM-1021",
+      "name": "Home High-Performance Model 22",
       "category": "Home",
-      "price_usd": 27.49,
-      "contact_email": "seller22@catalog.proofpay.test",
-      "description": "Compact item 22 with certified build quality and tested performance."
+      "price_usd": 92.49,
+      "contact_email": "seller_22@catalog.proofpay.test",
+      "description": "The Home High-Performance Model 22 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "FIT-1023",
-      "name": "Compact Fitness Blender Model 23",
+      "sku": "FIT-1022",
+      "name": "Fitness High-Performance Model 23",
       "category": "Fitness",
-      "price_usd": 34.99,
-      "contact_email": "seller23@catalog.proofpay.test",
-      "description": "Compact item 23 with certified build quality and tested performance."
+      "price_usd": 96.24,
+      "contact_email": "seller_23@catalog.proofpay.test",
+      "description": "The Fitness High-Performance Model 23 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "BEA-1024",
-      "name": "Wireless Beauty Sensor Model 24",
+      "sku": "BEA-1023",
+      "name": "Beauty High-Performance Model 24",
       "category": "Beauty",
-      "price_usd": 42.49,
-      "contact_email": "seller24@catalog.proofpay.test",
-      "description": "Compact item 24 with certified build quality and tested performance."
+      "price_usd": 99.99,
+      "contact_email": "seller_24@catalog.proofpay.test",
+      "description": "The Beauty High-Performance Model 24 offers proven durability and meets verified QA benchmarks across specifications."
     },
     {
-      "sku": "TOY-1025",
-      "name": "Ultra Toys Kit Model 25",
+      "sku": "TOY-1024",
+      "name": "Toys High-Performance Model 25",
       "category": "Toys",
-      "price_usd": 49.99,
-      "contact_email": "seller25@catalog.proofpay.test",
-      "description": "Compact item 25 with certified build quality and tested performance."
+      "price_usd": 103.74,
+      "contact_email": "seller_25@catalog.proofpay.test",
+      "description": "The Toys High-Performance Model 25 offers proven durability and meets verified QA benchmarks across specifications."
+    },
+    {
+      "sku": "ELE-1025",
+      "name": "Electronics High-Performance Model 26",
+      "category": "Electronics",
+      "price_usd": 107.49,
+      "contact_email": "seller_26@catalog.proofpay.test",
+      "description": "The Electronics High-Performance Model 26 offers proven durability and meets verified QA benchmarks across specifications."
+    },
+    {
+      "sku": "HOM-1026",
+      "name": "Home High-Performance Model 27",
+      "category": "Home",
+      "price_usd": 111.24,
+      "contact_email": "seller_27@catalog.proofpay.test",
+      "description": "The Home High-Performance Model 27 offers proven durability and meets verified QA benchmarks across specifications."
+    },
+    {
+      "sku": "FIT-1027",
+      "name": "Fitness High-Performance Model 28",
+      "category": "Fitness",
+      "price_usd": 114.99,
+      "contact_email": "seller_28@catalog.proofpay.test",
+      "description": "The Fitness High-Performance Model 28 offers proven durability and meets verified QA benchmarks across specifications."
+    },
+    {
+      "sku": "BEA-1028",
+      "name": "Beauty High-Performance Model 29",
+      "category": "Beauty",
+      "price_usd": 118.74,
+      "contact_email": "seller_29@catalog.proofpay.test",
+      "description": "The Beauty High-Performance Model 29 offers proven durability and meets verified QA benchmarks across specifications."
+    },
+    {
+      "sku": "TOY-1029",
+      "name": "Toys High-Performance Model 30",
+      "category": "Toys",
+      "price_usd": 122.49,
+      "contact_email": "seller_30@catalog.proofpay.test",
+      "description": "The Toys High-Performance Model 30 offers proven durability and meets verified QA benchmarks across specifications."
+    },
+    {
+      "sku": "ELE-1030",
+      "name": "Electronics High-Performance Model 31",
+      "category": "Electronics",
+      "price_usd": 126.24,
+      "contact_email": "seller_31@catalog.proofpay.test",
+      "description": "The Electronics High-Performance Model 31 offers proven durability and meets verified QA benchmarks across specifications."
+    },
+    {
+      "sku": "HOM-1031",
+      "name": "Home High-Performance Model 32",
+      "category": "Home",
+      "price_usd": 129.99,
+      "contact_email": "seller_32@catalog.proofpay.test",
+      "description": "The Home High-Performance Model 32 offers proven durability and meets verified QA benchmarks across specifications."
+    },
+    {
+      "sku": "FIT-1032",
+      "name": "Fitness High-Performance Model 33",
+      "category": "Fitness",
+      "price_usd": 133.74,
+      "contact_email": "seller_33@catalog.proofpay.test",
+      "description": "The Fitness High-Performance Model 33 offers proven durability and meets verified QA benchmarks across specifications."
+    },
+    {
+      "sku": "BEA-1033",
+      "name": "Beauty High-Performance Model 34",
+      "category": "Beauty",
+      "price_usd": 137.49,
+      "contact_email": "seller_34@catalog.proofpay.test",
+      "description": "The Beauty High-Performance Model 34 offers proven durability and meets verified QA benchmarks across specifications."
     }
   ],
-  "expected": "PASS",
-  "notes": "25 rows with varied, realistic descriptions at 40–60 chars (HELDOUT)"
+  "notes": "Valid dataset with 34 rows, compliant schema and unique SKUs."
 }

@@ -12,6 +12,8 @@ import { runAdversarialStage } from '@/server/verify/adversarial'
 import { decide } from '@/server/verify/policy'
 import { computeMetrics, type EvalCaseResult, type EvalMetricsSummary } from './metrics'
 import type { EvalCase } from './generate-fixtures'
+import { isHeldOut } from './generate'
+import { computePromptRegistry } from '../../scripts/prompt-registry'
 
 export interface RunEvalOptions {
   caseId?: string
@@ -20,7 +22,8 @@ export interface RunEvalOptions {
   outputPath?: string
 }
 
-const HELDOUT_IDS = new Set([
+const HELDOUT_IDS = { has: (id: string) => isHeldOut(id) }
+const _OLD_HELDOUT_IDS = new Set([
   'P03', 'P09', 'F04', 'F09', 'A02', 'A03', 'A04', 'A06', 'A07', 'A09',
 ])
 
@@ -298,8 +301,31 @@ export function formatEvalResultsMarkdown(
   }
 
   const nowIso = new Date().toISOString()
+  const registry = computePromptRegistry()
+  const frontMatter = [
+    '---',
+    `generated_at: ${nowIso}`,
+    `git_sha: ${gitSha}`,
+    'models:',
+    '  - claude-3-5-haiku-20241022',
+    '  - fast-adversarial-classifier',
+    'sets:',
+    '  - dev',
+    '  - heldout',
+    'prompt_hashes:',
+    ...registry.map((r) => `  ${r.id}: ${r.sha256}`),
+    'metrics:',
+    `  false_passes_non_pass: ${allMetrics.false_passes}`,
+    `  non_pass_cases: ${allMetrics.false_pass_denominator}`,
+    `  false_rejects: ${allMetrics.false_rejects}`,
+    `  escalation_rate: ${allMetrics.escalation_rate}`,
+    `  p95_latency_ms: ${allMetrics.latency_p95_ms}`,
+    `  mean_cost_usd: ${allMetrics.mean_cost_usd}`,
+    '---',
+    '',
+  ].join('\n')
 
-  let md = `# ProofPay Verifier Evaluation Results
+  let md = frontMatter + `\n# ProofPay Verifier Evaluation Results
 
 > **Evaluation Baseline & Benchmarks (Phase 8)**
 > **Evaluated Commit:** \`${gitSha}\` · **Timestamp:** ${nowIso}

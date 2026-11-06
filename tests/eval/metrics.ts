@@ -3,6 +3,8 @@
  * Implements phase-8-testing-and-hardening.md §8.1 & testing.md §4.
  */
 
+import { wilsonInterval, type ConfidenceInterval } from '@/lib/wilson'
+
 export interface EvalCaseResult {
   id: string
   group: 'P' | 'F' | 'A'
@@ -28,6 +30,7 @@ export interface EvalMetricsSummary {
   false_pass_denominator: number
   false_pass_rate: number
   rule_of_three_upper_bound: number
+  false_pass_wilson: ConfidenceInterval
 
   false_rejects: number
   false_reject_denominator: number
@@ -97,6 +100,7 @@ export function computeMetrics(results: EvalCaseResult[]): EvalMetricsSummary {
       false_pass_denominator: 0,
       false_pass_rate: 0,
       rule_of_three_upper_bound: 0,
+      false_pass_wilson: { center: 0, low: 0, high: 0, rule_of_three_upper: 0 },
       false_rejects: 0,
       false_reject_denominator: 0,
       false_reject_rate: 0,
@@ -160,6 +164,7 @@ export function computeMetrics(results: EvalCaseResult[]): EvalMetricsSummary {
     false_pass_denominator: falsePassDenominator,
     false_pass_rate: falsePassDenominator > 0 ? falsePasses / falsePassDenominator : 0,
     rule_of_three_upper_bound: computeRuleOfThree(falsePassDenominator),
+    false_pass_wilson: wilsonInterval(falsePasses, falsePassDenominator),
     false_rejects: falseRejects,
     false_reject_denominator: falseRejectDenominator,
     false_reject_rate: falseRejectDenominator > 0 ? falseRejects / falseRejectDenominator : 0,
