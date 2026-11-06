@@ -6,7 +6,7 @@ import { env } from '@/server/config/env'
 import { logger } from '@/server/util/logger'
 import { paypalFetch } from './client'
 import { getDb, lockContract, type Tx } from '@/server/db/client'
-import { contracts, milestones, paypalEvents } from '@/server/db/schema'
+import { contracts, milestones, paypalEvents, disputes } from '@/server/db/schema'
 import { eq, and, sql } from 'drizzle-orm'
 import { appendLedgerEvent } from '@/server/ledger/append'
 import { enqueueJob } from '@/server/jobs/queue'
@@ -349,6 +349,101 @@ export async function handlePayPalEvent(event: PayPalWebhookEvent): Promise<void
       }
 
       case 'PAYMENT.CAPTURE.REFUNDED': {
+        await appendLedgerEvent(tx, {
+          contractId,
+          type: 'WEBHOOK_RECEIVED',
+          actorType: 'paypal',
+          payload: { event_id: event.id, event_type: event.event_type },
+        })
+        break
+      }
+
+      case 'CUSTOMER.DISPUTE.CREATED':
+      case 'PAYMENT.CAPTURE.REVERSED': {
+        // -----------------------------------------------------------------------
+        // A buyer has opened a chargeback/dispute directly with PayPal.
+        // We must freeze the contract to prevent any further auto-releases until
+        // the dispute is resolved.
+        // -----------------------------------------------------------------------
+        const disputeId = (resource['dispute_id'] ?? resource['id'] ?? event.id) as string
+
+        // Idempotent upsert: only create dispute record if one doesn't already exist
+        const existingDispute = await tx
+          .select({ id: disputes.id })
+          .from(disputes)
+          .where(eq(disputes.paypal_dispute_id, disputeId))
+          .limit(1)
+
+        if (existingDispute.length === 0) {
+          await tx.insert(disputes).values({
+            contract_id: contractId,
+            milestone_id: resolved.milestoneId ?? null,
+            paypal_dispute_id: disputeId,
+            status: 'OPEN',
+          })
+        }
+
+        // Set funding_at_risk flag to freeze auto-release logic
+        if (!contract.funding_at_risk) {
+          await tx
+            .update(contracts)
+            .set({ funding_at_risk: true })
+            .where(eq(contracts.id, contractId))
+        }
+
+        await appendLedgerEvent(tx, {
+          contractId,
+          type: 'DISPUTE_OPENED',
+          actorType: 'paypal',
+          payload: {
+            event_type: event.event_type,
+            paypal_dispute_id: disputeId,
+            milestone_id: resolved.milestoneId ?? null,
+          },
+        })
+
+        await appendLedgerEvent(tx, {
+          contractId,
+          type: 'WEBHOOK_RECEIVED',
+          actorType: 'paypal',
+          payload: { event_id: event.id, event_type: event.event_type },
+        })
+        break
+      }
+
+      case 'CUSTOMER.DISPUTE.RESOLVED': {
+        // Dispute was resolved (buyer/seller agreed or PayPal ruled).
+        // Clear funding_at_risk if no other open disputes remain.
+        const disputeId = (resource['dispute_id'] ?? resource['id'] ?? event.id) as string
+
+        await tx
+          .update(disputes)
+          .set({ status: 'RESOLVED' })
+          .where(eq(disputes.paypal_dispute_id, disputeId))
+
+        // Check if any other open disputes remain for this contract
+        const openDisputes = await tx
+          .select({ id: disputes.id })
+          .from(disputes)
+          .where(and(eq(disputes.contract_id, contractId), eq(disputes.status, 'OPEN')))
+
+        if (openDisputes.length === 0 && contract.funding_at_risk) {
+          await tx
+            .update(contracts)
+            .set({ funding_at_risk: false })
+            .where(eq(contracts.id, contractId))
+        }
+
+        await appendLedgerEvent(tx, {
+          contractId,
+          type: 'DISPUTE_RESOLVED',
+          actorType: 'paypal',
+          payload: {
+            paypal_dispute_id: disputeId,
+            remaining_open: openDisputes.length,
+          },
+        })
+
         await appendLedgerEvent(tx, {
           contractId,
           type: 'WEBHOOK_RECEIVED',

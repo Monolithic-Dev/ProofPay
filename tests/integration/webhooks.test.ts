@@ -8,7 +8,7 @@ import { http, HttpResponse } from 'msw'
 import { eq, and } from 'drizzle-orm'
 import { getDb } from '@/server/db/client'
 import { resetDb, makeUser, makeContractFixture, checkDbActive } from './helpers/db'
-import { contracts, milestones, ledger_events, paypalEvents } from '@/server/db/schema'
+import { contracts, milestones, ledger_events, paypalEvents, disputes } from '@/server/db/schema'
 import { SANDBOX_BASE_URL, resetTokenCacheForTests } from '@/server/paypal/client'
 import { POST as webhookRoute } from '@/app/api/v1/webhooks/paypal/route'
 import { NextRequest } from 'next/server'
@@ -454,5 +454,112 @@ describe('PayPal Webhooks Integration (§5.7)', () => {
     const [mCheck] = await db.select().from(milestones).where(eq(milestones.id, m1!.id))
     expect(mCheck?.status).toBe('RELEASED')
     expect(mCheck?.capture_id).toBe('CAP-PERMANENT')
+  })
+
+  it('CUSTOMER.DISPUTE.CREATED sets funding_at_risk and writes dispute record', async () => {
+    if (!dbActive) return
+    const db = getDb()
+    const buyer = await makeUser('buyer')
+    const seller = await makeUser('seller')
+    const contract = await makeContractFixture('FUNDED', buyer.id, seller.id)
+
+    const event = {
+      id: 'WH-EVT-DISPUTE-1',
+      event_type: 'CUSTOMER.DISPUTE.CREATED',
+      resource: {
+        dispute_id: 'DISP-001-PAYPAL',
+        status: 'OPEN',
+        custom_id: contract.id,
+      },
+    }
+
+    const res = await webhookRoute(makeWebhookRequest(event))
+    expect(res.status).toBe(200)
+
+    // Contract should be flagged as funding_at_risk
+    const [updatedContract] = await db.select().from(contracts).where(eq(contracts.id, contract.id))
+    expect(updatedContract?.funding_at_risk).toBe(true)
+
+    // Dispute record should be created
+    const disputeRows = await db.select().from(disputes).where(eq(disputes.contract_id, contract.id))
+    expect(disputeRows).toHaveLength(1)
+    expect(disputeRows[0]?.paypal_dispute_id).toBe('DISP-001-PAYPAL')
+    expect(disputeRows[0]?.status).toBe('OPEN')
+
+    // Ledger should have DISPUTE_OPENED event
+    const ledgerDisputeEvents = await db
+      .select()
+      .from(ledger_events)
+      .where(and(eq(ledger_events.contract_id, contract.id), eq(ledger_events.type, 'DISPUTE_OPENED')))
+    expect(ledgerDisputeEvents).toHaveLength(1)
+  })
+
+  it('CUSTOMER.DISPUTE.CREATED is idempotent — repeated delivery does not create duplicate dispute row', async () => {
+    if (!dbActive) return
+    const db = getDb()
+    const buyer = await makeUser('buyer')
+    const seller = await makeUser('seller')
+    const contract = await makeContractFixture('FUNDED', buyer.id, seller.id)
+
+    const event = {
+      id: 'WH-EVT-DISPUTE-DUP',
+      event_type: 'CUSTOMER.DISPUTE.CREATED',
+      resource: {
+        dispute_id: 'DISP-002-DUP',
+        status: 'OPEN',
+        custom_id: contract.id,
+      },
+    }
+
+    // Deliver same webhook twice
+    await webhookRoute(makeWebhookRequest(event))
+    await webhookRoute(makeWebhookRequest(event))
+
+    const disputeRows = await db.select().from(disputes).where(eq(disputes.contract_id, contract.id))
+    // Must only have one dispute record despite two deliveries
+    expect(disputeRows).toHaveLength(1)
+  })
+
+  it('CUSTOMER.DISPUTE.RESOLVED clears funding_at_risk when no other disputes remain', async () => {
+    if (!dbActive) return
+    const db = getDb()
+    const buyer = await makeUser('buyer')
+    const seller = await makeUser('seller')
+    const contract = await makeContractFixture('FUNDED', buyer.id, seller.id)
+
+    // First create a dispute
+    const createEvent = {
+      id: 'WH-EVT-DISPUTE-CREATE',
+      event_type: 'CUSTOMER.DISPUTE.CREATED',
+      resource: {
+        dispute_id: 'DISP-003-RESOLVE',
+        custom_id: contract.id,
+      },
+    }
+    await webhookRoute(makeWebhookRequest(createEvent))
+
+    // Confirm funding_at_risk is set
+    const [afterCreate] = await db.select().from(contracts).where(eq(contracts.id, contract.id))
+    expect(afterCreate?.funding_at_risk).toBe(true)
+
+    // Now resolve the dispute
+    const resolveEvent = {
+      id: 'WH-EVT-DISPUTE-RESOLVE',
+      event_type: 'CUSTOMER.DISPUTE.RESOLVED',
+      resource: {
+        dispute_id: 'DISP-003-RESOLVE',
+        custom_id: contract.id,
+      },
+    }
+    const res = await webhookRoute(makeWebhookRequest(resolveEvent))
+    expect(res.status).toBe(200)
+
+    // funding_at_risk should be cleared
+    const [afterResolve] = await db.select().from(contracts).where(eq(contracts.id, contract.id))
+    expect(afterResolve?.funding_at_risk).toBe(false)
+
+    // Dispute row should be RESOLVED
+    const disputeRows = await db.select().from(disputes).where(eq(disputes.paypal_dispute_id, 'DISP-003-RESOLVE'))
+    expect(disputeRows[0]?.status).toBe('RESOLVED')
   })
 })
