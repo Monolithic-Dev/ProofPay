@@ -62,3 +62,4 @@ export function safeRedirectPath(next: string | null | undefined): string {
 
   return trimmed
 }
+

@@ -40,3 +40,4 @@ export function buildCspHeader(options?: CspHeaderOptions): { headerName: string
 
   return { headerName, headerValue, nonce }
 }
+

@@ -132,3 +132,4 @@ export function validateAndConsumeFundingState(params: {
   target.usedAt = now
   return { valid: true, record: target }
 }
+
