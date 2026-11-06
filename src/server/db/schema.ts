@@ -372,6 +372,20 @@ export const demo_runs = pgTable('demo_runs', {
 })
 
 // ---------------------------------------------------------------------------
+// 3.12.1 demo_pool (AIP-13: Pre-authorized demo contracts for 90s express judge lane)
+// ---------------------------------------------------------------------------
+export const demo_pool = pgTable('demo_pool', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  contract_id: uuid('contract_id').references(() => contracts.id).notNull(),
+  status: text('status').notNull().default('AVAILABLE'), // AVAILABLE | IN_USE | CONSUMED
+  authorization_expires_at: timestamptz('authorization_expires_at'),
+  claimed_by: uuid('claimed_by').references(() => users.id),
+  claimed_at: timestamptz('claimed_at'),
+  created_at: timestamptz('created_at').notNull().defaultNow(),
+})
+
+
+// ---------------------------------------------------------------------------
 // 3.13 disputes [C]
 // ---------------------------------------------------------------------------
 export const disputes = pgTable('disputes', {
@@ -762,3 +776,6 @@ export type NewServiceAccount = typeof service_accounts.$inferInsert
 export type SupportTicket = typeof support_tickets.$inferSelect
 export type PaypalConnection = typeof paypal_connections.$inferSelect
 
+
+export type DemoPool = typeof demo_pool.$inferSelect
+export type NewDemoPool = typeof demo_pool.$inferInsert

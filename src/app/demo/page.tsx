@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { JudgePanel } from '@/components/judge/JudgePanel'
 import { PageShell } from '@/components/common/PageShell'
-import { FlaskConical, ArrowLeft, ShieldCheck, Sparkles } from 'lucide-react'
+import { FlaskConical, ArrowLeft, Zap, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react'
 
 export default function DemoPlaygroundPage() {
   return (
@@ -31,23 +31,51 @@ export default function DemoPlaygroundPage() {
           </p>
         </div>
 
-        <Link
-          href="/contracts"
-          className="px-4 py-2 rounded-lg bg-brand text-white text-xs font-medium hover:opacity-95 transition-opacity"
-        >
-          Open App Workspace →
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/demo/express"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-brand text-white text-xs font-bold hover:bg-brand-hover transition-colors shadow-sm"
+          >
+            <Zap className="w-3.5 h-3.5 fill-white" />
+            <span>90s Express Lane</span>
+          </Link>
+          <Link
+            href="/contracts"
+            className="px-3.5 py-2 rounded-lg bg-surface border border-border text-text text-xs font-medium hover:bg-surface-2 transition-colors"
+          >
+            App Workspace →
+          </Link>
+        </div>
       </div>
 
-      {/* Notice Banner */}
-      <div className="p-4 rounded-xl bg-surface border border-border flex items-start gap-3 text-xs text-muted">
-        <FlaskConical className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
-        <div>
-          <strong className="font-semibold text-text block">Dedicated Hackathon Testbench</strong>
-          <span>
-            This playground runs isolated sandbox scenarios. Any action taken here creates real cryptographic ledger events and exercises the live PayPal v2 order endpoints.
-          </span>
+      {/* Express Lane Callout for Judges */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-brand/10 via-surface to-accent/10 border border-brand/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="p-2 rounded-xl bg-brand/10 text-brand flex-shrink-0 mt-0.5">
+            <Zap className="w-5 h-5 fill-brand text-brand" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <strong className="text-sm font-bold text-text">
+                Hackathon Judge 90-Second Express Sandbox
+              </strong>
+              <span className="px-2 py-0.5 rounded bg-brand/10 text-brand text-[10px] font-mono font-bold">
+                PRE-AUTHORIZED
+              </span>
+            </div>
+            <p className="text-xs text-muted mt-1 max-w-2xl leading-relaxed">
+              Experience the entire ProofPay payment capture flow in &lt; 90 seconds. Uses pre-authorized PayPal sandbox holds funded by the ProofPay team — no personal PayPal sandbox login required.
+            </p>
+          </div>
         </div>
+
+        <Link
+          href="/demo/express"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand text-white text-xs font-bold hover:bg-brand-hover transition-all flex-shrink-0 shadow-sm"
+        >
+          <span>Launch Express Lane</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       {/* Scenarios and Persona Switcher */}

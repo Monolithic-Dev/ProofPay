@@ -94,21 +94,7 @@ export function JudgePanel({ className = '' }: { className?: string }) {
   }
 
   const handleLaunchExpressLane = async () => {
-    try {
-      setIsLaunchingExpress(true)
-      setExpressError(null)
-      const res = await api.runScenario('happy_path')
-      if (res?.contract_id) {
-        router.push(`/contracts/${res.contract_id}`)
-      } else {
-        router.push('/contracts')
-      }
-    } catch (err: any) {
-      console.error('Express lane error:', err)
-      setExpressError(err.message || 'Express lane execution failed')
-    } finally {
-      setIsLaunchingExpress(false)
-    }
+    router.push('/demo/express')
   }
 
   return (

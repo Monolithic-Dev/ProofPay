@@ -18,6 +18,7 @@ const ScenarioNameSchema = z.enum([
   'injection_attack',
   'capture_declined',
   'silent_buyer_autorelease',
+  'express_happy_path',
 ])
 
 export const POST = apiHandler(

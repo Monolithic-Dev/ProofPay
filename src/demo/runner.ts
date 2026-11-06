@@ -23,6 +23,7 @@ import { rejectThenPassScenario } from './scenarios/reject_then_pass'
 import { injectionAttackScenario } from './scenarios/injection_attack'
 import { captureDeclinedScenario } from './scenarios/capture_declined'
 import { silentBuyerAutoreleaseScenario } from './scenarios/silent_buyer_autorelease'
+import { expressHappyPathScenario } from './scenarios/express_happy_path'
 
 const log = logger.child({ module: 'demo:runner' })
 
@@ -33,6 +34,7 @@ const SCENARIO_REGISTRY: Record<string, ScenarioDefinition> = {
   injection_attack: injectionAttackScenario,
   capture_declined: captureDeclinedScenario,
   silent_buyer_autorelease: silentBuyerAutoreleaseScenario,
+  express_happy_path: expressHappyPathScenario,
 }
 
 export function registerScenario(scenario: ScenarioDefinition) {
