@@ -215,7 +215,10 @@ export async function runVerificationPipeline(params: RunVerificationPipelinePar
                 .limit(1)
 
               if (priorSub) {
+                // Sanitize historical context: cap length to 4000 chars and strip zero-width characters (Finding A-2)
                 contextArtifacts[pm.milestone_key] = priorSub.content_text
+                  .slice(0, 4000)
+                  .replace(/[\u200B-\u200F\u202A-\u202E\u2060\uFEFF]/g, '')
               }
             }
           }
