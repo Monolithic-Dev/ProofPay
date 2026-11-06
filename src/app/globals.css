@@ -61,3 +61,36 @@ code, pre {
     scroll-behavior: auto !important;
   }
 }
+
+/* Sleek AG Grid Customization */
+.ag-theme-quartz {
+  --ag-background-color: var(--surface);
+  --ag-foreground-color: var(--text);
+  --ag-border-color: var(--border);
+  --ag-secondary-border-color: var(--border);
+  --ag-header-background-color: var(--surface-2);
+  --ag-header-foreground-color: var(--text);
+  --ag-header-column-resize-handle-color: var(--border);
+  --ag-odd-row-background-color: transparent;
+  --ag-row-hover-color: var(--surface-2);
+  --ag-selected-row-background-color: rgba(var(--brand-rgb), 0.08);
+  --ag-font-family: var(--font-inter);
+  --ag-font-size: 12px;
+  --ag-grid-size: 6px;
+  --ag-cell-horizontal-padding: 14px;
+  --ag-header-height: 42px;
+  --ag-row-height: 46px;
+  --ag-borders: solid 1px;
+  --ag-border-radius: 12px;
+  border-radius: 12px;
+}
+
+.dark .ag-theme-quartz {
+  --ag-background-color: var(--surface);
+  --ag-foreground-color: var(--text);
+  --ag-border-color: var(--border);
+  --ag-header-background-color: var(--surface-2);
+  --ag-header-foreground-color: var(--text);
+  --ag-row-hover-color: var(--surface-2);
+  --ag-selected-row-background-color: rgba(59, 130, 246, 0.15);
+}
