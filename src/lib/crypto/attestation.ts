@@ -50,6 +50,19 @@ export function generateEd25519KeyPair() {
   })
 }
 
+let defaultAuthorityKeypair: { publicKey: string; privateKey: string } | null = null
+
+export function getOrCreateAuthorityKeyPair(): { publicKey: string; privateKey: string } {
+  if (!defaultAuthorityKeypair) {
+    defaultAuthorityKeypair = generateEd25519KeyPair()
+  }
+  return defaultAuthorityKeypair
+}
+
+export function createSignedDecision(payload: DecisionAttestationPayload): SignedDecisionAttestation {
+  const { publicKey, privateKey } = getOrCreateAuthorityKeyPair()
+  return signDecision(payload, privateKey, publicKey)
+}
 /** Signs a decision attestation using an Ed25519 private key */
 export function signDecision(
   payload: DecisionAttestationPayload,

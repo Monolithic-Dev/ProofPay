@@ -4,7 +4,8 @@ import {
   signDecision,
   verifyDecision,
   buildMerkleTree,
-  verifyInclusionProof,
+  createSignedDecision,
+  getOrCreateAuthorityKeyPair,
 } from '@/lib/crypto/attestation'
 
 describe('Signed Decision Attestations & Merkle Transparency Log (F1)', () => {
@@ -30,6 +31,25 @@ describe('Signed Decision Attestations & Merkle Transparency Log (F1)', () => {
     expect(verifyDecision(tampered)).toBe(false)
   })
 
+  it('generates authority keypair and creates verifiable attestations via createSignedDecision', () => {
+    const authority = getOrCreateAuthorityKeyPair()
+    expect(authority.publicKey).toContain('BEGIN PUBLIC KEY')
+
+    const payload = {
+      contract_id: 'c7777777-1111-2222-3333-444444444444',
+      milestone_key: 'm2',
+      decision: 'PASS' as const,
+      criteria_hash: 'b'.repeat(64),
+      timestamp_iso: new Date().toISOString(),
+      authority_id: 'proofpay-ed25519-authority-v1',
+    }
+
+    const signed = createSignedDecision(payload)
+    expect(signed.signature).toBeDefined()
+    expect(signed.public_key).toBe(authority.publicKey)
+    expect(verifyDecision(signed)).toBe(true)
+  })
+
   it('builds Merkle tree and verifies single-leaf inclusion', () => {
     const leaves = ['leaf_a'.repeat(8), 'leaf_b'.repeat(8)]
     const tree = buildMerkleTree(leaves)
@@ -38,4 +58,3 @@ describe('Signed Decision Attestations & Merkle Transparency Log (F1)', () => {
     expect(tree.root.length).toBe(64)
   })
 })
-

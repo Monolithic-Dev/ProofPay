@@ -9,6 +9,8 @@ import { eq } from 'drizzle-orm'
 import { withTx, lockContract } from '@/server/db/client'
 import { milestones, contracts } from '@/server/db/schema'
 import type { MilestoneStatus } from '@/shared/types'
+import { createHash } from 'crypto'
+import { createSignedDecision } from '@/lib/crypto/attestation'
 import { assertMilestoneTransition } from '@/server/contracts/transitions'
 import { appendLedgerEvent } from '@/server/ledger/append'
 import { enqueueJob } from '@/server/jobs/queue'
@@ -92,6 +94,18 @@ export async function applyDecision(params: ApplyDecisionParams): Promise<ApplyD
       })
     }
 
+    // Generate Ed25519 decision attestation (Finding P1 / Next Level Strategy F1)
+    const attestation = createSignedDecision({
+      contract_id: contractId,
+      milestone_key: milestone.milestone_key,
+      decision,
+      criteria_hash: createHash('sha256')
+        .update(`${contractId}:${milestone.milestone_key}:${verificationId}`)
+        .digest('hex'),
+      timestamp_iso: new Date().toISOString(),
+      authority_id: 'proofpay-ed25519-authority-v1',
+    })
+
     // -------------------------------------------------------------------------
     // PASS: Transition to PASSED & enqueue RELEASE_MILESTONE
     // -------------------------------------------------------------------------
@@ -111,6 +125,7 @@ export async function applyDecision(params: ApplyDecisionParams): Promise<ApplyD
           milestone_id: milestoneId,
           milestone_key: milestone.milestone_key,
           verification_id: verificationId,
+          attestation,
         },
       })
 
@@ -160,6 +175,7 @@ export async function applyDecision(params: ApplyDecisionParams): Promise<ApplyD
             reasons,
             revisions_used: newRevisionsUsed,
             max_revisions: milestone.max_revisions,
+            attestation,
           },
         })
 
@@ -201,6 +217,7 @@ export async function applyDecision(params: ApplyDecisionParams): Promise<ApplyD
           reasons,
           revisions_used: newRevisionsUsed,
           max_revisions: milestone.max_revisions,
+          attestation,
         },
       })
 
@@ -240,6 +257,7 @@ export async function applyDecision(params: ApplyDecisionParams): Promise<ApplyD
           verification_id: verificationId,
           reasons,
           auto_release_at: autoReleaseAt.toISOString(),
+          attestation,
         },
       })
 

@@ -92,7 +92,9 @@ describe('applyDecision Integration', () => {
       .select()
       .from(ledger_events)
       .where(eq(ledger_events.contract_id, contract.id))
-    expect(events.some((e) => e.type === 'MILESTONE_PASSED')).toBe(true)
+    const passedEvent = events.find((e) => e.type === 'MILESTONE_PASSED')
+    expect(passedEvent).toBeDefined()
+    expect((passedEvent?.payload as any)?.attestation?.signature).toBeDefined()
   })
 
   it('REJECT increments revisions_used and transitions to REJECTED when under max', async () => {
