@@ -3,10 +3,11 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { User, Users, Building, CreditCard, KeyRound, Zap } from 'lucide-react'
+import { User, Users, Building, CreditCard, KeyRound, Zap, Shield } from 'lucide-react'
 
 const navItems = [
   { href: '/settings', label: 'Profile & Security', icon: User, exact: true },
+  { href: '/settings/security-center', label: 'Security Center', icon: Shield },
   { href: '/settings/team', label: 'Team & Roles', icon: Users },
   { href: '/settings/workspace', label: 'Workspace Policy', icon: Building },
   { href: '/settings/payments', label: 'Payments & PayPal', icon: CreditCard },

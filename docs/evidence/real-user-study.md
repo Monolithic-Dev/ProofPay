@@ -60,3 +60,4 @@ We conducted a controlled experiment with **5 technical participants** evaluatin
   4. Unit test suite verified CSV schema and row count = 500 in 2.1s.
   5. PayPal partial capture executed automatically for \$35.00.
   6. Zero human intervention required for settlement.
+

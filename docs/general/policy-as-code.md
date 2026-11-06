@@ -50,3 +50,4 @@ In ProofPay, settlement decisions are evaluated through a strict cascade of prio
 1. **AI Never Overrides Failed Code:** If a single deterministic check fails, an LLM score of 100% cannot trigger a pass.
 2. **Zero Custody:** ProofPay never moves funds into intermediate platform accounts.
 3. **Double-Spend Protection:** Idempotency keys bound to contract and funding attempt (`pp:{contract}:fund:{attempt}`) prevent replay captures.
+

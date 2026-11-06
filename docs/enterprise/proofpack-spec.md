@@ -93,3 +93,4 @@ An independent verifier verifies a ProofPack in 5 steps:
 5. **Ledger Hash Chain:** Verify `previousHash` linking across all ledger events leading to `PAYMENT_CAPTURED`.
 
 When all 5 checks succeed, the settlement is mathematically proven.
+

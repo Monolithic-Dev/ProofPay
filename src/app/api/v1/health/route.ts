@@ -10,6 +10,7 @@ import { kvGet } from '@/server/db/repos/kv.repo'
 import { jobs } from '@/server/db/schema'
 import { getAccessToken } from '@/server/paypal/client'
 import { env } from '@/server/config/env'
+import { getLastCanaryResult } from '@/server/canary/last-run'
 
 export async function GET() {
   const db = getDb()
@@ -93,6 +94,10 @@ export async function GET() {
       pending_jobs: pendingJobs,
       stuck_jobs: stuckJobs,
       llm_budget: llmBudget,
+      llm: {
+        ...llmBudget,
+        last_canary: getLastCanaryResult(),
+      },
       paypal: paypalStatus,
       worker: {
         last_heartbeat: workerHeartbeat,

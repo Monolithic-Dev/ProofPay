@@ -27,7 +27,10 @@
     "typecheck": "tsc --noEmit",
     "spike:paypal": "tsx scripts/paypal-spike.ts",
     "test:load": "tsx scripts/smoke-load.ts",
-    "check:copy": "node scripts/check-copy.mjs"
+    "check:copy": "node scripts/check-copy.mjs",
+    "canary": "tsx scripts/run-canary.ts",
+    "bench": "tsx scripts/score-bench.ts --score",
+    "attacks": "tsx scripts/run-external-attacks.ts --run"
   },
   "dependencies": {
     "next": "15.3.3",

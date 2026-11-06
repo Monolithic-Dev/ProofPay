@@ -43,3 +43,4 @@ drizzle/meta/
 
 # Misc
 *.local
+.canary_last_run.json
