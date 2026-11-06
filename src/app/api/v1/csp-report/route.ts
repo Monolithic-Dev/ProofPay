@@ -32,3 +32,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to process report' }, { status: 400 })
   }
 }
+
