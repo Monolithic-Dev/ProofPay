@@ -1,0 +1,26 @@
+[
+  {
+    "id": "compile",
+    "version": "v1",
+    "file": "src/server/ai/prompts/compile.v1.ts",
+    "sha256": "479c7cfae86eef355d2d51684d937a3bb483380cd8df29978676b4100218c05c"
+  },
+  {
+    "id": "rubric",
+    "version": "v1",
+    "file": "src/server/ai/prompts/rubric.v1.ts",
+    "sha256": "e10a83c0ae9f0de719f2e179b460861eb42d46af770df183b01807a73f705103"
+  },
+  {
+    "id": "adversarial",
+    "version": "v1",
+    "file": "src/server/verify/adversarial.ts",
+    "sha256": "ff398ffdaeca103a2d097b2cf72df7376677bf262e4d8180eaf1de14ac16f236"
+  },
+  {
+    "id": "policy",
+    "version": "v1",
+    "file": "src/server/verify/policy.ts",
+    "sha256": "5e13ed9afe2d8d9ab925ddd438b75755724e1ee1d92da67472b5852af830d01d"
+  }
+]
