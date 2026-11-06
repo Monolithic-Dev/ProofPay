@@ -126,3 +126,4 @@ describe('PLAT-12 URLs, Redirects, and Email Abuse Controls', () => {
     })
   })
 })
+

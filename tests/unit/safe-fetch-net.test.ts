@@ -42,3 +42,4 @@ describe('PLAT-1 SSRF Safe Fetch (src/server/net/safe-fetch.ts)', () => {
     ).rejects.toThrow(/resolved to private\/blocked IP/)
   })
 })
+

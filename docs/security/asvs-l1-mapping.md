@@ -38,3 +38,4 @@ This document maps ProofPay's security architecture against **32 selected OWASP 
 | **V13.1.1** | API | API keys support CIDR allow-listing and automatic rotation. | **Implemented** | `src/server/auth/api-key-hardening.ts` | `tests/unit/api-key-hardening.test.ts` |
 | **V13.2.1** | API | Abuse-limiting and sliding-window rate limiting. | **Implemented** | `src/server/util/rate-limit.ts` | `tests/unit/rate-limit.test.ts` |
 | **V14.4.1** | Configuration | Content Security Policy (CSP) with nonces enforced. | **Implemented** | `src/server/security/csp.ts` | `tests/unit/csp.test.ts` |
+

@@ -20,3 +20,4 @@ npx vitest run tests/unit/ip.test.ts tests/unit/safe-fetch-net.test.ts
 echo "========================================================"
 echo "All self-audit checks passed successfully!"
 echo "========================================================"
+

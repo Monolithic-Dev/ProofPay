@@ -27,3 +27,4 @@ describe('PLAT-11 CSP with Nonce (src/server/security/csp.ts)', () => {
     expect(headerName).toBe('Content-Security-Policy-Report-Only')
   })
 })
+

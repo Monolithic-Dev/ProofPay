@@ -26,3 +26,4 @@ SET LOCAL app.bypass_rls = 'on'
 | `src/server/paypal/webhooks.ts` | PayPal Webhook ingestion | Inbound webhooks from PayPal are signed by PayPal, not a logged-in user session. Must look up contracts by external PayPal Order ID across all tenants. |
 | `src/server/db/migrations/*` | Database schema migrations | Schema definition and DDL migrations run with administrative database credentials. |
 | `src/server/jobs/handlers/auto-release.ts` | Scheduled timer auto-capture | Runs unattended on timer expiry; evaluates deliverable integrity across tenant contracts. |
+

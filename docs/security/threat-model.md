@@ -28,3 +28,4 @@ This document provides a systematic **STRIDE** threat model across all architect
 1. **Zero Fund Custody:** ProofPay never holds user funds in its own bank accounts. All funds remain in PayPal under `AUTHORIZE` holds.
 2. **Deterministic Code Decides:** LLMs are never permitted to authorize payment captures. Pure deterministic code and unit test exit codes govern settlement.
 3. **Cryptographic Immutability:** Deliverables and milestone specs are sealed with SHA-256 digests and attested via RFC 3161 timestamps.
+

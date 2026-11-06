@@ -81,3 +81,4 @@ describe('PLAT-6 Security Posture Scoring (src/shared/security.ts)', () => {
     expect(posture.recommendations.some((r) => r.id === 'rec_step_up')).toBe(true)
   })
 })
+
