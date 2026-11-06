@@ -19,10 +19,10 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f525247833795be322dca4 # v4.0.2
+        uses: actions/setup-node@101b3474143230c3562bd21f0b3c3f8254784571 # v4.0.2
         with:
           node-version: 20
           cache: 'npm'
@@ -38,7 +38,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@48ab28a6f5dab2a725c1001912937b960f8922b9 # v3.24.6
@@ -55,7 +55,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -71,10 +71,10 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f525247833795be322dca4 # v4.0.2
+        uses: actions/setup-node@101b3474143230c3562bd21f0b3c3f8254784571 # v4.0.2
         with:
           node-version: 20
 
@@ -82,7 +82,7 @@ jobs:
         run: npx @cyclonedx/cyclonedx-npm --omit dev --output-file sbom.json
 
       - name: Upload SBOM Artifact
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sbom-cyclonedx
           path: sbom.json
@@ -95,10 +95,10 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f525247833795be322dca4 # v4.0.2
+        uses: actions/setup-node@101b3474143230c3562bd21f0b3c3f8254784571 # v4.0.2
         with:
           node-version: 20
 
@@ -113,10 +113,10 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f525247833795be322dca4 # v4.0.2
+        uses: actions/setup-node@101b3474143230c3562bd21f0b3c3f8254784571 # v4.0.2
         with:
           node-version: 20
           cache: 'npm'
