@@ -254,7 +254,37 @@ export const ROUTES: RouteSpec[] = [
     auth: 'user',
     requireParty: true,
     description: 'Get verification detail report',
-    },
+  },
+  {
+    path: 'abuse-reports',
+    methods: ['POST'],
+    auth: 'none',
+    description: 'Submit an abuse / phishing / spam report',
+  },
+  {
+    path: 'auth/step-up',
+    methods: ['POST'],
+    auth: 'none',
+    description: 'Verify step-up MFA challenge',
+  },
+  {
+    path: 'csp-report',
+    methods: ['POST'],
+    auth: 'none',
+    description: 'Content Security Policy violation reporting endpoint',
+  },
+  {
+    path: 'orgs/current/risk-events',
+    methods: ['GET'],
+    auth: 'none',
+    description: 'Get recent org risk events',
+  },
+  {
+    path: 'orgs/current/security',
+    methods: ['GET'],
+    auth: 'none',
+    description: 'Get org security posture score and breakdown',
+  },
     {
       path: 'auth/login',
       methods: ['POST'],

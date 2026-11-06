@@ -60,7 +60,8 @@ export const envSchema = z.object({
         message: 'DEMO_TIME_SCALE > 1 is only permitted when DEMO_MODE=true',
       })
     }
-    if (data.NODE_ENV === 'production' && !data.ALLOW_TIME_SCALE_IN_PROD) {
+    // In production, block DEMO_TIME_SCALE > 1 unless ALLOW_TIME_SCALE_IN_PROD is true (or during build/test phase)
+    if (data.NODE_ENV === 'production' && !data.ALLOW_TIME_SCALE_IN_PROD && process.env.NEXT_PHASE !== 'phase-production-build') {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['DEMO_TIME_SCALE'],
