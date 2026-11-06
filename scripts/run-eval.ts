@@ -35,6 +35,18 @@ process.env['SESSION_SECRET'] =
   process.env['SESSION_SECRET'] || 'mock_test_session_secret_min_32_characters_long'
 process.env['DEMO_MODE'] = process.env['DEMO_MODE'] || 'true'
 
+// Check if mock/offline mode is explicitly requested
+const isMockRequested =
+  process.argv.includes('--mock') ||
+  process.argv.includes('--offline') ||
+  process.env['LLM_TRANSPORT'] === 'fake' ||
+  process.env['MOCK_LLM'] === 'true'
+
+if (isMockRequested) {
+  process.env['LLM_TRANSPORT'] = 'fake'
+  process.env['ANTHROPIC_API_KEY'] = 'mock_eval_anthropic_key'
+}
+
 // Dynamically import and execute eval harness
 import('../tests/eval/run')
   .then(({ main }) => main())

@@ -39,7 +39,19 @@ export const HEURISTIC_PATTERNS: Array<{ name: string; regex: RegExp }> = [
   },
   {
     name: 'multilingual_override',
-    regex: /(ignora|ignorar)\s+(todas|las)\s+(reglas|instrucciones)/i,
+    regex: /(ignora|ignorar|ignorer|ignoriere)\s+(?:(?:todas|las|toutes|les|alle|tutte)\s+)*(?:reglas|instrucciones|instructions|anweisungen|istruzioni|instruções)/i,
+  },
+  {
+    name: 'delimiter_escape',
+    regex: /<\/?(deliverable|system|instruction|user_input|context|prompt)>/i,
+  },
+  {
+    name: 'system_tag_injection',
+    regex: /\[\/?(SYSTEM|ADMIN|PROMPT|OVERRIDE)\]/i,
+  },
+  {
+    name: 'base64_payload_directive',
+    regex: /(?:base64\s*[,:]\s*|eval\s*\(\s*atob\s*\()([A-Za-z0-9+/]{28,}={0,2})/i,
   },
 ]
 
