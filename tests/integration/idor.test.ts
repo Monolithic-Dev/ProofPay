@@ -249,6 +249,12 @@ export const ROUTES: RouteSpec[] = [
     description: 'SSE stream for scenario run events',
   },
   {
+    path: 'demo/express',
+    methods: ['GET', 'POST'],
+    auth: 'none',
+    description: 'AIP-13 Express Judge Lane pool claim and status',
+  },
+  {
     path: 'verifications/[vid]',
     methods: ['GET'],
     auth: 'user',
