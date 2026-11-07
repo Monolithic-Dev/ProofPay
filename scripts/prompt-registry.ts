@@ -30,7 +30,8 @@ export function computePromptRegistry(baseDir: string = process.cwd()): PromptRe
     const fullPath = path.join(baseDir, item.file)
     if (fs.existsSync(fullPath)) {
       const content = fs.readFileSync(fullPath, 'utf8')
-      const hash = crypto.createHash('sha256').update(content).digest('hex')
+      const normalized = content.replace(/\r\n/g, '\n')
+      const hash = crypto.createHash('sha256').update(normalized).digest('hex')
       registry.push({
         id: item.id,
         version: item.version,
