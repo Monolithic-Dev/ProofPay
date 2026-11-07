@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { GET, POST, SCENARIOS } from '@/app/api/v1/demo/tribunal/route'
+import { GET, POST } from '@/app/api/v1/demo/tribunal/route'
+import { SCENARIOS } from '@/shared/tribunal-data'
 import { NextRequest } from 'next/server'
 
 describe('Demo AI Dispute Tribunal API Route (/api/v1/demo/tribunal)', () => {
@@ -62,4 +63,3 @@ describe('Demo AI Dispute Tribunal API Route (/api/v1/demo/tribunal)', () => {
     expect(verdict.paypalPayload.method).toContain('void')
   })
 })
-

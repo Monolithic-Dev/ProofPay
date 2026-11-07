@@ -255,6 +255,24 @@ export const ROUTES: RouteSpec[] = [
     description: 'AIP-13 Express Judge Lane pool claim and status',
   },
   {
+    path: 'demo/mcp',
+    methods: ['GET', 'POST'],
+    auth: 'none',
+    description: 'Model Context Protocol (MCP) in-browser demo API',
+  },
+  {
+    path: 'demo/tribunal',
+    methods: ['GET', 'POST'],
+    auth: 'none',
+    description: 'Multi-Agent AI Dispute Tribunal arbitration endpoint',
+  },
+  {
+    path: 'demo/agent-wallet',
+    methods: ['GET', 'POST'],
+    auth: 'none',
+    description: 'PayPal Autonomous Agent Spend Policy and Wallet Guardrail',
+  },
+  {
     path: 'verifications/[vid]',
     methods: ['GET'],
     auth: 'user',

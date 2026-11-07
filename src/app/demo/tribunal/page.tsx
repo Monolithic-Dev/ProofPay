@@ -22,7 +22,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import Link from 'next/link'
-import { SCENARIOS, type DisputeScenario, type TribunalTurn } from '@/app/api/v1/demo/tribunal/route'
+import { SCENARIOS, type DisputeScenario, type TribunalTurn } from '@/shared/tribunal-data'
 
 export default function TribunalDemoPage() {
   const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(0)
@@ -296,7 +296,7 @@ export default function TribunalDemoPage() {
             </div>
 
             <p className="text-sm text-text leading-relaxed font-sans">
-              "{currentTurn.statement}"
+              &ldquo;{currentTurn.statement}&rdquo;
             </p>
 
             {currentTurn.citedEvidence && (
