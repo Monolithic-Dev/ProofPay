@@ -75,3 +75,4 @@ describe('Demo Agent Wallet Guardrail API Route (/api/v1/demo/agent-wallet)', ()
     expect(res.status).toBe(404)
   })
 })
+
