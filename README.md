@@ -18,7 +18,8 @@
 
 📖 **[Read the Complete End-to-End Implementation & Architecture Guide](docs/PROOFPAY_COMPLETE_GUIDE.md)** for a deep dive into every subsystem, API route, and security guardrail.  
 🤖 **[Read the Model Context Protocol (MCP) Agent Guide](docs/MCP-AGENT-GUIDE.md)** to connect Claude Desktop, Cursor, or autonomous LLMs.  
-⚡ **[Launch the 90-Second Express Judge Sandbox](/demo/express)** to test the full lifecycle with pre-authorized PayPal holds without logging into PayPal.
+⚡ **[Launch the 90-Second Express Judge Sandbox](/demo/express)** to test the full lifecycle with pre-authorized PayPal holds without logging into PayPal.  
+🧠 **[Launch the In-Browser MCP Agent Simulator](/demo/mcp)** to watch Claude & Gemini execute all 6 tools via JSON-RPC in under 60 seconds.
 
 ---
 
@@ -145,10 +146,11 @@ Explore 5 comprehensive scenarios with 4 personas (Sarah Buyer, Alex Seller, Pro
 
 ProofPay includes a fully functional Model Context Protocol server exposing 6 autonomous agent tools for Claude Desktop, Cursor, Gemini, and custom AI agents.
 
-```bash
-# Run MCP server locally via stdio
-npm run mcp:start
-```
+- **In-Browser Interactive Simulator:** Experience Claude & Gemini calling MCP tools with zero setup at **[`/demo/mcp`](/demo/mcp)**.
+- **Run Locally via stdio:**
+  ```bash
+  npm run mcp:start
+  ```
 
 Detailed setup guide and configuration snippets for Claude Desktop and Cursor are available in **[`docs/MCP-AGENT-GUIDE.md`](docs/MCP-AGENT-GUIDE.md)**.
 

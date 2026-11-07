@@ -201,6 +201,12 @@ export default function ExpressJudgePage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Link
+              href="/demo/mcp"
+              className="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 transition-colors flex items-center gap-1.5 shadow-sm"
+            >
+              <span>MCP Simulator →</span>
+            </Link>
             <span className="text-xs text-muted">Environment:</span>
             <span className="px-2.5 py-1 rounded-lg bg-surface border border-border text-xs font-mono font-medium text-text">
               PayPal v2 Sandbox

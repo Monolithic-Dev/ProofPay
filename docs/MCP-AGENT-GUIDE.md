@@ -1,7 +1,8 @@
 # ProofPay Model Context Protocol (MCP) Agent Guide
 
 > **Autonomous Agent Commerce on Verified PayPal Rails**  
-> Allows Claude, Cursor, Gemini, and custom LLM agents to negotiate milestone agreements, check deliverables, and coordinate payment settlements through ProofPay's MCP server.
+> Allows Claude, Cursor, Gemini, and custom LLM agents to negotiate milestone agreements, check deliverables, and coordinate payment settlements through ProofPay's MCP server.  
+> ⚡ **Short on time?** Test the **[In-Browser Interactive MCP Simulator](/demo/mcp)** to watch Claude & Gemini execute these tools in 30 seconds with 0 setup.
 
 ---
 
@@ -114,3 +115,4 @@ Claude executes `create_contract`:
 2. **Deterministic Precedence**: Code and regex rules run first. LLMs only provide advisory rubric review with required quote citations.
 3. **No Agent Payout Power**: Even if an autonomous agent is compromised, it cannot authorize payout or divert holds. Releases occur strictly when verification passes.
 4. **Idempotent Retries**: Replayed tool calls produce identical results with zero double-charging.
+

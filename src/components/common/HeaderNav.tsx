@@ -59,6 +59,14 @@ export function HeaderNav() {
       })}
 
       <Link
+        href="/demo/mcp"
+        className="px-2 py-1 rounded-md text-xs font-semibold bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/30 transition-colors flex items-center gap-1.5"
+      >
+        <Bot className="w-3 h-3" />
+        <span>MCP</span>
+      </Link>
+
+      <Link
         href="/demo"
         className="px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/30 transition-colors flex items-center gap-1.5"
       >
