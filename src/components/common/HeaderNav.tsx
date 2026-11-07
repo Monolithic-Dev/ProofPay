@@ -7,7 +7,7 @@ import { useCurrentUser } from '@/lib/query'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { NotificationBell } from '@/components/common/NotificationBell'
 import { CommandPalette } from '@/components/common/CommandPalette'
-import { User, Bot, Play } from 'lucide-react'
+import { User, Bot, Play, Scale, ShieldCheck } from 'lucide-react'
 
 export function HeaderNav() {
   const { data: user } = useCurrentUser()
@@ -67,6 +67,22 @@ export function HeaderNav() {
       </Link>
 
       <Link
+        href="/demo/tribunal"
+        className="px-2 py-1 rounded-md text-xs font-semibold bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 border border-indigo-500/30 transition-colors flex items-center gap-1.5"
+      >
+        <Scale className="w-3 h-3" />
+        <span>Tribunal</span>
+      </Link>
+
+      <Link
+        href="/demo/agent-wallet"
+        className="px-2 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 transition-colors flex items-center gap-1.5"
+      >
+        <ShieldCheck className="w-3 h-3" />
+        <span>Wallet</span>
+      </Link>
+
+      <Link
         href="/demo"
         className="px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/30 transition-colors flex items-center gap-1.5"
       >
@@ -83,8 +99,8 @@ export function HeaderNav() {
             href="/settings"
             className="flex items-center space-x-2 pl-2 text-xs text-muted hover:text-text transition-colors"
           >
-            <div className="w-7 h-7 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold text-xs uppercase border border-brand/20">
-              {user.display_name ? user.display_name.slice(0, 2) : 'ME'}
+            <div className="w-6 h-6 rounded-full bg-brand/10 text-brand border border-brand/20 flex items-center justify-center font-bold text-xs uppercase">
+              {user.email ? user.email.slice(0, 1) : <User className="w-3 h-3" />}
             </div>
           </Link>
         )}

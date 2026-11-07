@@ -142,12 +142,16 @@ Explore 5 comprehensive scenarios with 4 personas (Sarah Buyer, Alex Seller, Pro
 
 ---
 
-## 7. Model Context Protocol (MCP) Showcase
+## 7. Flagship AI & Agentic Commerce Showcases
 
-ProofPay includes a fully functional Model Context Protocol server exposing 6 autonomous agent tools for Claude Desktop, Cursor, Gemini, and custom AI agents.
+ProofPay includes four purpose-built interactive testbenches for hackathon evaluation:
 
-- **In-Browser Interactive Simulator:** Experience Claude & Gemini calling MCP tools with zero setup at **[`/demo/mcp`](/demo/mcp)**.
-- **Run Locally via stdio:**
+1. **In-Browser Interactive MCP Simulator ([`/demo/mcp`](/demo/mcp)):** Experience Claude & Gemini calling all 6 ProofPay MCP tools via JSON-RPC 2.0 to negotiate, fund holds, and prove deliverables with zero local setup.
+2. **Multi-Agent AI Dispute Tribunal ([`/demo/tribunal`](/demo/tribunal)):** Three autonomous LLM agents (Buyer Advocate `SentinelBot`, Seller Defense `LexiBot`, and Chief Arbitrator `JusticeBot`) debate ambiguous deliverables and emit binding PayPal v2 partial capture / void transactions.
+3. **PayPal Agent Spend Policy Guardrail ([`/demo/agent-wallet`](/demo/agent-wallet)):** Demonstrates how humans safely delegate PayPal spending authority to autonomous AI agents with bounded session holds, milestone caps, and prompt injection defense.
+4. **Offline Cryptographic Proof Pack Verifier ([`/verify`](/verify)):** 100% client-side WebCrypto SHA-256 verifier with drag-and-drop proof packs, tamper attack simulation, and certified PayPal Dispute Resolution Dossier generation.
+
+- **Run MCP Server Locally via stdio:**
   ```bash
   npm run mcp:start
   ```
