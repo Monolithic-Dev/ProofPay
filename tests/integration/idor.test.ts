@@ -32,6 +32,12 @@ export const ROUTES: RouteSpec[] = [
     description: 'System health check and feature flags',
   },
   {
+    path: 'metrics',
+    methods: ['GET'],
+    auth: 'none',
+    description: 'Prometheus metrics scrape endpoint for OpenTelemetry monitoring',
+  },
+  {
     path: 'auth/demo-login',
     methods: ['POST'],
     auth: 'none',
