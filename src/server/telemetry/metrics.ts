@@ -174,7 +174,7 @@ export const metrics = new PrometheusRegistry()
 metrics.registerCounter('proofpay_verifications_total', 'Total number of verification attempts processed')
 metrics.registerCounter('proofpay_captures_total', 'Total number of PayPal payment captures initiated')
 metrics.registerCounter('proofpay_adversarial_rejections_total', 'Total adversarial submissions detected and rejected')
-metrics.registerGauge('proofpay_active_contracts', 'Current number of active funded escrow contracts')
+metrics.registerGauge('proofpay_active_contracts', 'Current number of active funded PayPal authorization hold agreements')
 metrics.registerGauge('proofpay_worker_lag_seconds', 'Lag in seconds of background verification worker')
 metrics.registerGauge('proofpay_llm_budget_spent_usd', 'Cumulative LLM spend in USD')
 metrics.registerHistogram(
