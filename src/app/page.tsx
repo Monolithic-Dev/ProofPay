@@ -86,7 +86,7 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-7">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-2/80 backdrop-blur-md border border-border text-text text-xs font-semibold shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-muted">Zero-Custody Escrow · Powered by</span>
+            <span className="text-muted">Zero-Custody Authorization Hold (Not Escrow) · Powered by</span>
             <span className="font-bold text-text flex items-center gap-1">
               <span className="text-sky-500">PayPal</span> Rails
             </span>
