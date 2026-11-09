@@ -77,44 +77,64 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen gradient-mesh">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28 border-b border-border bg-gradient-to-b from-surface/40 via-surface/10 to-transparent">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-2 border border-border text-text text-xs font-medium">
+      <section className="relative overflow-hidden pt-16 pb-20 md:pt-28 md:pb-32 border-b border-border">
+        {/* Ambient Glow Orbs */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-tr from-sky-500/20 via-blue-500/15 to-purple-500/20 blur-[120px] rounded-full pointer-events-none -z-10" />
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-7">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-2/80 backdrop-blur-md border border-border text-text text-xs font-semibold shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Sandbox Test Environment • Real PayPal Rails</span>
+            <span className="text-muted">Zero-Custody Escrow · Powered by</span>
+            <span className="font-bold text-text flex items-center gap-1">
+              <span className="text-sky-500">PayPal</span> Rails
+            </span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-text leading-[1.1]">
-            Get paid for work that’s proven.
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-text leading-[1.08]">
+            Get paid for work that’s{' '}
+            <span className="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent">
+              proven.
+            </span>
           </h1>
 
-          <p className="max-w-2xl mx-auto text-base sm:text-lg text-muted leading-relaxed">
-            ProofPay secures the payment on PayPal before work starts and releases it milestone by
-            milestone when delivered work meets criteria both sides agreed. Humans and AI agents can
-            use it.
+          <p className="max-w-2xl mx-auto text-base sm:text-lg text-muted leading-relaxed font-normal">
+            ProofPay locks authorized funds on PayPal before work starts, releasing payment milestone by
+            milestone only after deliverables meet cryptographic criteria verified by deterministic analyzers
+            and dual-LLM consensus.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4">
             <Link
-              href="/app"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-semibold text-sm shadow-md shadow-brand/20 transition-all"
+              href="/demo/express"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              <span>Create a free sandbox workspace</span>
+              <span>Launch 90-Second Express Sandbox</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/how-it-works"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-surface border border-border text-text font-medium hover:bg-surface-2 transition-colors text-sm shadow-sm"
+              href="/auth/login"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-surface/90 backdrop-blur-sm border border-border text-text font-bold hover:bg-surface-2 transition-all text-sm shadow-sm hover:scale-[1.02] active:scale-[0.98]"
             >
-              See how it works
+              <span>Enterprise Sign In</span>
             </Link>
           </div>
 
-          <p className="text-xs text-muted pt-1">
-            PayPal authorization hold, not escrow. Sandbox only: no real money.
-          </p>
+          <div className="flex items-center justify-center gap-6 pt-3 text-xs text-muted font-medium">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              Zero-Custody Protocol
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              Machine-Verifiable ProofPacks™
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              RFC 3161 External TSA
+            </span>
+          </div>
         </div>
       </section>
 

@@ -24,14 +24,19 @@ export default function RootLayout({
           Skip to main content
         </a>
         <QueryProvider>
-          <header className="border-b border-border bg-surface/80 backdrop-blur-sm sticky top-0 z-40">
+          <header className="border-b border-border bg-surface/85 backdrop-blur-md sticky top-0 z-40 shadow-sm transition-all">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Link href="/" className="font-bold text-lg tracking-tight text-brand">
-                  ProofPay
+                <Link href="/" className="flex items-center space-x-2 group">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-600 via-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                    <span className="text-white font-black text-sm tracking-tighter">PP</span>
+                  </div>
+                  <span className="font-extrabold text-lg tracking-tight text-text">
+                    Proof<span className="text-brand dark:text-sky-400">Pay</span>
+                  </span>
                 </Link>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-surface-2 text-muted border border-border">
-                  Sandbox
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  PayPal Sandbox v2
                 </span>
               </div>
               <HeaderNav />
