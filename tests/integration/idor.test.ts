@@ -277,7 +277,13 @@ export const ROUTES: RouteSpec[] = [
     methods: ['GET', 'POST'],
     auth: 'none',
     description: 'PayPal Autonomous Agent Spend Policy and Wallet Guardrail',
+  },  {
+    path: 'demo/lab',
+    methods: ['GET', 'POST'],
+    auth: 'none',
+    description: 'Resilience Lab fault injection and money invariant inspector',
   },
+
   {
     path: 'verifications/[vid]',
     methods: ['GET'],
