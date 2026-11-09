@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://techicons.dev/icons/paypal.svg" width="68" height="68" alt="PayPal" />
+  <img src="assets/icons/paypal.svg" width="60" height="60" alt="PayPal" />
   &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="https://techicons.dev/icons/anthropic.svg" width="68" height="68" alt="AI Agent Engine" />
+  <img src="assets/icons/anthropic.svg" width="60" height="60" alt="Anthropic Claude AI" />
 </p>
 
 <h1 align="center">ProofPay</h1>
@@ -152,21 +152,45 @@ sequenceDiagram
 ## Application Showcase
 
 <p align="center">
-  <img src="docs/images/dashboard-escrow-ledger.jpg" alt="ProofPay Enterprise Escrow Dashboard" width="95%" />
+  <img src="assets/screenshots/dashboard-overview.png" alt="ProofPay Enterprise Escrow Dashboard" width="95%" />
   <br />
-  <em>Real-Time Contract Ledger, Active Escrow Holds, and Cryptographic Checkpoints</em>
+  <em>Real-Time Contract Overview: Active Escrow Holds, Authorization Lifecycle, and Cryptographic Ledger</em>
 </p>
 
 <p align="center">
-  <img src="docs/images/studio-contract-builder.jpg" alt="ProofPay Contract Studio" width="95%" />
+  <img src="assets/screenshots/demo-express.png" alt="ProofPay 90-Second Express Sandbox" width="95%" />
   <br />
-  <em>Contract Studio: Policy-as-Code Milestone Specification & Acceptance Rubric Builder</em>
+  <em>Express Judge Sandbox: Pre-Authorized PayPal Escrows with Fast-Path Automated Consensus</em>
 </p>
 
 <p align="center">
-  <img src="docs/images/dispute-tribunal-view.png" alt="Multi-Agent AI Dispute Tribunal" width="95%" />
+  <img src="assets/screenshots/demo-mcp-agent.png" alt="Model Context Protocol Agent Simulator" width="95%" />
   <br />
-  <em>Autonomous Dispute Tribunal: Multi-Agent Argumentation & Binding Settlement Engine</em>
+  <em>In-Browser MCP Simulator: Autonomous Claude & Gemini Agents Interacting via Model Context Protocol JSON-RPC</em>
+</p>
+
+<p align="center">
+  <img src="assets/screenshots/demo-tribunal.png" alt="Multi-Agent AI Dispute Tribunal" width="95%" />
+  <br />
+  <em>Autonomous Dispute Tribunal: Claimant, Respondent, and Arbitrator AI Agents Resolving Escrow Holds</em>
+</p>
+
+<p align="center">
+  <img src="assets/screenshots/demo-agent-wallet.png" alt="Autonomous Agent Wallet & Spend Guardrail" width="95%" />
+  <br />
+  <em>Agent Wallet: Enterprise Velocity Caps, Domain Whitelisting, and Autonomous Spend Policy Enforcement</em>
+</p>
+
+<p align="center">
+  <img src="assets/screenshots/offline-verifier.png" alt="Offline Cryptographic ProofPack Verifier" width="95%" />
+  <br />
+  <em>Zero-Dependency Offline Verifier: Cryptographic Drag-and-Drop Merkle Tree and RFC 3161 Verification</em>
+</p>
+
+<p align="center">
+  <img src="assets/screenshots/transparency-checkpoints.png" alt="Immutable Transparency Checkpoints" width="95%" />
+  <br />
+  <em>Audit Ledger: Tamper-Evident SHA-256 Hash Chains & Public Transparency Checkpoints</em>
 </p>
 
 ---
@@ -236,21 +260,21 @@ classDiagram
 
 ## Technology Stack
 
-The stack is built on modern enterprise web and security standards, utilizing verified icons from [techicons.dev](https://techicons.dev):
+The stack is built on modern enterprise web and security standards, utilizing verified SVG icons stored locally in [`assets/icons/`](assets/icons/):
 
 <p align="left">
-  <a href="https://nextjs.org"><img src="https://techicons.dev/icons/nextjs.svg" width="36" height="36" alt="Next.js" title="Next.js 15 App Router" /></a>&nbsp;&nbsp;
-  <a href="https://react.dev"><img src="https://techicons.dev/icons/react.svg" width="36" height="36" alt="React" title="React 19" /></a>&nbsp;&nbsp;
-  <a href="https://www.typescriptlang.org"><img src="https://techicons.dev/icons/typescript.svg" width="36" height="36" alt="TypeScript" title="TypeScript 5.7" /></a>&nbsp;&nbsp;
-  <a href="https://tailwindcss.com"><img src="https://techicons.dev/icons/tailwindcss.svg" width="36" height="36" alt="Tailwind CSS" title="Tailwind CSS" /></a>&nbsp;&nbsp;
-  <a href="https://developer.paypal.com"><img src="https://techicons.dev/icons/paypal.svg" width="36" height="36" alt="PayPal" title="PayPal Orders & Payments v2 API" /></a>&nbsp;&nbsp;
-  <a href="https://www.postgresql.org"><img src="https://techicons.dev/icons/postgresql.svg" width="36" height="36" alt="PostgreSQL" title="PostgreSQL 16 with Row-Level Security" /></a>&nbsp;&nbsp;
-  <a href="https://anthropic.com"><img src="https://techicons.dev/icons/anthropic.svg" width="36" height="36" alt="Anthropic" title="Claude 3.5 Sonnet Rubric Evaluation" /></a>&nbsp;&nbsp;
-  <a href="https://opentelemetry.io"><img src="https://techicons.dev/icons/opentelemetry.svg" width="36" height="36" alt="OpenTelemetry" title="OpenTelemetry & Prometheus Instrumentation" /></a>&nbsp;&nbsp;
-  <a href="https://vitest.dev"><img src="https://techicons.dev/icons/vitest.svg" width="36" height="36" alt="Vitest" title="Vitest 2.1 Test Suite" /></a>&nbsp;&nbsp;
-  <a href="https://playwright.dev"><img src="https://techicons.dev/icons/playwright.svg" width="36" height="36" alt="Playwright" title="Playwright End-to-End Testing" /></a>&nbsp;&nbsp;
-  <a href="https://github.com/features/actions"><img src="https://techicons.dev/icons/githubactions.svg" width="36" height="36" alt="GitHub Actions" title="Automated CI/CD & Security Gates" /></a>&nbsp;&nbsp;
-  <a href="https://docker.com"><img src="https://techicons.dev/icons/docker.svg" width="36" height="36" alt="Docker" title="Docker Containerization" /></a>
+  <img src="assets/icons/nextjs.svg" width="36" height="36" alt="Next.js" title="Next.js 15 App Router" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/react.svg" width="36" height="36" alt="React" title="React 19" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/typescript.svg" width="36" height="36" alt="TypeScript" title="TypeScript 5.7" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/tailwindcss.svg" width="36" height="36" alt="Tailwind CSS" title="Tailwind CSS" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/paypal.svg" width="36" height="36" alt="PayPal" title="PayPal Orders & Payments v2 API" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/postgresql.svg" width="36" height="36" alt="PostgreSQL" title="PostgreSQL 16 with Row-Level Security" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/anthropic.svg" width="36" height="36" alt="Anthropic" title="Claude 3.5 Sonnet Rubric Evaluation" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/opentelemetry.svg" width="36" height="36" alt="OpenTelemetry" title="OpenTelemetry & Prometheus Instrumentation" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/vitest.svg" width="36" height="36" alt="Vitest" title="Vitest 2.1 Test Suite" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/playwright.svg" width="36" height="36" alt="Playwright" title="Playwright End-to-End Testing" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/githubactions.svg" width="36" height="36" alt="GitHub Actions" title="Automated CI/CD & Security Gates" />&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/icons/docker.svg" width="36" height="36" alt="Docker" title="Docker Containerization" />
 </p>
 
 | Layer | Primary Technologies | Key Capabilities |
@@ -268,12 +292,6 @@ The stack is built on modern enterprise web and security standards, utilizing ve
 ## Enterprise Quality & Security Gates
 
 ProofPay maintains strict automated gates executed across every push and pull request:
-
-<p align="center">
-  <img src="docs/images/supply-chain-gates-green.png" alt="Security and Supply Chain Gates" width="85%" />
-  <br />
-  <em>GitHub Actions Supply Chain & Security Verification Pipeline (6/6 Passing)</em>
-</p>
 
 ### Verification Matrix
 - **Unit & Integration Suite**: 415 test cases across 61 test files with 100% pass rate (`npm run test:unit`)
@@ -368,9 +386,11 @@ npm run build
 ```
 ProofPay/
 ├── .github/workflows/          # CI/CD & Security Gate Definitions
+├── assets/                     # Self-Contained Repository Assets
+│   ├── icons/                  # High-Resolution SVGs (PayPal, Anthropic, Next.js, etc.)
+│   └── screenshots/            # Hi-DPI Playwright App Captures (Dashboard, Studio, Tribunal)
 ├── docs/                       # Technical Specifications & Guides
 │   ├── enterprise/             # Enterprise Architecture (RFC 3161, KMS, SAML, RLS)
-│   ├── images/                 # App Screenshots & Architecture Visuals
 │   └── WINNING-PLAYBOOK.md     # Authoritative Master Architecture Reference
 ├── src/
 │   ├── app/                    # Next.js 15 App Router Pages & API Endpoints
