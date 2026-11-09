@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" height="auto">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bannerBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050B14"/>
+      <stop offset="50%" stop-color="#0A1628"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+
+    <!-- Subtle Grid Pattern -->
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#1E293B" stroke-width="0.75" stroke-opacity="0.35"/>
+    </pattern>
+
+    <!-- Glow Gradients -->
+    <radialGradient id="paypalGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0079C1" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0079C1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="aiGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Logo Card Gradient -->
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <!-- Accent Line Gradient -->
+    <linearGradient id="accentLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#003087" stop-opacity="0"/>
+      <stop offset="25%" stop-color="#0079C1"/>
+      <stop offset="50%" stop-color="#38BDF8"/>
+      <stop offset="75%" stop-color="#0079C1"/>
+      <stop offset="100%" stop-color="#003087" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1200" height="360" rx="16" fill="url(#bannerBg)"/>
+  <rect width="1200" height="360" rx="16" fill="url(#grid)"/>
+
+  <!-- Subtle Radial Glow Orbs -->
+  <circle cx="200" cy="180" r="180" fill="url(#paypalGlow)"/>
+  <circle cx="950" cy="180" r="220" fill="url(#aiGlow)"/>
+
+  <!-- Border & Top Accent Line -->
+  <rect width="1198" height="358" x="1" y="1" rx="15" fill="none" stroke="#1E293B" stroke-width="1.5"/>
+  <line x1="100" y1="2" x2="1100" y2="2" stroke="url(#accentLine)" stroke-width="3"/>
+
+  <!-- Left Side: Brand Logo Lockup -->
+  <g transform="translate(80, 75)">
+    <!-- Glow Backdrop Card -->
+    <rect width="130" height="130" rx="28" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
+    <rect width="130" height="130" rx="28" fill="#F0F9FF" fill-opacity="0.04"/>
+
+    <!-- PayPal Double-P Monogram in Center -->
+    <g transform="translate(18, 14) scale(0.74)">
+      <!-- Primary Navy P -->
+      <path fill="#003087" d="M37.9 14.5h33.8c18.5 0 31.5 11.2 32 27-.7 16.7-15.5 33.6-36.2 33.6H54.4l-9.1 57.4H23.5L42.5 14.5h-4.6z"/>
+      <!-- Cyan Blue Secondary P -->
+      <path fill="#0079C1" d="M50.4 44.5h27.8c15.2 0 25.8 9.2 26.2 22.1-.6 13.7-12.7 27.5-29.6 27.5H62.7l-7.4 46.9H37.4l15.6-96.5h-2.6z"/>
+      <!-- Dark Overlap Section -->
+      <path fill="#002069" d="M54.4 75.1h13.1c16.9 0 29-13.8 29.6-27.5-.2 5.5-2.2 11.1-6.1 15.6-5.8 6.7-14.7 10.3-24.5 10.3H54.4l-7.4 46.9h8.4l7-45.3z"/>
+    </g>
+
+    <!-- Sub-badge under logo -->
+    <rect x="15" y="146" width="100" height="24" rx="12" fill="#0369A1" fill-opacity="0.25" stroke="#0284C7" stroke-width="1"/>
+    <text x="65" y="162" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" font-weight="700" fill="#38BDF8" text-anchor="middle" letter-spacing="1">PAYPAL V2</text>
+  </g>
+
+  <!-- Center Text Content -->
+  <!-- Category Pill -->
+  <g transform="translate(250, 68)">
+    <rect width="320" height="28" rx="14" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <circle cx="16" cy="14" r="4" fill="#10B981"/>
+    <text x="28" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#94A3B8" letter-spacing="0.5">
+      PAYPAL AI HACKATHON 2026 · ZERO-CUSTODY
+    </text>
+  </g>
+
+  <!-- Main Headline Title -->
+  <text x="250" y="145" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="52" font-weight="800" fill="#FFFFFF" letter-spacing="-1">
+    ProofPay
+  </text>
+  <text x="475" y="145" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="52" font-weight="800" fill="#38BDF8" letter-spacing="-1">
+    ™
+  </text>
+
+  <!-- Tagline Subtitle -->
+  <text x="250" y="182" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#E2E8F0">
+    Autonomous AI Agent Settlement Protocol via PayPal Escrow Holds
+  </text>
+
+  <!-- Feature Description -->
+  <text x="250" y="210" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#94A3B8">
+    Deterministic Verification · Dual-LLM Consensus · Sealed ProofPacks™ · RFC 3161 Certified
+  </text>
+
+  <!-- Bottom Capability Badges -->
+  <g transform="translate(250, 240)">
+    <!-- Badge 1: PayPal Two-Phase Auth -->
+    <rect x="0" y="0" width="165" height="34" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1.2"/>
+    <text x="14" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#0284C7">◆</text>
+    <text x="28" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#F1F5F9">PayPal Authorize</text>
+
+    <!-- Badge 2: Ed25519 Merkle Chains -->
+    <rect x="177" y="0" width="165" height="34" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1.2"/>
+    <text x="191" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#10B981">◆</text>
+    <text x="205" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#F1F5F9">ProofPack™ Merkle</text>
+
+    <!-- Badge 3: Multi-Agent Tribunal -->
+    <rect x="354" y="0" width="165" height="34" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1.2"/>
+    <text x="368" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#F59E0B">◆</text>
+    <text x="382" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#F1F5F9">AI Dispute Tribunal</text>
+
+    <!-- Badge 4: RFC 3161 TSA Timestamp -->
+    <rect x="531" y="0" width="165" height="34" rx="8" fill="#0F172A" stroke="#1E293B" stroke-width="1.2"/>
+    <text x="545" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#A855F7">◆</text>
+    <text x="559" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#F1F5F9">RFC 3161 TSA</text>
+  </g>
+
+  <!-- Right Decorative Settlement Visualization -->
+  <g transform="translate(1000, 110)">
+    <!-- Outer Orbit Ring -->
+    <circle cx="80" cy="70" r="65" fill="none" stroke="#1E293B" stroke-width="1" stroke-dasharray="4,4"/>
+    <circle cx="80" cy="70" r="48" fill="#0F172A" stroke="#0284C7" stroke-width="2"/>
+
+    <!-- Checkmark Shield Icon Inside -->
+    <path fill="#38BDF8" d="M80 44 L98 52 C98 72 88 84 80 92 C72 84 62 72 62 52 Z"/>
+    <polyline points="72,68 78,74 89,61" fill="none" stroke="#0F172A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Small Satellites -->
+    <circle cx="80" cy="5" r="5" fill="#10B981"/>
+    <circle cx="145" cy="70" r="5" fill="#F59E0B"/>
+    <circle cx="80" cy="135" r="5" fill="#38BDF8"/>
+    <circle cx="15" cy="70" r="5" fill="#A855F7"/>
+  </g>
+</svg>

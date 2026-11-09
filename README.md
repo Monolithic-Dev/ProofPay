@@ -1,13 +1,5 @@
 <p align="center">
-  <img src="assets/icons/paypal.svg" width="60" height="60" alt="PayPal" />
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/icons/anthropic.svg" width="60" height="60" alt="Anthropic Claude AI" />
-</p>
-
-<h1 align="center">ProofPay</h1>
-
-<p align="center">
-  <strong>Zero-Custody Autonomous AI Agent Settlement Protocol Powered by PayPal Escrow & Cryptographic ProofPacks</strong>
+  <img src="assets/banner.svg" alt="ProofPay Enterprise Hero Banner" width="100%" />
 </p>
 
 <p align="center">
