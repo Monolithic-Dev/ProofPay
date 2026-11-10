@@ -12,17 +12,15 @@ import Link from 'next/link'
 import { PageShell } from '@/components/common/PageShell'
 import {
   ShieldCheck,
-  CheckCircle2,
   AlertTriangle,
-  Cpu,
   Lock,
-  RefreshCw,
   FileCheck2,
   Scale,
   ArrowRight,
-  Terminal,
-  Zap,
-  Target
+  SearchCode,
+  History,
+  Activity,
+  ShieldAlert,
 } from 'lucide-react'
 
 export default function TrustCenterPage() {
@@ -34,19 +32,26 @@ export default function TrustCenterPage() {
       <div className="max-w-5xl mx-auto space-y-12">
         {/* Core Tenet Banner */}
         <div className="p-6 rounded-2xl bg-gradient-to-r from-surface-2 to-surface border border-border space-y-3">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-ok animate-pulse" />
-            <span className="text-xs font-semibold text-text uppercase tracking-wider">
-              Core Architectural Tenet
-            </span>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-ok animate-pulse" />
+              <span className="text-xs font-semibold text-text uppercase tracking-wider">
+                Core Architectural Tenet
+              </span>
+            </div>
+            <Link
+              href="/status"
+              className="inline-flex items-center gap-1.5 text-xs text-brand hover:underline font-medium"
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Live System Status &rarr;</span>
+            </Link>
           </div>
           <p className="text-sm sm:text-base font-medium text-text leading-relaxed">
             <strong>AI reads and explains. Code decides. Math attests. PayPal moves the money.</strong>
           </p>
           <p className="text-xs text-muted leading-relaxed">
-            ProofPay never holds, pools, or transmits funds. Payments are held directly inside PayPal&apos;s
-            authorization hold framework and captured only when deterministic code and verified evidence prove
-            the acceptance criteria have been satisfied.
+            ProofPay never holds, pools, or transmits funds. Payments remain inside PayPal&apos;s authorization hold framework (not escrow) and are captured only when deterministic code and verified evidence prove the acceptance criteria have been satisfied.
           </p>
         </div>
 
@@ -69,8 +74,8 @@ export default function TrustCenterPage() {
                 <span className="text-[10px] text-muted font-mono">&lt; 50ms</span>
               </div>
               <p className="text-xs text-muted leading-relaxed">
-                Local pure functions verify JSON schemas (Ajv), row counts, unique IDs, CSV headers, and regex constraints.
-                If any required check fails, execution terminates immediately.
+                Local pure functions verify JSON schemas (Ajv), row counts, unique IDs, CSV headers, junk repetition, forbidden terms, and regex constraints.
+                Required failures stop execution immediately.
               </p>
             </div>
 
@@ -84,7 +89,7 @@ export default function TrustCenterPage() {
               </div>
               <p className="text-xs text-muted leading-relaxed">
                 For semantic rubric criteria, LLMs locate verbatim excerpts from the deliverable.
-                Every quoted substring is verified via strict <code className="text-text font-mono">artifact.includes(quote)</code> before being admitted.
+                Every quoted substring is verified via strict <code className="text-text font-mono">artifact.includes(quote)</code> before admission.
               </p>
             </div>
 
@@ -97,8 +102,8 @@ export default function TrustCenterPage() {
                 <span className="text-[10px] text-muted font-mono">Dual-Layer</span>
               </div>
               <p className="text-xs text-muted leading-relaxed">
-                Dual heuristics and adversarial audits scan for prompt injection attempts, system prompt overrides, or delimiter tampering.
-                Any identified attempt is flagged and isolated.
+                Dual heuristics and adversarial audits scan for prompt injection attempts, homoglyphs, zero-width smuggling, or delimiter overrides.
+                Detected attempts force safe escalation or rejection.
               </p>
             </div>
 
@@ -112,27 +117,27 @@ export default function TrustCenterPage() {
               </div>
               <p className="text-xs text-muted leading-relaxed">
                 A pure code function applies deterministic rules 1–8 to the verified evidence.
-                Only a unanimous pass on all required criteria can yield a <code className="text-ok font-mono font-bold">PASS</code> decision.
+                Only passing all required criteria without unresolved high-risk flags yields <code className="text-ok font-mono font-bold">PASS</code>.
               </p>
             </div>
           </div>
         </section>
 
-        {/* 2. Verifier Benchmark Suite */}
+        {/* 2. Verifier LLM Deep Evaluation Suite */}
         <section className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h2 className="text-lg font-bold text-text">2. Verifier Evaluation Benchmark Suite</h2>
+              <h2 className="text-lg font-bold text-text">2. Live LLM Verifier Benchmark Suite (30 Cases)</h2>
               <p className="text-xs text-muted">
-                30 test fixtures (20 dev set + 10 strictly held-out cases) evaluated with cache disabled.
+                Committed live-model benchmark in <code className="text-text font-mono">docs/eval-results.md</code> (20 dev + 10 held-out cases, prompt cache disabled).
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <Link
                 href="/verify"
                 className="inline-flex items-center gap-1.5 text-xs text-brand hover:underline font-medium"
               >
-                <span>Offline Verifier</span>
+                <span>Offline Verifier &amp; Replay</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <Link
@@ -217,37 +222,88 @@ export default function TrustCenterPage() {
           </div>
 
           <div className="p-3 rounded-lg bg-surface-2 border border-border text-[11px] text-muted leading-relaxed">
-            <strong>Rule-of-Three Statistical Bound:</strong> With 0 false passes across 19 non-pass test cases, the 95% upper bound on the true false-pass rate is bounded by approximately <strong>3 / 19 &asymp; 15.8%</strong>. We report empirical measurements and bounds rather than unverified &quot;100% accuracy&quot; marketing claims.
+            <strong>Rule-of-Three Statistical Bound (Live 30-Case Eval):</strong> With 0 false passes across 19 non-pass test cases (<code className="text-text font-mono">F10</code> optional criterion excluded per spec), the 95% upper bound on the true false-pass rate is bounded by approximately <strong>3 / 19 &asymp; 15.8%</strong>. We report empirical measurements and statistical bounds rather than marketing claims.
           </div>
         </section>
 
-        {/* 3. Red-Team Adversarial Corpus & Consensus */}
+        {/* 3. 120-Case Automated & Red-Team Benchmark Corpus */}
         <section className="space-y-4">
           <div className="space-y-1">
-            <h2 className="text-lg font-bold text-text">3. Continuous Red-Team &amp; Cross-Model Consensus</h2>
+            <h2 className="text-lg font-bold text-text">3. 120-Case Deterministic &amp; Adversarial Corpus</h2>
             <p className="text-xs text-muted">
-              Automated adversarial testing suite and multi-model consensus verification.
+              Hash-seeded automated regression corpus (<code className="text-text font-mono">tests/eval/generate.ts</code> &amp; <code className="text-text font-mono">scripts/score-bench.ts</code>): 30 Pass, 30 Fail, and 60 Adversarial cases across 12 attack families (~30% hash-frozen held-out split).
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             <div className="card p-4 rounded-xl border border-border bg-surface text-center space-y-1">
-              <p className="text-[10px] uppercase tracking-wider text-muted font-medium">Red-Team Attack Passes</p>
-              <p className="text-2xl font-extrabold text-ok font-mono">0 / 120</p>
-              <p className="text-[10px] text-muted">0 attacks bypassed rule engine</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted font-medium">Corpus Size &amp; Split</p>
+              <p className="text-2xl font-extrabold text-text font-mono">120</p>
+              <p className="text-[10px] text-muted">30 Pass · 30 Fail · 60 Attack</p>
             </div>
 
             <div className="card p-4 rounded-xl border border-border bg-surface text-center space-y-1">
-              <p className="text-[10px] uppercase tracking-wider text-muted font-medium">Cross-Model Consensus</p>
-              <p className="text-2xl font-extrabold text-text font-mono">100%</p>
-              <p className="text-[10px] text-muted">Independent multi-provider quote verification</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted font-medium">Adversarial Families</p>
+              <p className="text-2xl font-extrabold text-brand font-mono">12 &times; 5</p>
+              <p className="text-[10px] text-muted">Homoglyphs, zero-width, role forgery, key injection</p>
             </div>
 
             <div className="card p-4 rounded-xl border border-border bg-surface text-center space-y-1">
-              <p className="text-[10px] uppercase tracking-wider text-muted font-medium">PII Shield Leaks</p>
-              <p className="text-2xl font-extrabold text-ok font-mono">0</p>
-              <p className="text-[10px] text-muted">Sensitive data masked before AI review</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted font-medium">Non-Pass False Passes</p>
+              <p className="text-2xl font-extrabold text-ok font-mono">0 / 89</p>
+              <p className="text-[10px] text-muted">95% Rule-of-Three bound: 3 / 89 &asymp; 3.4%</p>
             </div>
+
+            <div className="card p-4 rounded-xl border border-border bg-surface text-center space-y-1">
+              <p className="text-[10px] uppercase tracking-wider text-muted font-medium">External Attack Suite</p>
+              <p className="text-2xl font-extrabold text-ok font-mono">Blocked</p>
+              <p className="text-[10px] text-muted">Adversarial stage + PII masking enforced</p>
+            </div>
+          </div>
+
+          {/* Interactive Inspection Shortcuts (N1, N2, N3) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <Link
+              href="/demo/loophole"
+              className="p-3.5 rounded-xl border border-orange-500/30 bg-orange-500/5 hover:bg-orange-500/10 transition-colors flex items-center justify-between gap-2"
+            >
+              <div className="flex items-center gap-2.5">
+                <SearchCode className="w-4 h-4 text-orange-400 shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-text">N1 Loophole Finder</p>
+                  <p className="text-[10px] text-muted">Red-team &amp; RFC 6902 auto-patch</p>
+                </div>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+            </Link>
+
+            <Link
+              href="/verify"
+              className="p-3.5 rounded-xl border border-brand/30 bg-brand/5 hover:bg-brand/10 transition-colors flex items-center justify-between gap-2"
+            >
+              <div className="flex items-center gap-2.5">
+                <History className="w-4 h-4 text-brand shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-text">N2 Offline Replay &amp; Verify</p>
+                  <p className="text-[10px] text-muted">Client-side SHA-256 chain check</p>
+                </div>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-brand shrink-0" />
+            </Link>
+
+            <Link
+              href="/demo/lab"
+              className="p-3.5 rounded-xl border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 transition-colors flex items-center justify-between gap-2"
+            >
+              <div className="flex items-center gap-2.5">
+                <ShieldAlert className="w-4 h-4 text-red-400 shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-text">N3 Chaos Resilience Lab</p>
+                  <p className="text-[10px] text-muted">Fault injection &amp; idempotency</p>
+                </div>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-red-400 shrink-0" />
+            </Link>
           </div>
         </section>
 
@@ -304,30 +360,30 @@ export default function TrustCenterPage() {
             <div className="card p-4 rounded-xl border border-border bg-surface space-y-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-text">
                 <ShieldCheck className="w-4 h-4 text-brand" />
-                <span>Insecure Direct Object References (IDOR)</span>
+                <span>Insecure Direct Object References (IDOR) &amp; Agent Caps</span>
               </div>
               <p className="text-xs text-muted leading-relaxed">
-                All contract, milestone, and ledger routes require an authenticated active organization. Cross-organization access attempts return a strict 404 (not 403), verified by automated route security scanners.
+                Every contract, milestone, and ledger route enforces active organization ownership (returning 404 to prevent contract enumeration). Autonomous agent keys are explicitly blocked from funding, capture retries, manual release, and cancellation actions.
               </p>
             </div>
 
             <div className="card p-4 rounded-xl border border-border bg-surface space-y-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-text">
                 <FileCheck2 className="w-4 h-4 text-brand" />
-                <span>Append-Only Ledger Tamper Evidence</span>
+                <span>Append-Only Ledger &amp; State Parity</span>
               </div>
               <p className="text-xs text-muted leading-relaxed">
-                Each event links cryptographically to its predecessor via SHA-256 chain hashing covering the canonical payload JSON. Any out-of-band database edit breaks the checksum chain.
+                Each event links cryptographically to its predecessor via SHA-256 chain hashing over canonical JSON. Any out-of-band edit breaks the chain, and live N2 event replay verifies that current database balances match ledger sums.
               </p>
             </div>
 
             <div className="card p-4 rounded-xl border border-border bg-surface space-y-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-text">
                 <Scale className="w-4 h-4 text-brand" />
-                <span>Two-Person Rule for Large Funding</span>
+                <span>Two-Person Rule &amp; Pre-Sign Off Loophole Closure</span>
               </div>
               <p className="text-xs text-muted leading-relaxed">
-                Contracts exceeding organization thresholds cannot generate a PayPal authorization hold until a second authorized member (Owner/Admin/Finance) reviews and signs off.
+                Contracts exceeding organization thresholds cannot generate a PayPal authorization hold until a second authorized member (Owner/Admin/Finance) signs off, and buyers can red-team contract criteria before locking hashes.
               </p>
             </div>
           </div>
@@ -351,7 +407,7 @@ export default function TrustCenterPage() {
                 <strong>English Deliverable Focus:</strong> Current prompt templates and adversarial evaluators are tuned for English language agreements and structured JSON/CSV data.
               </li>
               <li>
-                <strong>Hold, Not Escrow:</strong> ProofPay does not act as an escrow agent or take custody of funds.
+                <strong>Authorization Hold, Not Escrow:</strong> ProofPay does not act as an escrow agent or take custody of funds.
               </li>
             </ul>
           </div>

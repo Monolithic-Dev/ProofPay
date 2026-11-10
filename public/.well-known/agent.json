@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "name": "ProofPay Verifiable Settlement Agent",
+  "description": "Pay-on-acceptance settlement protocol using PayPal authorization holds (not escrow), deterministic schema & regex gates, verbatim quote-verified rubric extraction, adversarial injection scanning, and an append-only SHA-256 ledger.",
+  "url": "https://proofpay.app",
+  "provider": {
+    "organization": "ProofPay",
+    "url": "https://proofpay.app/trust"
+  },
+  "version": "2.1.0",
+  "documentation_url": "https://proofpay.app/api/v1/openapi",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": true,
+    "offlineVerification": true,
+    "mcpStdioServer": true
+  },
+  "authentication": {
+    "schemes": [
+      {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key (pp_k_...)",
+        "description": "Scoped organization user or agent API key created in /app/developers. Autonomous agent keys (is_agent=true) are blocked from money-approval and escalation endpoints."
+      }
+    ]
+  },
+  "idempotency": {
+    "header": "Idempotency-Key",
+    "requiredForMutations": true,
+    "paypalHeader": "PayPal-Request-Id"
+  },
+  "guardrails": {
+    "custodyModel": "ZERO_CUSTODY_PAYPAL_AUTHORIZATION_HOLD",
+    "notEscrow": true,
+    "maxHoldDays": 29,
+    "autonomousAgentForbiddenActions": [
+      "approve_funding_or_start_paypal_checkout",
+      "buyer_manual_release_or_reject_escalation",
+      "retry_capture",
+      "refund_or_void_or_cancel_contract"
+    ],
+    "deterministicPrecedence": true,
+    "piiMaskingBeforeLlm": true
+  },
+  "endpoints": {
+    "openapi": "/api/v1/openapi",
+    "health": "/api/v1/health",
+    "mcpDemo": "/api/v1/demo/mcp",
+    "contracts": "/api/v1/contracts",
+    "replay": "/api/v1/contracts/{id}/replay",
+    "stateCheck": "/api/v1/contracts/{id}/state-check",
+    "loopholeScan": "/api/v1/contracts/{id}/loophole-scan",
+    "proofPack": "/api/v1/contracts/{id}/proof-pack",
+    "offlineVerifyUi": "/verify",
+    "trustCenter": "/trust",
+    "statusPage": "/status"
+  },
+  "mcp_tools": [
+    {
+      "name": "create_contract",
+      "description": "Compile a natural language specification into a formal ProofPay contract and apply safe lint fixes.",
+      "mutatesMoney": false
+    },
+    {
+      "name": "accept_contract",
+      "description": "Accept proposed contract terms and lock the canonical SHA-256 contract hash.",
+      "mutatesMoney": false
+    },
+    {
+      "name": "get_funding_link",
+      "description": "Generate a PayPal authorization approval URL for a human payer to approve manually.",
+      "mutatesMoney": false
+    },
+    {
+      "name": "submit_deliverable",
+      "description": "Submit a JSON records or text deliverable for deterministic, quote-verified, and adversarial evaluation.",
+      "mutatesMoney": false
+    },
+    {
+      "name": "get_verification_report",
+      "description": "Inspect deterministic checks, verbatim quotes, adversarial scan severity, and 8-rule policy output.",
+      "mutatesMoney": false
+    },
+    {
+      "name": "get_contract_status",
+      "description": "Retrieve current contract state, authorization hold breakdown, and milestone capture status.",
+      "mutatesMoney": false
+    }
+  ]
+}
+

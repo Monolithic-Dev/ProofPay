@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Zap, Cpu, Scale, Wallet, Play, ShieldAlert } from 'lucide-react'
+import { Zap, Cpu, Scale, Wallet, Play, ShieldAlert, SearchCode } from 'lucide-react'
 
 export default function DemoLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -21,6 +21,13 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
       badge: 'Real Capture',
       icon: Zap,
       activeColor: 'text-brand border-brand bg-brand/10',
+    },
+    {
+      href: '/demo/loophole',
+      label: 'Loophole Finder',
+      badge: 'Red-Team N1',
+      icon: SearchCode,
+      activeColor: 'text-orange-400 border-orange-400 bg-orange-500/10',
     },
     {
       href: '/demo/mcp',
@@ -103,4 +110,3 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
     </div>
   )
 }
-

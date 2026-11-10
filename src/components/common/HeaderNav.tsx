@@ -10,17 +10,7 @@ import { CommandPalette } from '@/components/common/CommandPalette'
 import {
   User,
   ChevronDown,
-  LayoutDashboard,
-  FileText,
-  CreditCard,
-  Shield,
-  Layers,
-  Users,
-  Terminal,
-  Scale,
   Sparkles,
-  LogOut,
-  ExternalLink,
 } from 'lucide-react'
 
 export function HeaderNav() {
@@ -55,11 +45,13 @@ export function HeaderNav() {
   ]
 
   const moreLinks = [
+    { href: '/demo', label: 'Playground Labs' },
     { href: '/app/templates', label: 'Templates' },
     { href: '/app/counterparties', label: 'Contacts' },
     { href: '/app/developers', label: 'Developers' },
     { href: '/trust', label: 'Trust & Custody' },
     { href: '/transparency', label: 'Transparency' },
+    { href: '/status', label: 'System Status' },
     { href: '/help', label: 'Help' },
   ]
 
@@ -71,6 +63,12 @@ export function HeaderNav() {
       badge: 'Interactive',
     },
     {
+      href: '/demo/loophole',
+      title: 'Loophole Finder',
+      desc: 'Red-team contract criteria with exploits & patch with RFC 6902',
+      badge: 'Red-Team',
+    },
+    {
       href: '/demo/mcp',
       title: 'MCP Agent Simulator',
       desc: 'Claude & Gemini executing tool calls via JSON-RPC',
@@ -79,7 +77,7 @@ export function HeaderNav() {
     {
       href: '/demo/tribunal',
       title: 'Multi-Agent Tribunal',
-      desc: 'Claimant, respondent & arbitrator AI binding courtroom',
+      desc: 'Claimant, respondent & arbitrator AI dispute courtroom',
       badge: 'Tribunal',
     },
     {
@@ -87,6 +85,12 @@ export function HeaderNav() {
       title: 'Agent Spend Guardrails',
       desc: 'Autonomous wallet limits, velocity caps & policies',
       badge: 'Guardrail',
+    },
+    {
+      href: '/demo/lab',
+      title: 'Resilience Lab',
+      desc: 'Inject PayPal faults & verify money conservation invariants',
+      badge: 'Chaos',
     },
   ]
 
@@ -153,7 +157,7 @@ export function HeaderNav() {
         </button>
 
         {demoMenuOpen && (
-          <div className="absolute top-full right-0 mt-2 w-72 rounded-2xl bg-surface border border-border shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-1 space-y-1">
+          <div className="absolute top-full right-0 mt-2 w-80 rounded-2xl bg-surface border border-border shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-1 space-y-1">
             <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted">
               Live PayPal Agent Demonstrations
             </div>
