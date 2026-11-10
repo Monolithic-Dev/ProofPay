@@ -12,11 +12,11 @@ import {
   ShieldAlert,
   Check,
   CreditCard,
-  FileCheck2,
   FileDown,
   Loader2,
   Lock,
   Layers,
+  History,
   FlaskConical,
   UserPlus,
   XCircle,
@@ -254,6 +254,14 @@ export default function ContractTimelinePage() {
           >
             <Layers className="w-3.5 h-3.5 text-muted" />
             <span>Ledger</span>
+          </Link>
+
+          <Link
+            href={`/contracts/${contractId}/replay`}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand/30 bg-brand/5 text-xs font-semibold text-brand hover:bg-brand/10 transition-colors"
+          >
+            <History className="w-3.5 h-3.5" />
+            <span>Time-Travel Replay</span>
           </Link>
 
           <a

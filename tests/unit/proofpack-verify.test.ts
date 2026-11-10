@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { verifyProofPack, sha256Hex, canonicalize, ZERO_HASH } from '@/lib/proofpack/verify'
+import { buildValidSampleProofPack, createTamperedSampleProofPack } from '@/lib/proofpack/sample'
 
 describe('Offline Proof Pack Verifier', () => {
   it('successfully verifies a valid Proof Pack chain', async () => {
@@ -70,5 +71,20 @@ describe('Offline Proof Pack Verifier', () => {
     expect(res.brokenAtSeq).toBe(1)
     expect(res.error).toMatch(/Tampering detected at event #1/)
   })
-})
 
+  it('validates the built-in sample Proof Pack cleanly and catches sample tampering at seq #7', async () => {
+    const validSample = await buildValidSampleProofPack()
+    const validResult = await verifyProofPack(validSample)
+
+    expect(validResult.valid).toBe(true)
+    expect(validResult.contractHashValid).toBe(true)
+    expect(validResult.eventsChecked).toBe(7)
+
+    const tamperedSample = await createTamperedSampleProofPack()
+    const tamperedResult = await verifyProofPack(tamperedSample)
+
+    expect(tamperedResult.valid).toBe(false)
+    expect(tamperedResult.brokenAtSeq).toBe(7)
+    expect(tamperedResult.error).toMatch(/Tampering detected at event #7/)
+  })
+})

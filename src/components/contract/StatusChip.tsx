@@ -92,6 +92,11 @@ export const STATUS_CONFIG_MAP: Record<string, StatusConfig> = {
     icon: Circle,
     badgeClass: 'bg-surface-2 text-muted border-border',
   },
+  SUBMITTED: {
+    label: 'Submitted',
+    icon: Clock,
+    badgeClass: 'bg-brand/10 text-brand border-brand/20',
+  },
   VERIFYING: {
     label: 'Verifying',
     icon: Loader2,
@@ -112,6 +117,11 @@ export const STATUS_CONFIG_MAP: Record<string, StatusConfig> = {
     label: 'Rejected',
     icon: XCircle,
     badgeClass: 'bg-bad/10 text-bad border-bad/20',
+  },
+  FAILED_FINAL: {
+    label: 'Final Failure',
+    icon: AlertOctagon,
+    badgeClass: 'bg-bad/10 text-bad border-bad/30',
   },
   ESCALATED: {
     label: 'Needs Review',

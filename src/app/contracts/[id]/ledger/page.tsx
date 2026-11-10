@@ -7,6 +7,8 @@
  */
 import React, { useState } from 'react'
 import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { History } from 'lucide-react'
 import { PageShell } from '@/components/common/PageShell'
 import { LedgerGrid } from '@/components/ledger/LedgerGrid'
 import { LedgerDrawer } from '@/components/ledger/LedgerDrawer'
@@ -58,6 +60,13 @@ export default function ContractLedgerPage() {
       actions={
         <div className="flex flex-wrap items-center gap-3">
           <ChainBadge contractId={contractId} />
+          <Link
+            href={`/contracts/${contractId}/replay`}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-brand/30 bg-brand/5 text-xs font-semibold text-brand hover:bg-brand/10 transition-colors"
+          >
+            <History className="w-3.5 h-3.5" />
+            <span>Time-Travel Replay</span>
+          </Link>
           <ProofPackButtons contractId={contractId} />
         </div>
       }

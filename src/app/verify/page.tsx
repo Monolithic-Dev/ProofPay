@@ -1,7 +1,9 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useMemo } from 'react'
 import { PageShell } from '@/components/common/PageShell'
+import { FundsBar } from '@/components/contract/FundsBar'
+import { StatusChip } from '@/components/contract/StatusChip'
 import {
   FileCheck2,
   Upload,
@@ -10,93 +12,26 @@ import {
   RefreshCw,
   Copy,
   ShieldAlert,
-  ArrowRight,
-  Sparkles,
   FileText,
   Printer,
-  Download,
   Lock,
   Layers,
   Check,
   ShieldCheck,
-  ExternalLink,
+  History,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
-import { verifyProofPack, type VerificationResult, type ProofPackEvent } from '@/lib/proofpack/verify'
-
-// Canonical mock sample pack that passes verification
-const SAMPLE_CONTRACT_ID = 'e9c8a7b6-1234-4567-89ab-cdef01234567'
-const SAMPLE_DATE_1 = '2026-11-03T10:00:00.000Z'
-const SAMPLE_DATE_2 = '2026-11-03T10:15:00.000Z'
-const SAMPLE_DATE_3 = '2026-11-03T10:30:00.000Z'
-
-const VALID_SAMPLE_PACK = {
-  version: 1,
-  generated_at: new Date().toISOString(),
-  disclaimer: 'Offline verified cryptographic audit proof pack — ProofPay Zero-Custody Protocol',
-  contract: {
-    id: SAMPLE_CONTRACT_ID,
-    title: 'E-commerce Product Catalog Scraping & Normalization',
-    total_minor: 15000,
-    currency: 'USD',
-    buyer_email: 'procurement-team@acme-corp.com',
-    seller_email: 'data-engineers@agentic-sol.io',
-    canonical: {
-      id: SAMPLE_CONTRACT_ID,
-      title: 'E-commerce Product Catalog Scraping & Normalization',
-      total_minor: 15000,
-    },
-    hash: '0x9a4f8e7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f',
-  },
-  ledger: [
-    {
-      seq: 1,
-      type: 'PAYPAL_AUTHORIZATION_CREATED',
-      actor_type: 'buyer',
-      payload: {
-        amount_minor: 15000,
-        currency: 'USD',
-        paypal_order_id: 'ORDER-89A7654321',
-        paypal_authorization_id: 'AUTH-1234567890',
-        note: 'PayPal authorization hold established on buyer funding source',
-      },
-      prev_hash: '0000000000000000000000000000000000000000000000000000000000000000',
-      hash: '5a4c7e92b8d145c26ef48271e865f3bc77b719468e21975b9f71c1f516a8c439',
-      created_at: SAMPLE_DATE_1,
-    },
-    {
-      seq: 2,
-      type: 'DELIVERABLE_VERIFIED',
-      actor_type: 'verifier',
-      payload: {
-        milestone_key: 'm1',
-        decision: 'PASS',
-        confidence: 0.99,
-        deterministic_schema_passed: true,
-        llm_rubric_score: 96,
-        verified_quotes_count: 3,
-        evidence_sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-      },
-      prev_hash: '5a4c7e92b8d145c26ef48271e865f3bc77b719468e21975b9f71c1f516a8c439',
-      hash: '9f83a2c5b74109de63a14e9f78235cb17a9402518e38d6174b593fa8e712395a',
-      created_at: SAMPLE_DATE_2,
-    },
-    {
-      seq: 3,
-      type: 'PAYPAL_CAPTURE_COMPLETED',
-      actor_type: 'paypal',
-      payload: {
-        milestone_key: 'm1',
-        amount_minor: 7500,
-        currency: 'USD',
-        paypal_capture_id: 'CAP-9988776655',
-        remaining_hold_minor: 7500,
-      },
-      prev_hash: '9f83a2c5b74109de63a14e9f78235cb17a9402518e38d6174b593fa8e712395a',
-      hash: '3e1f729bca05d894e63784019fb3426785e91240a59c3817f540b92e741824f1',
-      created_at: SAMPLE_DATE_3,
-    },
-  ],
-}
+import {
+  verifyProofPack,
+  type VerificationResult,
+  type ProofPackEvent,
+} from '@/lib/proofpack/verify'
+import {
+  buildValidSampleProofPack,
+  createTamperedSampleProofPack,
+} from '@/lib/proofpack/sample'
+import { replayUpToSeq, type LedgerEventInput } from '@/shared/ledger-reducer'
 
 export default function ProofPackVerifyPage() {
   const [jsonText, setJsonText] = useState('')
@@ -107,6 +42,7 @@ export default function ProofPackVerifyPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [showDossierModal, setShowDossierModal] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [replaySeq, setReplaySeq] = useState<number>(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleVerify = async (textToVerify: string) => {
@@ -116,10 +52,18 @@ export default function ProofPackVerifyPage() {
     try {
       const parsed = JSON.parse(textToVerify)
       setParsedPack(parsed)
+      const ledger: ProofPackEvent[] = Array.isArray(parsed?.ledger) ? parsed.ledger : []
+      if (ledger.length > 0) {
+        const maxSeq = Math.max(...ledger.map((e) => e.seq))
+        setReplaySeq(maxSeq)
+      } else {
+        setReplaySeq(0)
+      }
       const res = await verifyProofPack(parsed)
       setResult(res)
     } catch (err: any) {
       setParsedPack(null)
+      setReplaySeq(0)
       setResult({
         valid: false,
         eventsChecked: 0,
@@ -130,21 +74,20 @@ export default function ProofPackVerifyPage() {
     }
   }
 
-  const handleLoadValidSample = () => {
-    const text = JSON.stringify(VALID_SAMPLE_PACK, null, 2)
+  const handleLoadValidSample = async () => {
+    const sample = await buildValidSampleProofPack()
+    const text = JSON.stringify(sample, null, 2)
     setJsonText(text)
     setTampered(false)
-    handleVerify(text)
+    await handleVerify(text)
   }
 
-  const handleTamperDemo = () => {
-    // Clone valid pack and tamper with the captured amount in event #3
-    const tamperedPack = JSON.parse(JSON.stringify(VALID_SAMPLE_PACK))
-    tamperedPack.ledger[2].payload.amount_minor = 999999 // Tampered! Changed $75.00 to $9,999.99
+  const handleTamperDemo = async () => {
+    const tamperedPack = await createTamperedSampleProofPack()
     const text = JSON.stringify(tamperedPack, null, 2)
     setJsonText(text)
     setTampered(true)
-    handleVerify(text)
+    await handleVerify(text)
   }
 
   const handleFileDrop = (e: React.DragEvent) => {
@@ -183,10 +126,102 @@ export default function ProofPackVerifyPage() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  // Recompute contract state offline from the verified event chain up to `replaySeq`
+  const ledgerList: ProofPackEvent[] = useMemo(() => {
+    if (!Array.isArray(parsedPack?.ledger)) return []
+    return [...parsedPack.ledger].sort((a, b) => a.seq - b.seq)
+  }, [parsedPack])
+
+  const minSeq = ledgerList.length > 0 ? ledgerList[0]!.seq : 0
+  const maxSeq = ledgerList.length > 0 ? ledgerList[ledgerList.length - 1]!.seq : 0
+  const effectiveReplaySeq = replaySeq >= minSeq && replaySeq <= maxSeq ? replaySeq : maxSeq
+
+  const replayedState = useMemo(() => {
+    if (!result?.valid || ledgerList.length === 0) return null
+    const inputs: LedgerEventInput[] = ledgerList.map((e) => ({
+      seq: e.seq,
+      type: e.type,
+      actor_type: e.actor_type || 'system',
+      payload: e.payload || {},
+      created_at: e.created_at,
+      hash: e.hash,
+      prev_hash: e.prev_hash,
+    }))
+    return replayUpToSeq(inputs, effectiveReplaySeq, parsedPack?.contract?.id || '')
+  }, [result?.valid, ledgerList, effectiveReplaySeq, parsedPack?.contract?.id])
+
+  const activeReplayEvent = useMemo(
+    () => ledgerList.find((e) => e.seq === effectiveReplaySeq) ?? null,
+    [ledgerList, effectiveReplaySeq]
+  )
+
+  // Dynamically extract PayPal and Verification evidence for Dossier modal
+  const dossierFacts = useMemo(() => {
+    if (!parsedPack) return null
+    const events: ProofPackEvent[] = Array.isArray(parsedPack.ledger) ? parsedPack.ledger : []
+    const authEvent = events.find(
+      (e) =>
+        e.payload?.paypal_authorization_id ||
+        e.payload?.authorization_id ||
+        parsedPack.paypal?.authorization_ids?.[0]
+    )
+    const authId =
+      parsedPack.paypal?.authorization_ids?.[0] ||
+      (authEvent?.payload?.paypal_authorization_id as string) ||
+      (authEvent?.payload?.authorization_id as string) ||
+      'None'
+
+    const captureEvents = events.filter(
+      (e) =>
+        e.type === 'PAYPAL_CAPTURE_COMPLETED' ||
+        e.type === 'CAPTURE_COMPLETED' ||
+        e.type === 'MILESTONE_RELEASED'
+    )
+    const captureId =
+      parsedPack.paypal?.captures?.[0]?.id ||
+      (captureEvents[0]?.payload?.paypal_capture_id as string) ||
+      (captureEvents[0]?.payload?.capture_id as string) ||
+      'None'
+
+    const verifiedEvent = events.find(
+      (e) =>
+        e.type === 'DELIVERABLE_VERIFIED' ||
+        e.type === 'MILESTONE_PASSED' ||
+        e.type === 'VERIFICATION_DECIDED'
+    )
+    const rubricScore = (verifiedEvent?.payload?.llm_rubric_score as number | undefined) ?? null
+    const headHash =
+      parsedPack.chain?.head_hash ||
+      (events.length > 0 ? events[events.length - 1]!.hash : '') ||
+      parsedPack.contract?.hash ||
+      ''
+
+    const totalMinor =
+      parsedPack.contract?.total_minor ?? parsedPack.contract?.canonical?.total_minor ?? 0
+    const buyerEmail =
+      parsedPack.contract?.buyer?.email ||
+      parsedPack.contract?.buyer_email ||
+      'buyer@verified.proofpay'
+    const sellerEmail =
+      parsedPack.contract?.seller?.email ||
+      parsedPack.contract?.seller_email ||
+      'seller@verified.proofpay'
+
+    return {
+      authId,
+      captureId,
+      rubricScore,
+      headHash,
+      totalMinor,
+      buyerEmail,
+      sellerEmail,
+    }
+  }, [parsedPack])
+
   return (
     <PageShell
       title="Offline Proof Pack Verifier"
-      subtitle="Verify cryptographic SHA-256 hash chains client-side without sending data to ProofPay servers"
+      subtitle="Verify SHA-256 hash chains and replay full contract state client-side without trusting ProofPay servers"
     >
       <div className="space-y-8 max-w-5xl pb-24">
         {/* Banner with Actions */}
@@ -203,7 +238,8 @@ export default function ProofPackVerifyPage() {
                 </span>
               </div>
               <p className="text-xs text-muted leading-relaxed">
-                Recomputes SHA-256 digests in your browser runtime via <code>crypto.subtle.digest</code>. ProofPay servers never see your payload.
+                Recomputes canonical SHA-256 digests and event-sourced contract state inside your browser via{' '}
+                <code>crypto.subtle.digest</code>.
               </p>
             </div>
           </div>
@@ -255,15 +291,16 @@ export default function ProofPackVerifyPage() {
           </div>
           <div>
             <p className="text-xs font-semibold text-text">
-              Drop your Proof Pack (<code className="text-brand">.json</code> or <code className="text-brand">.proofpack</code>) here, or click to browse
+              Drop your Proof Pack (<code className="text-brand">.json</code> or{' '}
+              <code className="text-brand">.proofpack</code>) here, or click to browse
             </p>
             <p className="text-[11px] text-muted mt-0.5">
-              Supports full export bundles containing Merkle chains, PayPal receipts, and AI reasoning traces
+              Supports full export bundles containing hash chains, PayPal receipts, and verification trails
             </p>
           </div>
         </div>
 
-        {/* Status Alert Card if verified */}
+        {/* Status Alert Card */}
         {result && (
           <div
             className={`p-6 rounded-2xl border transition-all ${
@@ -272,7 +309,7 @@ export default function ProofPackVerifyPage() {
                 : 'bg-bad/10 border-bad/30 text-bad'
             }`}
           >
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div className="flex items-start gap-3.5">
                 {result.valid ? (
                   <CheckCircle2 className="w-6 h-6 flex-shrink-0 mt-0.5" />
@@ -282,19 +319,21 @@ export default function ProofPackVerifyPage() {
                 <div className="space-y-1.5">
                   <h3 className="text-base font-bold">
                     {result.valid
-                      ? `Cryptographic Audit Chain Intact (${result.eventsChecked} Sequential Events Verified)`
-                      : `Cryptographic Audit Chain Broken — Fraud / Tamper Detected`}
+                      ? `Audit Hash Chain Intact (${result.eventsChecked} Sequential Events Verified)`
+                      : `Audit Hash Chain Broken — Tampering Detected`}
                   </h3>
                   <p className="text-xs opacity-90 leading-relaxed font-mono">
                     {result.valid
-                      ? '✓ All sequential SHA-256 digests, canonical JSON payloads, and PayPal transaction receipts match perfectly.'
-                      : `✗ Tamper detected at sequence #${result.brokenAtSeq}. Expected checksum does not match payload digest.`}
+                      ? 'All canonical JSON hashes, sequential prev_hash pointers, and PayPal receipts match computed SHA-256 digests.'
+                      : result.error || `Hash mismatch detected at sequence #${result.brokenAtSeq}.`}
                   </p>
                   {tampered && !result.valid && (
                     <div className="text-xs mt-3 font-sans text-text bg-surface/80 p-3 rounded-xl border border-bad/30 space-y-1">
-                      <p className="font-bold text-bad">⚠️ Adversarial Tamper Demonstration:</p>
+                      <p className="font-bold text-bad">Adversarial Tamper Demonstration:</p>
                       <p className="text-muted leading-relaxed">
-                        We altered the PayPal capture payload in sequence #3 from <strong>$75.00</strong> to <strong>$9,999.99</strong>. Even a single byte alteration causes the entire SHA-256 cascade to fail, proving neither party can falsify historical financial records.
+                        We altered the PayPal capture payload in sequence #{result.brokenAtSeq} from{' '}
+                        <strong>$75.00</strong> to <strong>$9,999.99</strong>. Modifying a single field invalidates the
+                        SHA-256 chain immediately without needing server contact.
                       </p>
                     </div>
                   )}
@@ -305,18 +344,126 @@ export default function ProofPackVerifyPage() {
                 <button
                   type="button"
                   onClick={() => setShowDossierModal(true)}
-                  className="px-4 py-2 rounded-xl bg-brand text-black font-semibold text-xs hover:bg-brand/90 transition-all flex items-center gap-1.5 flex-shrink-0 shadow-lg shadow-brand/20"
+                  className="px-4 py-2 rounded-xl bg-brand text-white font-semibold text-xs hover:opacity-95 transition-all flex items-center gap-1.5 flex-shrink-0 shadow-sm"
                 >
                   <FileText className="w-3.5 h-3.5" />
-                  <span>Generate PayPal Dispute Dossier</span>
+                  <span>PayPal Dispute Dossier</span>
                 </button>
               )}
             </div>
           </div>
         )}
 
-        {/* Visual Hash Chain Block Explorer (When Valid Pack Loaded) */}
-        {result?.valid && parsedPack?.ledger && (
+        {/* Offline Time-Travel State Replay (N2 in browser) */}
+        {result?.valid && replayedState && ledgerList.length > 0 && (
+          <div className="p-6 rounded-2xl bg-surface border border-border space-y-5 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-brand/10 border border-brand/20 text-brand">
+                  <History className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-text">
+                    Offline Event-Sourced State Replay
+                  </h3>
+                  <p className="text-[11px] text-muted">
+                    Scrub across verified ledger blocks to inspect money state &amp; milestones at any event
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <StatusChip status={replayedState.status} size="md" />
+                <span className="text-xs font-mono text-muted px-2.5 py-1 rounded-lg bg-surface-2 border border-border">
+                  Event {effectiveReplaySeq} / {maxSeq}
+                </span>
+              </div>
+            </div>
+
+            {/* Scrubber Bar */}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                aria-label="Previous event"
+                disabled={effectiveReplaySeq <= minSeq}
+                onClick={() => setReplaySeq(Math.max(minSeq, effectiveReplaySeq - 1))}
+                className="p-2 rounded-lg border border-border bg-surface-2 text-text hover:border-brand/40 disabled:opacity-40 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <input
+                type="range"
+                aria-label="Replay ledger sequence"
+                min={minSeq}
+                max={maxSeq}
+                step={1}
+                value={effectiveReplaySeq}
+                onChange={(e) => setReplaySeq(Number(e.target.value))}
+                className="flex-1 accent-brand cursor-pointer"
+              />
+
+              <button
+                type="button"
+                aria-label="Next event"
+                disabled={effectiveReplaySeq >= maxSeq}
+                onClick={() => setReplaySeq(Math.min(maxSeq, effectiveReplaySeq + 1))}
+                className="p-2 rounded-lg border border-border bg-surface-2 text-text hover:border-brand/40 disabled:opacity-40 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Reconstructed Funds Bar */}
+            <div className="p-4 rounded-xl bg-surface-2 border border-border space-y-3">
+              <FundsBar
+                totalMinor={replayedState.total_minor || parsedPack?.contract?.total_minor || 0}
+                releasedMinor={replayedState.captured_minor}
+                heldMinor={replayedState.remaining_minor}
+                voidedMinor={replayedState.voided_minor}
+              />
+
+              {Object.keys(replayedState.milestones).length > 0 && (
+                <div className="pt-2 border-t border-border/60 flex flex-wrap gap-2">
+                  {Object.values(replayedState.milestones).map((m) => (
+                    <div
+                      key={m.key}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-border text-xs"
+                    >
+                      <span className="font-mono font-semibold text-text">{m.key}</span>
+                      <StatusChip status={m.status} size="sm" />
+                      {m.amount_minor > 0 && (
+                        <span className="text-[11px] font-mono text-muted">
+                          ${(m.amount_minor / 100).toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {activeReplayEvent && (
+              <div className="p-3.5 rounded-xl bg-surface-2 border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+                <div className="space-y-0.5">
+                  <span className="text-brand font-semibold">
+                    #{activeReplayEvent.seq} {activeReplayEvent.type}
+                  </span>
+                  <span className="block text-[11px] text-muted">
+                    Actor: {activeReplayEvent.actor_type || 'system'} ·{' '}
+                    {new Date(activeReplayEvent.created_at).toISOString()}
+                  </span>
+                </div>
+                <span className="text-[11px] text-ok truncate max-w-xs">
+                  SHA-256: {activeReplayEvent.hash}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Visual Hash Chain Block Explorer */}
+        {result?.valid && ledgerList.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-2">
@@ -329,67 +476,96 @@ export default function ProofPackVerifyPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {parsedPack.ledger.map((evt: ProofPackEvent, idx: number) => (
-                <div
-                  key={evt.seq}
-                  className="p-4 rounded-xl bg-surface border border-border hover:border-brand/40 transition-all space-y-3 relative overflow-hidden"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-surface-2 text-brand border border-brand/20">
-                      Block #{evt.seq}
-                    </span>
-                    <span className="text-[10px] text-muted font-mono">
-                      {new Date(evt.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <p className="text-xs font-bold text-text truncate">
-                      {evt.type.replace(/_/g, ' ')}
-                    </p>
-                    <p className="text-[11px] text-muted">
-                      Actor: <span className="font-semibold text-text uppercase">{evt.actor_type || 'system'}</span>
-                    </p>
-                  </div>
-
-                  <div className="space-y-1.5 pt-2 border-t border-border/60">
-                    <div className="text-[10px] font-mono text-muted space-y-0.5">
-                      <div className="flex items-center justify-between">
-                        <span>Prev Hash:</span>
-                        <span className="text-text font-semibold">{evt.prev_hash.slice(0, 8)}...</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Block Digest:</span>
-                        <span className="text-ok font-semibold">{evt.hash.slice(0, 8)}...</span>
-                      </div>
+              {ledgerList.map((evt: ProofPackEvent) => {
+                const isSelected = evt.seq === effectiveReplaySeq
+                return (
+                  <button
+                    key={evt.seq}
+                    type="button"
+                    onClick={() => setReplaySeq(evt.seq)}
+                    className={`text-left p-4 rounded-xl bg-surface border transition-all space-y-3 relative overflow-hidden ${
+                      isSelected
+                        ? 'border-brand ring-1 ring-brand/40'
+                        : 'border-border hover:border-brand/40'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-surface-2 text-brand border border-brand/20">
+                        Block #{evt.seq}
+                      </span>
+                      <span className="text-[10px] text-muted font-mono">
+                        {new Date(evt.created_at).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
                     </div>
 
-                    {evt.type === 'PAYPAL_AUTHORIZATION_CREATED' && (
-                      <div className="p-2 rounded bg-surface-2 border border-border text-[11px] text-muted space-y-0.5">
-                        <p className="font-semibold text-text">PayPal Auth Hold:</p>
-                        <p className="font-mono text-[10px] text-brand">{(evt.payload as any).paypal_authorization_id}</p>
-                        <p className="text-[10px]">${((evt.payload as any).amount_minor / 100).toFixed(2)} USD hold</p>
-                      </div>
-                    )}
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold text-text truncate">
+                        {evt.type.replace(/_/g, ' ')}
+                      </p>
+                      <p className="text-[11px] text-muted">
+                        Actor:{' '}
+                        <span className="font-semibold text-text uppercase">
+                          {evt.actor_type || 'system'}
+                        </span>
+                      </p>
+                    </div>
 
-                    {evt.type === 'DELIVERABLE_VERIFIED' && (
-                      <div className="p-2 rounded bg-surface-2 border border-border text-[11px] text-muted space-y-0.5">
-                        <p className="font-semibold text-text">AI Verification Decision:</p>
-                        <p className="font-mono text-[10px] text-ok">PASS (Score: {(evt.payload as any).llm_rubric_score ?? 95}/100)</p>
-                        <p className="text-[10px]">Deterministic Schema: Passed ✓</p>
+                    <div className="space-y-1.5 pt-2 border-t border-border/60">
+                      <div className="text-[10px] font-mono text-muted space-y-0.5">
+                        <div className="flex items-center justify-between">
+                          <span>Prev Hash:</span>
+                          <span className="text-text font-semibold">{evt.prev_hash.slice(0, 8)}...</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Block Digest:</span>
+                          <span className="text-ok font-semibold">{evt.hash.slice(0, 8)}...</span>
+                        </div>
                       </div>
-                    )}
 
-                    {evt.type === 'PAYPAL_CAPTURE_COMPLETED' && (
-                      <div className="p-2 rounded bg-surface-2 border border-border text-[11px] text-muted space-y-0.5">
-                        <p className="font-semibold text-text">PayPal Capture Rails:</p>
-                        <p className="font-mono text-[10px] text-ok">{(evt.payload as any).paypal_capture_id}</p>
-                        <p className="text-[10px]">${((evt.payload as any).amount_minor / 100).toFixed(2)} USD transferred</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+                      {(evt.type === 'PAYPAL_AUTHORIZATION_CREATED' || evt.type === 'AUTHORIZATION_CREATED') && (
+                        <div className="p-2 rounded bg-surface-2 border border-border text-[11px] text-muted space-y-0.5">
+                          <p className="font-semibold text-text">PayPal Auth Hold:</p>
+                          <p className="font-mono text-[10px] text-brand">
+                            {String(evt.payload?.paypal_authorization_id || evt.payload?.authorization_id || '')}
+                          </p>
+                          {typeof evt.payload?.amount_minor === 'number' && (
+                            <p className="text-[10px]">
+                              ${(evt.payload.amount_minor / 100).toFixed(2)} USD hold
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {evt.type === 'DELIVERABLE_VERIFIED' && (
+                        <div className="p-2 rounded bg-surface-2 border border-border text-[11px] text-muted space-y-0.5">
+                          <p className="font-semibold text-text">AI Verification Decision:</p>
+                          <p className="font-mono text-[10px] text-ok">
+                            PASS (Score: {String(evt.payload?.llm_rubric_score ?? 95)}/100)
+                          </p>
+                          <p className="text-[10px]">Deterministic Schema: Passed</p>
+                        </div>
+                      )}
+
+                      {(evt.type === 'PAYPAL_CAPTURE_COMPLETED' || evt.type === 'CAPTURE_COMPLETED') && (
+                        <div className="p-2 rounded bg-surface-2 border border-border text-[11px] text-muted space-y-0.5">
+                          <p className="font-semibold text-text">PayPal Capture:</p>
+                          <p className="font-mono text-[10px] text-ok">
+                            {String(evt.payload?.paypal_capture_id || evt.payload?.capture_id || '')}
+                          </p>
+                          {typeof evt.payload?.amount_minor === 'number' && (
+                            <p className="text-[10px]">
+                              ${(evt.payload.amount_minor / 100).toFixed(2)} USD captured
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </div>
         )}
@@ -426,7 +602,7 @@ export default function ProofPackVerifyPage() {
           </div>
 
           <textarea
-            rows={12}
+            rows={10}
             value={jsonText}
             onChange={(e) => {
               setJsonText(e.target.value)
@@ -435,6 +611,7 @@ export default function ProofPackVerifyPage() {
               } else {
                 setResult(null)
                 setParsedPack(null)
+                setReplaySeq(0)
               }
             }}
             placeholder="Paste your exported proof-pack.json here or click 'Load Sample Proof Pack' above..."
@@ -457,10 +634,10 @@ export default function ProofPackVerifyPage() {
           <div className="p-4 rounded-xl bg-surface border border-border space-y-1.5">
             <h4 className="text-xs font-bold text-text flex items-center gap-1.5">
               <Layers className="w-3.5 h-3.5 text-brand" />
-              <span>2. Immutable Merkle Chain</span>
+              <span>2. Immutable Hash Chain</span>
             </h4>
             <p className="text-[11px] text-muted leading-relaxed">
-              Every audit block links the parent digest into its own SHA-256 signature, creating an unbroken chain since contract creation.
+              Every audit block links the preceding digest into its own SHA-256 signature, creating an unbroken sequence since contract creation.
             </p>
           </div>
 
@@ -470,25 +647,26 @@ export default function ProofPackVerifyPage() {
               <span>3. PayPal Native Fact Trail</span>
             </h4>
             <p className="text-[11px] text-muted leading-relaxed">
-              Stores concrete PayPal Order IDs, Authorization IDs, and Capture IDs that can be verified independently with PayPal Merchant APIs.
+              Stores concrete PayPal Order IDs, Authorization IDs, and Capture IDs that can be reconciled against PayPal Merchant records.
             </p>
           </div>
         </div>
       </div>
 
       {/* Official PayPal Dispute Resolution Dossier Modal */}
-      {showDossierModal && parsedPack && (
+      {showDossierModal && parsedPack && dossierFacts && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
           <div className="max-w-2xl w-full bg-surface border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            {/* Modal Header */}
             <div className="p-5 border-b border-border flex items-center justify-between bg-surface-2">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 rounded-lg bg-brand/10 border border-brand/20 text-brand">
                   <FileText className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-text">PayPal Certified Dispute Resolution Dossier</h3>
-                  <p className="text-[11px] text-muted font-mono">Doc ID: DOSSIER-{parsedPack.contract?.id?.slice(0, 12)}</p>
+                  <h3 className="text-sm font-bold text-text">PayPal Dispute Evidence Dossier</h3>
+                  <p className="text-[11px] text-muted font-mono">
+                    Doc ID: DOSSIER-{parsedPack.contract?.id?.slice(0, 12)}
+                  </p>
                 </div>
               </div>
               <button
@@ -500,12 +678,14 @@ export default function ProofPackVerifyPage() {
               </button>
             </div>
 
-            {/* Printable Content Body */}
             <div className="p-6 overflow-y-auto space-y-5 text-xs text-text leading-relaxed font-sans">
               <div className="p-4 rounded-xl bg-brand/5 border border-brand/20 space-y-1">
-                <p className="text-xs font-bold text-brand uppercase tracking-wider">Zero-Custody Cryptographic Certificate</p>
+                <p className="text-xs font-bold text-brand uppercase tracking-wider">
+                  Authorization Hold Evidence Summary
+                </p>
                 <p className="text-[11px] text-muted">
-                  This document serves as definitive mathematical evidence for PayPal Dispute Resolution, confirming work specifications, objective verification metrics, and authorization hold releases.
+                  Compiled directly from the offline-verified SHA-256 Proof Pack summarizing contract specification,
+                  verification metrics, and PayPal authorization/capture references (authorization hold, not escrow).
                 </p>
               </div>
 
@@ -516,63 +696,74 @@ export default function ProofPackVerifyPage() {
                 </div>
                 <div>
                   <span className="text-muted block">Total Agreement Value:</span>
-                  <span className="font-semibold text-text">${((parsedPack.contract?.total_minor || 0) / 100).toFixed(2)} USD</span>
+                  <span className="font-semibold text-text">
+                    ${(dossierFacts.totalMinor / 100).toFixed(2)} USD
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted block">Buyer Identity:</span>
-                  <span className="font-mono text-text">{parsedPack.contract?.buyer_email || 'buyer@verified.proofpay'}</span>
+                  <span className="font-mono text-text">{dossierFacts.buyerEmail}</span>
                 </div>
                 <div>
                   <span className="text-muted block">Seller Identity:</span>
-                  <span className="font-mono text-text">{parsedPack.contract?.seller_email || 'seller@verified.proofpay'}</span>
+                  <span className="font-mono text-text">{dossierFacts.sellerEmail}</span>
                 </div>
               </div>
 
-              {/* PayPal Transaction References */}
               <div className="space-y-2">
                 <h4 className="text-xs font-bold text-text uppercase tracking-wider">PayPal Rail Evidence</h4>
                 <div className="p-3 rounded-xl bg-surface-2 border border-border space-y-1.5 font-mono text-[11px]">
                   <div className="flex justify-between">
                     <span className="text-muted">Authorization ID:</span>
-                    <span className="text-brand font-semibold">{parsedPack.ledger?.[0]?.payload?.paypal_authorization_id || 'AUTH-1234567890'}</span>
+                    <span className="text-brand font-semibold">{dossierFacts.authId}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted">Capture ID:</span>
-                    <span className="text-ok font-semibold">{parsedPack.ledger?.[2]?.payload?.paypal_capture_id || 'CAP-9988776655'}</span>
+                    <span className="text-ok font-semibold">{dossierFacts.captureId}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted">Custody Model:</span>
-                    <span className="text-text font-semibold">PayPal Authorization Hold (Zero ProofPay Custody)</span>
+                    <span className="text-text font-semibold">
+                      PayPal Authorization Hold (Zero ProofPay Custody)
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Verification Proof Summary */}
               <div className="space-y-2">
-                <h4 className="text-xs font-bold text-text uppercase tracking-wider">Multi-Stage AI Verification Evidence</h4>
+                <h4 className="text-xs font-bold text-text uppercase tracking-wider">
+                  Verification &amp; Chain Summary
+                </h4>
                 <div className="p-3 rounded-xl bg-surface-2 border border-border space-y-1.5 font-mono text-[11px]">
                   <div className="flex justify-between">
-                    <span className="text-muted">Deterministic Check:</span>
-                    <span className="text-ok font-semibold">PASSED (Schema valid, zero syntax defects)</span>
+                    <span className="text-muted">Deterministic Checks:</span>
+                    <span className="text-ok font-semibold">PASSED</span>
                   </div>
+                  {dossierFacts.rubricScore !== null && (
+                    <div className="flex justify-between">
+                      <span className="text-muted">LLM Rubric Score:</span>
+                      <span className="text-ok font-semibold">{dossierFacts.rubricScore} / 100</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
-                    <span className="text-muted">LLM Rubric Score:</span>
-                    <span className="text-ok font-semibold">96 / 100</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted">Merkle Root Hash:</span>
+                    <span className="text-muted">Contract Hash:</span>
                     <span className="text-brand font-semibold truncate max-w-[280px]">
-                      {parsedPack.contract?.hash || '0x9a4f8e7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f'}
+                      {parsedPack.contract?.hash || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted">Head Ledger Digest:</span>
+                    <span className="text-ok font-semibold truncate max-w-[280px]">
+                      {dossierFacts.headHash}
                     </span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Modal Actions */}
             <div className="p-4 border-t border-border flex items-center justify-between bg-surface-2">
               <span className="text-[10px] text-muted font-mono">
-                Digitally certified via ProofPay v2 Protocol
+                Verified offline via ProofPay SHA-256 Chain Protocol
               </span>
               <div className="flex items-center gap-2">
                 <button
@@ -586,7 +777,7 @@ export default function ProofPackVerifyPage() {
                 <button
                   type="button"
                   onClick={() => setShowDossierModal(false)}
-                  className="px-4 py-1.5 rounded-lg bg-brand text-black font-semibold text-xs hover:bg-brand/90 transition-all"
+                  className="px-4 py-1.5 rounded-lg bg-brand text-white font-semibold text-xs hover:opacity-95 transition-all"
                 >
                   Done
                 </button>
