@@ -137,10 +137,72 @@ export function createApiClient({ baseUrl, apiKey }: ApiClientConfig) {
     applyLintFix: async (id: string, issueCode: string) => {
       const res = await r<any>(`/api/v1/contracts/${id}/lint/apply`, {
         method: 'POST',
-        body: { code: issueCode },
+        body: { issue_code: issueCode },
       })
       return (res?.contract ?? res) as ContractView
     },
+    scanLoopholes: (id: string) =>
+      r<{
+        contract_id: string
+        contract_version: number
+        attempts_tested: number
+        loopholes_confirmed: number
+        confirmed_loopholes: Array<{
+          strategy_tag: string
+          milestone_key: string
+          milestone_index: number
+          title: string
+          why_useless: string
+          artifact_preview: string
+          passed_criteria: string[]
+          closing_fix_description: string
+          patch_ops: unknown[]
+          patch?: Record<string, unknown>
+          retest_result?: {
+            closed: boolean
+            failed_check?: string
+            reason: string
+          }
+        }>
+        summary_badge: string
+      }>(`/api/v1/contracts/${id}/loophole-scan`, { method: 'POST' }),
+    applyLoopholePatch: async (
+      id: string,
+      payload: { strategy_tag: string; patch_ops: unknown[]; description?: string }
+    ) =>
+      r<{
+        contract: ContractView
+        patch_applied: boolean
+        remaining_loopholes: number
+      }>(`/api/v1/contracts/${id}/loophole-scan/apply`, {
+        method: 'POST',
+        body: payload,
+      }),
+    getContractReplay: (id: string) =>
+      r<{
+        contract_id: string
+        chain_valid: boolean
+        checked_events: number
+        broken_at_seq: number | null
+        events: LedgerEvent[]
+        final_state: Record<string, unknown>
+      }>(`/api/v1/contracts/${id}/replay`),
+    getStateCheck: (id: string) =>
+      r<{
+        contract_id: string
+        chain_valid: boolean
+        checked_events: number
+        broken_at_seq: number | null
+        state_matches_ledger: boolean
+        mismatches: Array<{
+          scope: string
+          field: string
+          db_value: unknown
+          ledger_value: unknown
+        }>
+        db_summary: Record<string, unknown>
+        ledger_state: Record<string, unknown>
+      }>(`/api/v1/contracts/${id}/state-check`),
     proposeContract: async (id: string, sellerIdOrEmail: string) => {
       const res = await r<any>(`/api/v1/contracts/${id}/propose`, {
         method: 'POST',

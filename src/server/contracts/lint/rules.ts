@@ -3,7 +3,6 @@
  * Implements phase-3-auth-and-contracts.md §3.7 & PRD FR-4…FR-7,
  * and AIP-11 Satisfiability Linter.
  */
-import { sha256Hex } from '@/server/contracts/canonical'
 import { findVagueTerms } from './vague-terms'
 import type { LintIssue } from '@/shared/types'
 
@@ -119,7 +118,7 @@ export function runDeterministicLint(contract: any, options?: LintOptions): Lint
         if (c.check === 'json_schema') jsonSchemaCheck = c
         if (c.check === 'unique_field') uniqueFieldCheck = c
         if (c.check === 'required_keywords') keywordsCheck = c
-        if (c.check === 'junk_free') hasJunkFree = true
+        if (c.check === 'junk_free' || c.check === 'junk_detector') hasJunkFree = true
       }
 
       // LINT_RUBRIC_NO_THRESHOLD
@@ -162,6 +161,10 @@ export function runDeterministicLint(contract: any, options?: LintOptions): Lint
         'word_count',
         'required_keywords',
         'junk_free',
+        'junk_detector',
+        'csv_schema',
+        'forbidden_terms',
+        'link_check',
       ]
       if (c?.type === 'deterministic' && c?.check && !VALID_CHECKS.includes(c.check)) {
         addIssue({
@@ -261,13 +264,18 @@ export function runDeterministicLint(contract: any, options?: LintOptions): Lint
     }
 
     // AIP-11: 5. LINT_NO_JUNK_CHECK
-    const isDatasetOrContent = m?.deliverable?.format === 'csv' || m?.deliverable?.format === 'json' || m?.deliverable?.format === 'markdown'
+    const isDatasetOrContent =
+      m?.deliverable?.format === 'csv' ||
+      m?.deliverable?.format === 'json' ||
+      m?.deliverable?.format === 'markdown' ||
+      m?.deliverable?.content_type === 'json_records' ||
+      m?.deliverable?.content_type === 'text'
     if (isDatasetOrContent && !hasJunkFree) {
       addIssue({
         code: 'LINT_NO_JUNK_CHECK',
         severity: 'info',
         path: `${mPath}/criteria`,
-        message: 'Dataset / document deliverable has no junk_free check; consider adding junk_free to guard against lorem ipsum or placeholder rows',
+        message: 'Deliverable has no junk_detector check; consider running Loophole Finder to guard against placeholders or repetition',
       })
     }
   })

@@ -9,13 +9,13 @@ import { useParams, useRouter } from 'next/navigation'
 import { PageShell } from '@/components/common/PageShell'
 import { ContractEditor } from '@/components/studio/ContractEditor'
 import { LintPanel } from '@/components/studio/LintPanel'
+import { LoopholeFinderPanel } from '@/components/studio/LoopholeFinderPanel'
 import { ProposeBar } from '@/components/studio/ProposeBar'
 import { LoadingBlock } from '@/components/common/LoadingBlock'
 import { ErrorState } from '@/components/common/ErrorState'
 import { useContract, useApiClient } from '@/lib/query'
 import { useQueryClient } from '@tanstack/react-query'
 import { computeClarityScore } from '@/lib/clarity'
-import { Sparkles, ShieldAlert, CheckCircle2, AlertTriangle, Info } from 'lucide-react'
 
 export default function StudioContractDetailPage() {
   const params = useParams()
@@ -109,7 +109,7 @@ export default function StudioContractDetailPage() {
   return (
     <PageShell
       title="Review &amp; Refine Draft"
-      subtitle="Inspect acceptance criteria, fix ambiguities with one click, and propose to seller"
+      subtitle="Inspect acceptance criteria, fix ambiguities, close red-team loopholes, and propose to seller"
       backHref="/studio"
       backLabel="Back to Studio"
     >
@@ -197,12 +197,20 @@ export default function StudioContractDetailPage() {
             />
           </div>
 
-          {/* Right Rail: Ambiguity & Lint Panel */}
+          {/* Right Rail: Ambiguity & Lint Panel + Red-Team Loophole Finder */}
           <div className="space-y-6">
             <LintPanel
               issues={issues}
               onApplyFix={handleApplyFix}
               isFixing={isFixing}
+            />
+
+            <LoopholeFinderPanel
+              contractId={contractId}
+              contractVersion={contract.version}
+              onContractUpdated={async () => {
+                await queryClient.invalidateQueries({ queryKey: ['contract', contractId] })
+              }}
             />
           </div>
         </div>

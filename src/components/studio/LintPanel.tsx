@@ -57,6 +57,11 @@ export function LintPanel({
               {warnings.length} warning{warnings.length > 1 ? 's' : ''}
             </span>
           )}
+          {infos.length > 0 && (
+            <span className="px-2 py-0.5 rounded-full bg-surface-2 text-muted font-medium">
+              {infos.length} note{infos.length > 1 ? 's' : ''}
+            </span>
+          )}
         </div>
       </div>
 
@@ -80,7 +85,13 @@ export function LintPanel({
             iconColor = 'text-warn'
           }
 
-          const fixDesc = (issue as any).suggested_fix?.description || issue.fix
+          const hasFix = Boolean((issue as any).suggested_fix?.patch || issue.fix)
+          const rawFixDesc = (issue as any).suggested_fix?.description || issue.fix
+          const fixDesc =
+            typeof rawFixDesc === 'string' &&
+            (rawFixDesc.trim().startsWith('[') || rawFixDesc.trim().startsWith('{'))
+              ? 'Automated schema patch ready'
+              : rawFixDesc
 
           return (
             <div
@@ -99,10 +110,10 @@ export function LintPanel({
                 </div>
               </div>
 
-              {fixDesc && (
+              {hasFix && (
                 <div className="pt-2 border-t border-border/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <span className="text-muted text-[11px] leading-relaxed">
-                    💡 {fixDesc}
+                    {fixDesc}
                   </span>
                   <button
                     type="button"

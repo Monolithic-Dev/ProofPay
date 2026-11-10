@@ -36,24 +36,79 @@ export const KeywordsSpec = z.object({
   case_sensitive: z.boolean().optional(),
 })
 
+export const JunkDetectorSpec = z.object({
+  max_placeholder_ratio: z.number().min(0).max(1).optional(),
+  max_duplicate_ratio: z.number().min(0).max(1).optional(),
+  min_entropy: z.number().min(0).max(8).optional(),
+  custom_placeholders: z.array(z.string().min(1)).optional(),
+})
+
+export const CsvSchemaSpec = z.object({
+  required_headers: z.array(z.string().min(1)).optional(),
+  min_columns: z.number().int().positive().optional(),
+  delimiter: z.string().min(1).max(4).optional(),
+})
+
+export const ForbiddenTermsSpec = z.object({
+  terms: z.array(z.string().min(1)).min(1),
+  case_sensitive: z.boolean().optional(),
+})
+
+export const LinkCheckSpec = z.object({
+  require_https: z.boolean().optional(),
+  disallow_internal: z.boolean().optional(),
+  max_links: z.number().int().nonnegative().optional(),
+})
+
+const SPEC_VALIDATORS = {
+  json_schema: JsonSchemaSpec,
+  row_count: RowCountSpec,
+  unique_field: UniqueFieldSpec,
+  regex_field: RegexFieldSpec,
+  word_count: WordCountSpec,
+  required_keywords: KeywordsSpec,
+  junk_detector: JunkDetectorSpec,
+  csv_schema: CsvSchemaSpec,
+  forbidden_terms: ForbiddenTermsSpec,
+  link_check: LinkCheckSpec,
+} as const
+
 // ---------------------------------------------------------------------------
 // Criterion variants
 // ---------------------------------------------------------------------------
-const DeterministicCriterion = z.object({
-  key: z.string().regex(/^c[1-9]\d*$/, 'criterion key must be c1, c2, …'),
-  type: z.literal('deterministic'),
-  required: z.boolean(),
-  description: z.string().min(1).max(300),
-  check: z.enum([
-    'json_schema',
-    'row_count',
-    'unique_field',
-    'regex_field',
-    'word_count',
-    'required_keywords',
-  ]),
-  spec: z.union([JsonSchemaSpec, RowCountSpec, UniqueFieldSpec, RegexFieldSpec, WordCountSpec, KeywordsSpec]),
-})
+const DeterministicCriterion = z
+  .object({
+    key: z.string().regex(/^c[1-9]\d*$/, 'criterion key must be c1, c2, …'),
+    type: z.literal('deterministic'),
+    required: z.boolean(),
+    description: z.string().min(1).max(300),
+    check: z.enum([
+      'json_schema',
+      'row_count',
+      'unique_field',
+      'regex_field',
+      'word_count',
+      'required_keywords',
+      'junk_detector',
+      'csv_schema',
+      'forbidden_terms',
+      'link_check',
+    ]),
+    spec: z.record(z.unknown()),
+  })
+  .superRefine((crit, ctx) => {
+    const validator = SPEC_VALIDATORS[crit.check]
+    const parsed = validator.safeParse(crit.spec)
+    if (!parsed.success) {
+      for (const issue of parsed.error.issues) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Invalid spec for '${crit.check}': ${issue.message}`,
+          path: ['spec', ...issue.path],
+        })
+      }
+    }
+  })
 
 const RubricCriterion = z.object({
   key: z.string().regex(/^c[1-9]\d*$/),
@@ -71,7 +126,7 @@ const HumanCriterion = z.object({
   statement: z.string().min(1).max(300),
 })
 
-export const Criterion = z.discriminatedUnion('type', [
+export const Criterion = z.union([
   DeterministicCriterion,
   RubricCriterion,
   HumanCriterion,

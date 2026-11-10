@@ -160,7 +160,7 @@ export function ContractEditor({
                       Expected Deliverable
                     </span>
                     <p className="text-text font-mono bg-surface p-2.5 rounded-lg border border-border/60">
-                      [{m.deliverable.type}] {m.deliverable.description}
+                      [{m.deliverable.content_type ?? m.deliverable.type ?? 'deliverable'}] {m.deliverable.description}
                     </p>
                   </div>
                 )}
@@ -184,11 +184,22 @@ export function ContractEditor({
                           <div className="space-y-1 flex-1">
                             <div className="flex items-center gap-2">
                               <span className="font-mono text-muted text-[11px]">{crit.key}</span>
-                              <span className="font-medium text-text">{crit.description}</span>
+                              <span className="font-medium text-text">{crit.description || crit.statement}</span>
                             </div>
+                            {crit.check && (
+                              <p className="text-[11px] font-mono text-muted">
+                                Check: {crit.check}
+                                {crit.spec ? ` ${JSON.stringify(crit.spec)}` : ''}
+                              </p>
+                            )}
                             {crit.rule?.pattern && (
                               <p className="text-[11px] font-mono text-muted">
                                 Pattern: {crit.rule.pattern}
+                              </p>
+                            )}
+                            {crit.pass_threshold !== undefined && isRubric && (
+                              <p className="text-[11px] text-muted italic">
+                                Passing threshold: {Math.round(Number(crit.pass_threshold) * 100)}%
                               </p>
                             )}
                             {crit.rubric?.target && (

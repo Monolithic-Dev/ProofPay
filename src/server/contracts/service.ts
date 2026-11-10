@@ -53,7 +53,11 @@ export async function updateContractDraft(
 
   let nextJson: unknown
   if (Array.isArray(patchOrUpdates)) {
-    nextJson = applyPatchSafe(existing.contract_json, patchOrUpdates)
+    const patchRes = applyPatchSafe(existing.contract_json, patchOrUpdates)
+    if (!patchRes.ok || !patchRes.contract) {
+      throw new ValidationError(patchRes.reason ?? 'Failed to apply JSON patch to draft contract')
+    }
+    nextJson = patchRes.contract
   } else {
     nextJson = {
       ...(existing.contract_json as Record<string, unknown>),
@@ -147,22 +151,28 @@ export async function applyLintFix(
   const lintData = existing.lint_json as { issues?: LintIssue[] }
   const issues = Array.isArray(lintData?.issues) ? lintData.issues : []
   const targetIssue = issues.find((i) => i.code === issueCode || (i as any).id === issueCode)
+  const rawFix = targetIssue?.fix ?? (targetIssue as any)?.suggested_fix?.patch
 
-  if (!targetIssue || !targetIssue.fix) {
+  if (!targetIssue || !rawFix) {
     throw new ValidationError(`Lint issue '${issueCode}' does not have an automated fix`)
   }
 
   let patchOps: Operation[] = []
   try {
-    const parsed = typeof targetIssue.fix === 'string' ? JSON.parse(targetIssue.fix) : targetIssue.fix
+    const parsed = typeof rawFix === 'string' ? JSON.parse(rawFix) : rawFix
     patchOps = Array.isArray(parsed) ? parsed : [parsed]
   } catch {
     throw new ValidationError(`Fix payload for issue '${issueCode}' is not a valid JSON patch`)
   }
 
-  const updatedJson = applyPatchSafe(existing.contract_json, patchOps)
+  const patchRes = applyPatchSafe(existing.contract_json, patchOps)
+  if (!patchRes.ok || !patchRes.contract) {
+    throw new ValidationError(
+      patchRes.reason ?? `Automated fix for '${issueCode}' did not pass schema validation`
+    )
+  }
 
-  const validated = parseContract(updatedJson)
+  const validated = parseContract(patchRes.contract)
   const detIssues = runDeterministicLint(validated)
   const aiIssues = await runAiLint(validated, detIssues)
   const allIssues = [...detIssues, ...aiIssues]
@@ -193,7 +203,78 @@ export async function applyLintFix(
       actorId: user.sub,
       payload: {
         issue_code: issueCode,
-        fix: targetIssue.fix,
+        fix: rawFix as unknown as Record<string, unknown>,
+      },
+    })
+
+    return row
+  })
+
+  return buildContractView(getDb(), updatedRow)
+}
+
+export async function applyLoopholePatchToDraft(
+  id: string,
+  user: SessionUser,
+  params: {
+    strategyTag: string
+    patchOps: Operation[]
+    description?: string
+  }
+): Promise<ContractView> {
+  requireRole(user, 'buyer', 'admin')
+
+  const { contract: existing } = await requireParty(getDb(), id, user)
+
+  if (existing.buyer_id !== user.sub && user.role !== 'admin') {
+    throw new ForbiddenError('Only the contract creator can patch loopholes on this draft')
+  }
+
+  if (existing.status !== 'DRAFT') {
+    throw new ConflictError('Only DRAFT contracts can be patched via Loophole Finder')
+  }
+
+  const patchRes = applyPatchSafe(existing.contract_json, params.patchOps)
+  if (!patchRes.ok || !patchRes.contract) {
+    throw new ValidationError(
+      patchRes.reason ?? `Loophole patch for '${params.strategyTag}' failed schema validation`
+    )
+  }
+
+  const validated = parseContract(patchRes.contract)
+  const detIssues = runDeterministicLint(validated)
+  const aiIssues = await runAiLint(validated, detIssues)
+  const allIssues = [...detIssues, ...aiIssues]
+
+  const updatedRow = await withTx(async (tx) => {
+    await lockContract(tx, id)
+
+    const [row] = await tx
+      .update(contracts)
+      .set({
+        title: validated.title,
+        contract_json: validated,
+        lint_json: { issues: allIssues },
+        total_minor: validated.total_minor,
+        currency: validated.currency,
+        version: existing.version + 1,
+        updated_at: new Date(),
+      })
+      .where(eq(contracts.id, id))
+      .returning()
+
+    if (!row) throw new NotFoundError('Contract', { id })
+
+    await appendLedgerEvent(tx, {
+      contractId: id,
+      type: 'contract_draft_edited',
+      actorType: 'buyer',
+      actorId: user.sub,
+      payload: {
+        loophole_tag: params.strategyTag,
+        fix_description: params.description ?? params.strategyTag,
+        version: row.version,
+        diff: params.patchOps as unknown as Record<string, unknown>,
       },
     })
 
