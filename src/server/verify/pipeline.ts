@@ -10,13 +10,14 @@
  * Stage 3: Adversarial / injection scan (heuristics + fast model audit)
  * Stage 4: Policy engine (pure function, rules 1–8 strictly ordered)
  */
-import { eq } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import { getDb } from '@/server/db/client'
 import { verifications, criteria, submissions, milestones, contracts } from '@/server/db/schema'
 import { parseArtifact } from './artifact'
 import { runDeterministicCheck } from './deterministic/registry'
 import { runRubricStage } from './rubric'
 import { runAdversarialStage } from './adversarial'
+import { buildContextFacts } from './context-facts'
 import { evaluateConsensus, type ModelVerdict } from './consensus'
 import {
   decide,
@@ -182,7 +183,7 @@ export async function runVerificationPipeline(params: RunVerificationPipelinePar
       if (anyRequiredDetFailed) {
         log.info('Skipping Stage 2 rubric evaluation because required deterministic check failed')
       } else {
-        // Collect context artifacts from accepted prior milestones if requested
+        // Collect deterministic summary facts from accepted prior milestones (never inject raw prose)
         const contextArtifacts: Record<string, string> = {}
         const requiredContextKeys = new Set<string>()
 
@@ -206,19 +207,29 @@ export async function runVerificationPipeline(params: RunVerificationPipelinePar
 
           for (const pm of priorMilestones) {
             if (requiredContextKeys.has(pm.milestone_key)) {
-              // Find latest successful submission
+              // Only admit context facts from accepted/released prior milestones
+              if (pm.status !== 'PASSED' && pm.status !== 'RELEASED') {
+                continue
+              }
+
+              // Fetch the LATEST submission attempt (descending order)
               const [priorSub] = await db
                 .select({ content_text: submissions.content_text })
                 .from(submissions)
                 .where(eq(submissions.milestone_id, pm.id))
-                .orderBy(submissions.attempt)
+                .orderBy(desc(submissions.attempt))
                 .limit(1)
 
               if (priorSub) {
-                // Sanitize historical context: cap length to 4000 chars and strip zero-width characters (Finding A-2)
-                contextArtifacts[pm.milestone_key] = priorSub.content_text
-                  .slice(0, 4000)
-                  .replace(/[\u200B-\u200F\u202A-\u202E\u2060\uFEFF]/g, '')
+                let parsedPrior: unknown = priorSub.content_text
+                try {
+                  parsedPrior = JSON.parse(priorSub.content_text)
+                } catch {
+                  // Keep string for unstructured text deliverables
+                }
+                // Deterministic metadata & distinctCategories only — blocks cross-milestone prompt injection
+                const safeFacts = buildContextFacts(pm.milestone_key, parsedPrior)
+                contextArtifacts[pm.milestone_key] = JSON.stringify(safeFacts)
               }
             }
           }

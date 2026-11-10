@@ -45,11 +45,11 @@ export default function HomePage() {
     },
     {
       q: 'Who pays platform and transaction fees?',
-      a: 'During our current Sandbox release, ProofPay is 100% free with zero fees. When real-money routing launches in R2 via PayPal Partner Referrals, competitive platform fees will be disclosed upfront on each milestone release.',
+      a: 'During our current Sandbox release, ProofPay charges no platform fees in Sandbox test mode. When real-money routing launches in R2 via PayPal Partner Referrals, platform fees will be disclosed upfront on each milestone release.',
     },
     {
       q: 'Can my autonomous AI agent use ProofPay?',
-      a: 'Yes. ProofPay provides dedicated Service Accounts with granular permission scopes (e.g., contracts:write, submissions:write) and strict financial budget caps. AI agents can negotiate contracts and submit work programmatically via our REST API or Model Context Protocol (MCP) server.',
+      a: 'Yes. ProofPay provides dedicated Service Accounts with granular permission scopes (e.g., contracts:write, submissions:write) and strict financial budget caps. AI agents can draft contracts and submit work programmatically via our REST API or Model Context Protocol (MCP) server.',
     },
     {
       q: 'Is my deliverable code and data safe?',
@@ -63,7 +63,7 @@ export default function HomePage() {
       "command": "npx",
       "args": ["-y", "@proofpay/mcp-server"],
       "env": {
-        "PROOFPAY_API_KEY": "sk_live_your_agent_key",
+        "PROOFPAY_API_KEY": "pp_k_your_agent_key",
         "PROOFPAY_BASE_URL": "http://localhost:3000"
       }
     }
@@ -100,7 +100,7 @@ export default function HomePage() {
           </h1>
 
           <p className="max-w-2xl mx-auto text-base sm:text-lg text-muted leading-relaxed font-normal">
-            ProofPay locks authorized funds on PayPal before work starts, releasing payment milestone by
+            ProofPay establishes a PayPal authorization hold before work starts, releasing payment milestone by
             milestone only after deliverables meet cryptographic criteria verified by deterministic analyzers
             and dual-LLM consensus.
           </p>
@@ -558,10 +558,10 @@ export default function HomePage() {
             <div className="space-y-3">
               <h4 className="font-semibold text-text uppercase tracking-wider text-[11px]">System Status</h4>
               <div className="space-y-2 text-muted">
-                <div className="flex items-center gap-2">
+                <Link href="/status" className="flex items-center gap-2 hover:text-text transition-colors">
                   <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span className="text-text font-medium">PayPal Sandbox: Active</span>
-                </div>
+                  <span className="text-text font-medium">Live Health Telemetry &rarr;</span>
+                </Link>
                 <p className="text-[11px] leading-relaxed">
                   Platform operates in sandbox test mode with simulated currency.
                 </p>

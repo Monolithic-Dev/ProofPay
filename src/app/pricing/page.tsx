@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { PageShell } from '@/components/common/PageShell'
-import { Check, Shield, ArrowRight, Zap, Info } from 'lucide-react'
+import { Check, Shield, ArrowRight, Info } from 'lucide-react'
 
 export default function PricingPage() {
   return (
@@ -91,7 +91,7 @@ export default function PricingPage() {
               </li>
               <li className="flex items-center gap-2.5">
                 <Check className="w-4 h-4 text-brand" />
-                <span>Zero fees on voided or cancelled contracts</span>
+                <span>No ProofPay platform charge on voided or cancelled holds</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Check className="w-4 h-4 text-brand" />

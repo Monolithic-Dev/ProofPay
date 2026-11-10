@@ -52,13 +52,14 @@ export function computeClarityScore(contract: any): ClarityScoreResult {
     const criteria = m.criteria || []
     let milestoneDeterministicCount = 0
 
-    if (m.due_days && m.due_days > 28) {
+    const dueDays = m.due_in_days ?? m.due_days
+    if (dueDays && dueDays > 28) {
       deadlineSafe = false
       score -= 20
-      reasons.push(`Milestone '${m.title || m.milestone_key}' due days (${m.due_days}d) exceeds PayPal's 29-day hold window.`)
+      reasons.push(`Milestone '${m.title || m.milestone_key}' due days (${dueDays}d) exceeds PayPal's 29-day hold window.`)
     }
 
-    if (VAGUE_TERMS_REGEX.test(m.description || '')) {
+    if (VAGUE_TERMS_REGEX.test(m.deliverable?.description || m.description || '')) {
       vagueTermsCount++
     }
 
@@ -69,7 +70,7 @@ export function computeClarityScore(contract: any): ClarityScoreResult {
         milestoneDeterministicCount++
       } else {
         // Rubric / subjective
-        if (VAGUE_TERMS_REGEX.test(c.description || '')) {
+        if (VAGUE_TERMS_REGEX.test(c.statement || c.description || '')) {
           vagueTermsCount++
         }
       }

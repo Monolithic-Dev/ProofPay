@@ -5,6 +5,7 @@ import {
   normalizeForScan,
 } from '@/server/verify/context-facts'
 import { heuristicScan } from '@/server/verify/adversarial'
+import { shouldBlockAutoRelease } from '@/server/jobs/handlers/auto-release'
 
 describe('AIP-10 Context Injection & Obfuscation Defenses (src/server/verify/context-facts.ts)', () => {
   it('extracts facts without leaking raw deliverable text into context', () => {
@@ -78,3 +79,50 @@ describe('AIP-10 Context Injection & Obfuscation Defenses (src/server/verify/con
   })
 })
 
+describe('AIP-12 Auto-Release Farming Guard (shouldBlockAutoRelease)', () => {
+  it('allows clean escalations with lowercase or uppercase none severity', () => {
+    expect(
+      shouldBlockAutoRelease({
+        manipulation_severity: 'none',
+        degraded: false,
+        reasons: [{ code: 'HUMAN_SIGNOFF_REQUIRED', message: 'Needs human review' }],
+      }).blocked
+    ).toBe(false)
+
+    expect(
+      shouldBlockAutoRelease({
+        manipulation_severity: 'NONE',
+        degraded: false,
+        reasons: [{ code: 'LOW_CONFIDENCE', message: 'Ambiguous prose' }],
+      }).blocked
+    ).toBe(false)
+  })
+
+  it('blocks auto-release when manipulation_severity is low or high', () => {
+    expect(
+      shouldBlockAutoRelease({
+        manipulation_severity: 'low',
+        degraded: false,
+        reasons: [{ code: 'POSSIBLE_MANIPULATION', message: 'Zero-width smuggling' }],
+      }).blocked
+    ).toBe(true)
+
+    expect(
+      shouldBlockAutoRelease({
+        manipulation_severity: 'high',
+        degraded: false,
+        reasons: [],
+      }).blocked
+    ).toBe(true)
+  })
+
+  it('blocks auto-release when verification was degraded or flagged VERIFIER_UNAVAILABLE', () => {
+    expect(
+      shouldBlockAutoRelease({
+        manipulation_severity: 'none',
+        degraded: true,
+        reasons: [{ code: 'VERIFIER_UNAVAILABLE', message: 'LLM timeout' }],
+      }).blocked
+    ).toBe(true)
+  })
+})

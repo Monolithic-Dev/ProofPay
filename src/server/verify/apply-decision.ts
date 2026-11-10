@@ -19,6 +19,15 @@ import { env } from '@/server/config/env'
 import { logger } from '@/server/util/logger'
 import { AppError } from '@/server/util/errors'
 
+const AUTO_RELEASE_BLOCKING_REASON_CODES = new Set([
+  'POSSIBLE_MANIPULATION',
+  'MANIPULATION_DETECTED',
+  'INJECTION_LOW',
+  'INJECTION_HIGH',
+  'VERIFIER_UNAVAILABLE',
+  'DEGRADED',
+])
+
 export interface ApplyDecisionParams {
   contractId: string
   milestoneId: string
@@ -225,10 +234,14 @@ export async function applyDecision(params: ApplyDecisionParams): Promise<ApplyD
     }
 
     // -------------------------------------------------------------------------
-    // ESCALATE: Set auto_release_at using review window and DEMO_TIME_SCALE
+    // ESCALATE: Set auto_release_at ONLY if free of manipulation/degraded flags
     // -------------------------------------------------------------------------
     if (decision === 'ESCALATE') {
       assertMilestoneTransition('VERIFYING', 'ESCALATED')
+
+      const blockAutoRelease =
+        String(manipulationSeverity).toLowerCase() !== 'none' ||
+        reasons.some((r) => AUTO_RELEASE_BLOCKING_REASON_CODES.has(r.code))
 
       const contractJson = contractRow.contract_json as {
         policy?: { buyer_review_window_hours?: number }
@@ -236,7 +249,7 @@ export async function applyDecision(params: ApplyDecisionParams): Promise<ApplyD
       const reviewHours = contractJson?.policy?.buyer_review_window_hours ?? 72
       const timeScale = env.DEMO_TIME_SCALE > 0 ? env.DEMO_TIME_SCALE : 1
       const windowMs = Math.max(1000, Math.floor((reviewHours * 3600 * 1000) / timeScale))
-      const autoReleaseAt = new Date(Date.now() + windowMs)
+      const autoReleaseAt = blockAutoRelease ? null : new Date(Date.now() + windowMs)
 
       await tx
         .update(milestones)
@@ -256,24 +269,27 @@ export async function applyDecision(params: ApplyDecisionParams): Promise<ApplyD
           milestone_key: milestone.milestone_key,
           verification_id: verificationId,
           reasons,
-          auto_release_at: autoReleaseAt.toISOString(),
+          auto_release_at: autoReleaseAt ? autoReleaseAt.toISOString() : null,
+          auto_release_blocked_reason: blockAutoRelease ? 'SECURITY_OR_DEGRADED_REVIEW' : undefined,
           attestation,
         },
       })
 
-      await enqueueJob(
-        tx,
-        'AUTO_RELEASE',
-        {
-          contract_id: contractId,
-          milestone_id: milestoneId,
-          verification_id: verificationId,
-        },
-        {
-          runAt: autoReleaseAt,
-          dedupeKey: `auto_release:${milestoneId}`,
-        }
-      )
+      if (autoReleaseAt) {
+        await enqueueJob(
+          tx,
+          'AUTO_RELEASE',
+          {
+            contract_id: contractId,
+            milestone_id: milestoneId,
+            verification_id: verificationId,
+          },
+          {
+            runAt: autoReleaseAt,
+            dedupeKey: `auto_release:${milestoneId}`,
+          }
+        )
+      }
 
       return { applied: true, newStatus: 'ESCALATED' }
     }

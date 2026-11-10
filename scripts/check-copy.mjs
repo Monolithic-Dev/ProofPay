@@ -56,8 +56,12 @@ const FORBIDDEN_PATTERNS = [
     regex: /auto-releases?\s+escrow/i,
   },
   {
-    name: 'Locks authorization holds (inaccurate)',
-    regex: /locks\s+authorization/i,
+    name: 'Locks authorization holds / funds (inaccurate — use "authorization hold")',
+    regex: /locks\s+authoriz(ation|ed)(\s+funds)?/i,
+  },
+  {
+    name: 'Overclaim: zero-fee / 0% fee claims in sandbox',
+    regex: /\b(0%|zero)\s+fees?\b/i,
   },
 ]
 

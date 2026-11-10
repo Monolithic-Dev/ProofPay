@@ -120,8 +120,8 @@ export async function submitDeliverable(
   }
 
   // Check deliverable content type matches milestone spec
-  const deliverableSpec = milestone.deliverable_json as { type?: string } | null
-  const expectedType = deliverableSpec?.type
+  const deliverableSpec = milestone.deliverable_json as { content_type?: string; type?: string } | null
+  const expectedType = deliverableSpec?.content_type ?? deliverableSpec?.type
   if (expectedType && expectedType !== body.content_type) {
     throw new AppError(
       'BAD_REQUEST',
