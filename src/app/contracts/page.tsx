@@ -154,10 +154,10 @@ export default function ContractsPage() {
         {/* Top Metric Cards */}
         <ScrollReveal animation="fade-up">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-brand/40 transition-all">
+            <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm space-y-2 group hover:border-brand/40 transition-all">
               <div className="flex items-center justify-between text-muted">
                 <span className="text-xs font-bold uppercase tracking-wider">Total Volume</span>
-                <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
+                <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-500 dark:text-sky-400">
                   <DollarSign className="w-4 h-4" />
                 </div>
               </div>
@@ -167,10 +167,10 @@ export default function ContractsPage() {
               <p className="text-[11px] text-muted">Across all negotiated contracts</p>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-blue-500/40 transition-all">
+            <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm space-y-2 group hover:border-blue-500/40 transition-all">
               <div className="flex items-center justify-between text-muted">
                 <span className="text-xs font-bold uppercase tracking-wider">Active Agreements</span>
-                <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400">
                   <FileText className="w-4 h-4" />
                 </div>
               </div>
@@ -178,10 +178,10 @@ export default function ContractsPage() {
               <p className="text-[11px] text-muted">Accepted, funded, or in progress</p>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-emerald-500/40 transition-all">
+            <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm space-y-2 group hover:border-emerald-500/40 transition-all">
               <div className="flex items-center justify-between text-muted">
                 <span className="text-xs font-bold uppercase tracking-wider">PayPal Holds Locked</span>
-                <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400">
                   <Lock className="w-4 h-4" />
                 </div>
               </div>
@@ -189,10 +189,10 @@ export default function ContractsPage() {
               <p className="text-[11px] text-muted">Secured via PayPal 29-day auth holds</p>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-teal-500/40 transition-all">
+            <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm space-y-2 group hover:border-teal-500/40 transition-all">
               <div className="flex items-center justify-between text-muted">
                 <span className="text-xs font-bold uppercase tracking-wider">Completed &amp; Settled</span>
-                <div className="p-2 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400">
+                <div className="p-2 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-500 dark:text-teal-400">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
               </div>

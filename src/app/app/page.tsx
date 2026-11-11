@@ -136,14 +136,14 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Section B: Money at a Glance (3 Stat Tiles with Bento Glow) */}
+        {/* Section B: Money at a Glance (3 Stat Tiles with Clean Surfaces) */}
         <ScrollReveal animation="fade-up">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Tile 1: Open Holds */}
-            <div className="p-6 rounded-2xl glass-card border border-border/80 shadow-lg space-y-3 relative overflow-hidden group hover:border-brand/40 transition-all">
+            <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-3 relative overflow-hidden group hover:border-brand/40 transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-muted uppercase tracking-wider">Held on PayPal</span>
-                <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-500 dark:text-sky-400 group-hover:scale-105 transition-transform">
                   <Lock className="w-4 h-4" />
                 </div>
               </div>
@@ -158,15 +158,15 @@ export default function DashboardPage() {
             </div>
 
             {/* Tile 2: Released This Month */}
-            <div className="p-6 rounded-2xl glass-card border border-border/80 shadow-lg space-y-3 relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+            <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-3 relative overflow-hidden group hover:border-emerald-500/40 transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-muted uppercase tracking-wider">Released on Proof</span>
-                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 group-hover:scale-105 transition-transform">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
               </div>
               <div className="space-y-1">
-                <div className="text-3xl font-black text-emerald-400 tracking-tight font-mono">
+                <div className="text-3xl font-black text-emerald-500 dark:text-emerald-400 tracking-tight font-mono">
                   {formatUsd(releasedMinor)}
                 </div>
                 <p className="text-[11px] text-muted">
@@ -176,10 +176,10 @@ export default function DashboardPage() {
             </div>
 
             {/* Tile 3: Funds at Risk */}
-            <div className="p-6 rounded-2xl glass-card border border-border/80 shadow-lg space-y-3 relative overflow-hidden group hover:border-amber-500/40 transition-all">
+            <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-3 relative overflow-hidden group hover:border-amber-500/40 transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-muted uppercase tracking-wider">Attention &amp; Risk</span>
-                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 dark:text-amber-400 group-hover:scale-105 transition-transform">
                   <TrendingUp className="w-4 h-4" />
                 </div>
               </div>
