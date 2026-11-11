@@ -1,8 +1,21 @@
 import type { Metadata } from 'next'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { QueryProvider } from '@/lib/query'
 import { HeaderNav } from '@/components/common/HeaderNav'
 import { PageTransition } from '@/components/common/PageTransition'
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+})
 
 export const metadata: Metadata = {
   title: 'ProofPay — Conditional Payments for Autonomous AI Agents',
@@ -16,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-bg text-text antialiased flex flex-col selection:bg-brand/20 selection:text-brand">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="min-h-screen bg-bg text-text font-sans antialiased flex flex-col selection:bg-brand/20 selection:text-brand">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-brand focus:text-white focus:rounded-md focus:shadow-lg"
@@ -25,14 +38,14 @@ export default function RootLayout({
           Skip to main content
         </a>
         <QueryProvider>
-          {/* Top floating glass dock container */}
-          <header className="fixed top-3 sm:top-4 left-0 right-0 z-50 flex justify-center px-3 sm:px-6 pointer-events-none">
-            <div className="w-full max-w-6xl pointer-events-auto">
+          {/* Featurebase-style: Clean, full-bleed sticky top navigation */}
+          <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-surface/80 backdrop-blur-xl transition-all">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
               <HeaderNav />
             </div>
           </header>
 
-          <main id="main-content" className="flex-1 pt-20 sm:pt-24">
+          <main id="main-content" className="flex-1">
             <PageTransition>{children}</PageTransition>
           </main>
         </QueryProvider>

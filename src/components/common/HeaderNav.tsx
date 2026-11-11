@@ -94,106 +94,99 @@ export function HeaderNav() {
   ]
 
   return (
-    <nav className="w-full flex items-center justify-between px-3 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-surface/80 dark:bg-surface/75 backdrop-blur-2xl border border-border/80 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.35)] transition-all">
-      {/* Brand & Sandbox Pill */}
-      <div className="flex items-center space-x-3 shrink-0">
-        <Link href="/" className="flex items-center space-x-2 group">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-text text-bg flex items-center justify-center font-black text-xs sm:text-sm tracking-tighter shadow-sm group-hover:scale-105 transition-transform">
+    <div className="w-full flex items-center justify-between">
+      {/* Brand & Left Navigation */}
+      <div className="flex items-center space-x-6 sm:space-x-8">
+        <Link href="/" className="flex items-center space-x-2.5 group">
+          <div className="w-8 h-8 rounded-lg bg-text text-bg flex items-center justify-center font-black text-sm tracking-tight shadow-sm group-hover:scale-105 transition-transform">
             PP
           </div>
-          <div className="flex flex-col">
-            <span className="font-extrabold text-sm sm:text-base tracking-tight text-text leading-none">
-              Proof<span className="text-brand">Pay</span>
-            </span>
-          </div>
+          <span className="font-extrabold text-base tracking-tight text-text">
+            Proof<span className="text-brand">Pay</span>
+          </span>
         </Link>
 
-        <span className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-2 border border-border/80 text-[10px] font-mono font-medium text-muted">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>PayPal Sandbox v2</span>
-        </span>
-      </div>
+        {/* Primary Links */}
+        <nav className="hidden md:flex items-center space-x-1">
+          {mainLinks.map((link) => {
+            const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
+                  isActive
+                    ? 'text-text font-bold bg-surface-2'
+                    : 'text-muted hover:text-text hover:bg-surface-2/60'
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
 
-      {/* Center Links (Linear/Stripe floating dock style) */}
-      <div className="hidden md:flex items-center space-x-1 lg:space-x-1.5 px-2 py-1 rounded-xl bg-surface-2/60 border border-border/40">
-        {mainLinks.map((link) => {
-          const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold tracking-wide transition-all ${
-                isActive
-                  ? 'bg-surface text-text shadow-xs font-bold'
-                  : 'text-muted hover:text-text hover:bg-surface/50'
-              }`}
+          {/* More Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-muted hover:text-text hover:bg-surface-2/60 transition-all flex items-center gap-1"
             >
-              {link.label}
-            </Link>
-          )
-        })}
+              <span>More</span>
+              <ChevronDown className={`w-3 h-3 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-        {/* More Dropdown */}
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="px-2.5 py-1 rounded-lg text-xs font-semibold text-muted hover:text-text hover:bg-surface/50 transition-all flex items-center gap-1"
-          >
-            <span>More</span>
-            <ChevronDown className={`w-3 h-3 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          {dropdownOpen && (
-            <div className="absolute top-full left-0 mt-2.5 w-56 rounded-2xl bg-surface/95 backdrop-blur-xl border border-border shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-1 divide-y divide-border/40">
-              <div className="px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted/70">
-                Workspace Tools
+            {dropdownOpen && (
+              <div className="absolute top-full left-0 mt-2 w-56 rounded-xl bg-surface/95 backdrop-blur-xl border border-border shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-1 divide-y divide-border/40">
+                <div className="px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted/70">
+                  Workspace Tools
+                </div>
+                <div className="py-1">
+                  {moreLinks.slice(0, 4).map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setDropdownOpen(false)}
+                      className="block px-3.5 py-1.5 text-xs font-medium text-text hover:bg-surface-2 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+                <div className="py-1">
+                  {moreLinks.slice(4).map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setDropdownOpen(false)}
+                      className="block px-3.5 py-1.5 text-xs font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
-              <div className="py-1">
-                {moreLinks.slice(0, 4).map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setDropdownOpen(false)}
-                    className="block px-3.5 py-1.5 text-xs font-medium text-text hover:bg-surface-2 transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-              <div className="py-1">
-                {moreLinks.slice(4).map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setDropdownOpen(false)}
-                    className="block px-3.5 py-1.5 text-xs font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </nav>
       </div>
 
-      {/* Right Controls: Command Palette, Demos, Theme & Auth */}
-      <div className="flex items-center space-x-1.5 sm:space-x-2">
+      {/* Right Controls: Featurebase Clean Pattern */}
+      <div className="flex items-center space-x-2 sm:space-x-3">
         <CommandPalette />
 
-        {/* Agent Demos Pill */}
+        {/* Demos Button */}
         <div className="relative" ref={demoRef}>
           <button
             onClick={() => setDemoMenuOpen(!demoMenuOpen)}
-            className="px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold tracking-wide bg-surface-2 hover:bg-surface-3 text-text border border-border/80 shadow-xs transition-all flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide text-muted hover:text-text hover:bg-surface-2 transition-all flex items-center gap-1.5"
           >
             <Sparkles className="w-3.5 h-3.5 text-brand" />
-            <span className="hidden sm:inline">Demos</span>
+            <span className="hidden sm:inline">Playground</span>
             <ChevronDown className={`w-3 h-3 text-muted transition-transform ${demoMenuOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {demoMenuOpen && (
-            <div className="absolute top-full right-0 mt-2.5 w-80 rounded-2xl bg-surface/95 backdrop-blur-xl border border-border shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-1 space-y-1">
+            <div className="absolute top-full right-0 mt-2 w-80 rounded-xl bg-surface/95 backdrop-blur-xl border border-border shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-1 space-y-1">
               <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted">
                 Live PayPal Agent Demos
               </div>
@@ -226,33 +219,33 @@ export function HeaderNav() {
           <NotificationBell />
         </div>
 
-        {/* User Auth: Monochromatic Luxury Action Button */}
+        {/* Auth / CTA Button */}
         {user ? (
           <Link
             href="/settings"
-            className="flex items-center space-x-1.5 pl-1.5 text-xs font-semibold text-text hover:opacity-80 transition-opacity"
+            className="flex items-center space-x-2 pl-2 text-xs font-semibold text-text hover:opacity-80 transition-opacity"
           >
             <div className="w-7 h-7 rounded-full bg-text text-bg flex items-center justify-center font-bold text-xs uppercase shadow-xs">
               {user.email ? user.email.slice(0, 1) : <User className="w-3.5 h-3.5" />}
             </div>
           </Link>
         ) : (
-          <div className="flex items-center space-x-1.5 pl-1.5">
+          <div className="flex items-center space-x-2 pl-2">
             <Link
               href="/auth/login"
-              className="hidden sm:inline-block px-3 py-1.5 rounded-xl text-xs font-medium text-muted hover:text-text hover:bg-surface-2 transition-colors"
+              className="hidden sm:inline-block px-3 py-1.5 rounded-lg text-xs font-semibold text-muted hover:text-text hover:bg-surface-2 transition-colors"
             >
               Sign In
             </Link>
             <Link
               href="/auth/login?tab=register"
-              className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-text text-bg hover:opacity-90 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="px-4 py-1.5 rounded-lg text-xs font-bold bg-text text-bg hover:opacity-90 transition-all shadow-sm"
             >
               Get Started
             </Link>
           </div>
         )}
       </div>
-    </nav>
+    </div>
   )
 }
