@@ -27,8 +27,9 @@ export default function RootLayout({
         </a>
         <QueryProvider>
           <header className="border-b border-border/80 bg-surface/75 backdrop-blur-xl sticky top-0 z-40 shadow-sm transition-all">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+              {/* Brand Logo and Status Pill */}
+              <div className="flex items-center space-x-3 shrink-0">
                 <Link href="/" className="flex items-center space-x-2.5 group">
                   <div className="relative">
                     <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/25 group-hover:scale-105 group-hover:shadow-sky-500/40 transition-all">
@@ -48,11 +49,15 @@ export default function RootLayout({
                     </span>
                   </div>
                 </Link>
-                <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-2/80 border border-border/60 text-[11px] font-medium text-muted">
+                
+                {/* Properly formatted, single-line PayPal badge with whitespace-nowrap */}
+                <div className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap shadow-xs">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span>PayPal Sandbox v2</span>
                 </div>
               </div>
+
+              {/* Streamlined Nav and Actions */}
               <HeaderNav />
             </div>
           </header>
