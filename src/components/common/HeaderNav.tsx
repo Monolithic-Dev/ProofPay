@@ -136,8 +136,8 @@ export function HeaderNav() {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-56 rounded-xl bg-surface/95 backdrop-blur-xl border border-border shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-1 divide-y divide-border/40">
-                <div className="px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted/70">
+              <div className="absolute top-full left-0 mt-2 w-56 rounded-xl bg-surface border border-border shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-1 divide-y divide-border/40">
+                <div className="px-3.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-muted/70">
                   Workspace Tools
                 </div>
                 <div className="py-1">
@@ -186,8 +186,8 @@ export function HeaderNav() {
           </button>
 
           {demoMenuOpen && (
-            <div className="absolute top-full right-0 mt-2 w-80 rounded-xl bg-surface/95 backdrop-blur-xl border border-border shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-1 space-y-1">
-              <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted">
+            <div className="absolute top-full right-0 mt-2 w-80 rounded-xl bg-surface border border-border shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-1 space-y-1">
+              <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted border-b border-border/40 mb-1">
                 Live PayPal Agent Demos
               </div>
               {demoScenarios.map((demo) => (
@@ -195,13 +195,13 @@ export function HeaderNav() {
                   key={demo.href}
                   href={demo.href}
                   onClick={() => setDemoMenuOpen(false)}
-                  className="block p-2.5 rounded-xl hover:bg-surface-2 transition-all group"
+                  className="block p-2.5 rounded-lg hover:bg-surface-2 transition-all group"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-text group-hover:text-brand transition-colors">
                       {demo.title}
                     </span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-surface-3 text-muted">
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-surface-2 border border-border/70 text-muted">
                       {demo.badge}
                     </span>
                   </div>
