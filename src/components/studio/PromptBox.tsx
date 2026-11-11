@@ -5,7 +5,7 @@
  * Enterprise Luxury edition: monochrome elegance, sleek keyboard shortcut styling, high-contrast borders.
  */
 import React, { useState } from 'react'
-import { Sparkles, ArrowRight, Loader2, FileCode } from 'lucide-react'
+import { Terminal, ArrowRight, Loader2, FileCode } from 'lucide-react'
 
 export interface PromptBoxProps {
   onCompile: (prompt: string) => Promise<void>
@@ -52,8 +52,8 @@ export function PromptBox({
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h2 className="text-base font-bold text-text flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-surface-2 border border-border text-brand">
-              <Sparkles className="w-4 h-4" />
+            <div className="p-1.5 rounded-lg bg-surface-2 border border-border text-text">
+              <Terminal className="w-4 h-4" />
             </div>
             <span>AI Contract Compiler</span>
           </h2>

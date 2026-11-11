@@ -17,10 +17,10 @@ import {
   AlertTriangle,
   Lock,
   Layers,
-  Sparkles,
   CheckCircle2,
   Users,
   FileCode,
+  ListChecks,
   DollarSign,
   TrendingUp,
   Clock,
@@ -227,7 +227,7 @@ export default function DashboardPage() {
                   href="/studio"
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand text-white text-xs font-semibold shadow-sm"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <FileCode className="w-3.5 h-3.5" />
                   <span>Create with AI Compiler</span>
                 </Link>
               </div>
@@ -287,8 +287,8 @@ export default function DashboardPage() {
           <div className="p-6 rounded-2xl glass-card border border-border/80 space-y-5 shadow-lg">
             <div className="space-y-1">
               <h3 className="text-sm font-bold text-text flex items-center gap-2">
-                <div className="w-6 h-6 rounded-md bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
-                  <Sparkles className="w-3.5 h-3.5" />
+                <div className="w-6 h-6 rounded-md bg-surface-2 border border-border flex items-center justify-center text-text">
+                  <ListChecks className="w-3.5 h-3.5" />
                 </div>
                 <span>Getting Started Checklist</span>
               </h3>

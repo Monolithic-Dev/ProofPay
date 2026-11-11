@@ -10,7 +10,7 @@ import { CommandPalette } from '@/components/common/CommandPalette'
 import {
   User,
   ChevronDown,
-  Sparkles,
+  SlidersHorizontal,
 } from 'lucide-react'
 
 export function HeaderNav() {
@@ -180,7 +180,7 @@ export function HeaderNav() {
             onClick={() => setDemoMenuOpen(!demoMenuOpen)}
             className="px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide text-muted hover:text-text hover:bg-surface-2 transition-all flex items-center gap-1.5"
           >
-            <Sparkles className="w-3.5 h-3.5 text-brand" />
+            <SlidersHorizontal className="w-3.5 h-3.5 text-muted" />
             <span className="hidden sm:inline">Playground</span>
             <ChevronDown className={`w-3 h-3 text-muted transition-transform ${demoMenuOpen ? 'rotate-180' : ''}`} />
           </button>

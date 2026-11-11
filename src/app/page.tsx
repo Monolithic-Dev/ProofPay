@@ -21,7 +21,6 @@ import {
   FileCheck2,
   ExternalLink,
   Layers,
-  Sparkles,
   HelpCircle,
   Copy,
   Check,
@@ -217,30 +216,30 @@ export default function HomePage() {
         <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" />
         
-        <div className="flex w-max animate-marquee space-x-12 items-center text-xs font-bold uppercase tracking-wider text-muted/70">
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>PayPal Orders v2 API</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>RFC 3161 Timestamping</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Claude & Gemini JSON-RPC MCP</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>SHA-256 Merkle Audit Chain</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Deterministic ProofPack™ Verification</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>OpenTelemetry Enterprise Tracing</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>PayPal Orders v2 API</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>RFC 3161 Timestamping</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Claude & Gemini JSON-RPC MCP</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>SHA-256 Merkle Audit Chain</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Deterministic ProofPack™ Verification</span>
-          <span className="text-border">•</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>OpenTelemetry Enterprise Tracing</span>
+        <div className="flex w-max animate-marquee space-x-12 items-center text-xs font-mono uppercase tracking-wider text-muted/70">
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>PayPal Orders v2 API</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>RFC 3161 Timestamping</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Claude &amp; Gemini JSON-RPC MCP</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>SHA-256 Merkle Audit Chain</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Deterministic ProofPack™ Verification</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>OpenTelemetry Enterprise Tracing</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>PayPal Orders v2 API</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>RFC 3161 Timestamping</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Claude &amp; Gemini JSON-RPC MCP</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>SHA-256 Merkle Audit Chain</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Deterministic ProofPack™ Verification</span>
+          <span className="text-border/60">/</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>OpenTelemetry Enterprise Tracing</span>
         </div>
       </section>
 
@@ -319,7 +318,7 @@ export default function HomePage() {
             <div className="p-7 rounded-2xl glass-card border border-border/80 shadow-xl space-y-6 hover:border-brand/40 transition-all duration-300">
               <div className="flex items-center justify-between border-b border-border/60 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                  <div className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text">
                     <FileCheck2 className="w-4 h-4" />
                   </div>
                   <div>
@@ -327,7 +326,7 @@ export default function HomePage() {
                     <span className="text-[11px] text-muted">Cryptographic Verdict Engine</span>
                   </div>
                 </div>
-                <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">
+                <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-surface-2 text-text border border-border font-mono">
                   DECISION: PASS
                 </span>
               </div>
@@ -356,10 +355,10 @@ export default function HomePage() {
 
                 <div className="flex items-center justify-between text-[11px] text-muted pt-2 border-t border-border/60">
                   <span className="font-mono flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                    <ShieldCheck className="w-3.5 h-3.5 text-text" />
                     <span>ProofPack™ signed with RFC 3161</span>
                   </span>
-                  <span className="text-emerald-400 font-bold">PayPal Captured: $600.00</span>
+                  <span className="text-brand font-bold">PayPal Captured: $600.00</span>
                 </div>
               </div>
             </div>
@@ -432,7 +431,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border text-text flex items-center justify-center">
                 <Briefcase className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold text-text">Agencies and Freelancers</h3>
@@ -442,7 +441,7 @@ export default function HomePage() {
             </div>
 
             <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border text-text flex items-center justify-center">
                 <Users className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold text-text">Buyers and Clients</h3>
@@ -452,7 +451,7 @@ export default function HomePage() {
             </div>
 
             <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-surface-2 border border-border text-text flex items-center justify-center">
                 <Bot className="w-5 h-5" />
               </div>
               <h3 className="text-base font-bold text-text">AI-Agent Builders</h3>
@@ -489,81 +488,77 @@ export default function HomePage() {
           {/* Asymmetric Bento Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Large card: AI safety */}
-            <div className="md:col-span-2 group relative p-8 rounded-3xl glass-card border border-purple-500/20 shadow-xl hover:border-purple-500/40 transition-all duration-300 overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 group-hover:bg-purple-500/10 transition-colors duration-700" />
+            <div className="md:col-span-2 group relative p-8 rounded-2xl bg-surface border border-border shadow-sm hover:border-brand/40 transition-all duration-300 overflow-hidden">
               <div className="relative z-10 space-y-5">
                 <div className="flex items-start justify-between">
-                  <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                  <div className="p-3 rounded-xl bg-surface-2 border border-border text-text">
                     <Scale className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-mono font-bold px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                  <span className="text-[11px] font-mono font-bold px-3 py-1.5 rounded-full bg-surface-2 text-text border border-border">
                     Non-Custodial
                   </span>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-black text-text">AI advises, deterministic rules decide</h3>
+                  <h3 className="text-xl font-bold text-text">AI advises, deterministic rules decide</h3>
                   <p className="text-sm text-muted leading-relaxed">
                     The AI cannot disburse payments. Strict JSON schema validators, threshold gates, and dual-LLM consensus hold absolute authority over every PayPal authorization capture.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-1">
                   {['Schema Validation', 'Rubric Scoring', 'Consensus Check', 'Threshold Gates'].map(tag => (
-                    <span key={tag} className="text-[11px] px-2.5 py-1 rounded-lg bg-surface-2/80 border border-border/60 text-muted font-medium">{tag}</span>
+                    <span key={tag} className="text-[11px] px-2.5 py-1 rounded-lg bg-surface-2 border border-border text-muted font-medium">{tag}</span>
                   ))}
                 </div>
               </div>
             </div>
 
             {/* Evidence card */}
-            <div className="group relative p-8 rounded-3xl glass-card border border-emerald-500/20 shadow-xl hover:border-emerald-500/40 transition-all duration-300 overflow-hidden flex flex-col justify-between">
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 group-hover:bg-emerald-500/10 transition-colors duration-700" />
+            <div className="group relative p-8 rounded-2xl bg-surface border border-border shadow-sm hover:border-brand/40 transition-all duration-300 overflow-hidden flex flex-col justify-between">
               <div className="relative z-10 space-y-4">
-                <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 w-fit">
+                <div className="p-3 rounded-xl bg-surface-2 border border-border text-text w-fit">
                   <Database className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-black text-text">Evidence you can export</h3>
+                <h3 className="text-xl font-bold text-text">Evidence you can export</h3>
                 <p className="text-sm text-muted leading-relaxed">
                   Every decision recorded in a tamper-evident SHA-256 hash-chained log. Full ProofPack™ export for mediation.
                 </p>
               </div>
-              <div className="relative z-10 mt-5 p-3.5 rounded-xl bg-surface-2/90 border border-border/60 font-mono text-[11px] text-emerald-400 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="relative z-10 mt-5 p-3 rounded-xl bg-surface-2 border border-border font-mono text-[11px] text-text flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand" />
                 <span>SHA-256 hash chain · RFC 3161 TSA</span>
               </div>
             </div>
 
             {/* PayPal card */}
-            <div className="group relative p-8 rounded-3xl glass-card border border-sky-500/20 shadow-xl hover:border-sky-500/40 transition-all duration-300 overflow-hidden flex flex-col justify-between">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-sky-500/5 rounded-full blur-3xl -translate-y-1/3 translate-x-1/4 group-hover:bg-sky-500/10 transition-colors duration-700" />
+            <div className="group relative p-8 rounded-2xl bg-surface border border-border shadow-sm hover:border-brand/40 transition-all duration-300 overflow-hidden flex flex-col justify-between">
               <div className="relative z-10 space-y-4">
-                <div className="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 w-fit">
+                <div className="p-3 rounded-xl bg-surface-2 border border-border text-text w-fit">
                   <DollarSign className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-black text-text">PayPal moves the money</h3>
+                <h3 className="text-xl font-bold text-text">PayPal moves the money</h3>
                 <p className="text-sm text-muted leading-relaxed">
                   ProofPay never holds your funds. 29-day authorization holds stay securely on PayPal rails.
                 </p>
               </div>
-              <div className="relative z-10 mt-5 flex items-center gap-2 text-sky-400 text-xs font-semibold">
+              <div className="relative z-10 mt-5 flex items-center gap-2 text-text text-xs font-semibold group-hover:text-brand transition-colors">
                 <span>Direct PayPal REST API v2</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </div>
 
             {/* Honest limits wide card */}
-            <div className="md:col-span-2 group relative p-8 rounded-3xl glass-card border border-amber-500/20 shadow-xl hover:border-amber-500/40 transition-all duration-300 overflow-hidden">
-              <div className="absolute top-0 right-0 w-72 h-72 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 group-hover:bg-amber-500/8 transition-colors duration-700" />
+            <div className="md:col-span-2 group relative p-8 rounded-2xl bg-surface border border-border shadow-sm hover:border-brand/40 transition-all duration-300 overflow-hidden">
               <div className="relative z-10 space-y-5">
                 <div className="flex items-start justify-between">
-                  <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                  <div className="p-3 rounded-xl bg-surface-2 border border-border text-text">
                     <ShieldCheck className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-mono font-bold px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <span className="text-[11px] font-mono font-bold px-3 py-1.5 rounded-full bg-surface-2 text-text border border-border">
                     Transparency
                   </span>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-black text-text">Radically honest about limits</h3>
+                  <h3 className="text-xl font-bold text-text">Radically honest about limits</h3>
                   <p className="text-sm text-muted leading-relaxed">
                     Sandbox today with test money. Authorization hold, not escrow. Not legal advice. Every milestone criterion, evaluation log, and audit chain is fully exportable as verifiable JSON.
                   </p>
@@ -680,26 +675,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section — Premium Gradient with glow */}
-      <section className="py-28 relative overflow-hidden">
-        {/* Concentric glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-900/20 via-indigo-900/15 to-purple-900/20 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-sky-500/15 via-blue-500/15 to-indigo-500/15 blur-[100px] rounded-full pointer-events-none" />
-        <div className="absolute inset-0 bg-dot-pattern opacity-20 pointer-events-none" />
+      {/* CTA Section — Premium Monochrome with Subtle Brand Glow */}
+      <section className="py-28 relative overflow-hidden border-t border-border bg-surface/30">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-brand/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute inset-0 bg-dot-pattern opacity-15 pointer-events-none" />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
           <ScrollReveal animation="scale-up">
             <div className="space-y-5">
-              <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/30 px-4 py-1.5 rounded-full backdrop-blur-md">
-                <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
+              <span className="inline-flex items-center gap-2 text-xs uppercase font-mono font-bold tracking-wider text-muted bg-surface-2 border border-border px-4 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand"></span>
                 Sandbox Live · Real PayPal Rails
               </span>
               <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-text leading-tight">
                 Ready to secure agreements{' '}
-                <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                <span className="text-brand">
                   on PayPal?
                 </span>
               </h2>
@@ -710,14 +700,14 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 href="/app"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.03] active:scale-[0.98] group"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-text text-bg hover:opacity-90 font-bold text-sm shadow-md transition-all group"
               >
                 <span>Get started with sandbox</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link
                 href="/demo"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass-card border border-border/80 text-text font-bold hover:bg-surface-2 transition-all text-sm shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-surface border border-border text-text font-bold hover:bg-surface-2 transition-all text-sm shadow-xs"
               >
                 Open Sandbox Playground
               </Link>
