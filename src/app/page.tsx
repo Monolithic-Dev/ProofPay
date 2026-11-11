@@ -79,23 +79,31 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen gradient-mesh">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pb-20 md:pt-28 md:pb-32 border-b border-border">
-        {/* Ambient Glow Orbs */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-tr from-sky-500/20 via-blue-500/15 to-purple-500/20 blur-[120px] rounded-full pointer-events-none -z-10" />
+      <section className="relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-40 border-b border-border bg-grid-pattern">
+        {/* Magic UI / RareUI Ambient Radial Glows & Concentric Rings */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[900px] h-[450px] bg-gradient-to-tr from-sky-500/20 via-blue-600/15 to-purple-600/20 blur-[140px] rounded-full pointer-events-none -z-10 animate-pulse-slow" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bg/80 to-bg pointer-events-none -z-10" />
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-7">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-2/80 backdrop-blur-md border border-border text-text text-xs font-semibold shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
+          {/* Glowing Animated Pill (21st.dev / Magic UI pattern) */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-surface-2/90 backdrop-blur-xl border border-sky-500/30 text-text text-xs font-semibold shadow-lg shadow-sky-500/10 hover:border-sky-500/50 transition-all cursor-default">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
             <span className="text-muted">Zero-Custody Authorization Hold (Not Escrow) · Powered by</span>
-            <span className="font-bold text-text flex items-center gap-1">
-              <span className="text-sky-500">PayPal</span> Rails
+            <span className="font-extrabold text-text flex items-center gap-1">
+              <span className="text-sky-400">PayPal</span> Rails
             </span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-text leading-[1.08]">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-text leading-[1.05]">
             Get paid for work that’s{' '}
-            <span className="bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent">
-              proven.
+            <span className="relative whitespace-nowrap">
+              <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                proven.
+              </span>
+              <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 rounded-full blur-[1px]"></span>
             </span>
           </h1>
 
@@ -105,34 +113,35 @@ export default function HomePage() {
             and dual-LLM consensus.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link
               href="/demo/express"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.03] active:scale-[0.98] group"
             >
               <span>Launch 90-Second Express Sandbox</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/auth/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-surface/90 backdrop-blur-sm border border-border text-text font-bold hover:bg-surface-2 transition-all text-sm shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass-card border border-border/80 text-text font-bold hover:bg-surface-2 transition-all text-sm shadow-md hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>Enterprise Sign In</span>
             </Link>
           </div>
 
-          <div className="flex items-center justify-center gap-6 pt-3 text-xs text-muted font-medium">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-              Zero-Custody Protocol
+          {/* Social Proof / Trust Indicators with subtle glow */}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 pt-4 text-xs text-muted font-medium">
+            <span className="flex items-center gap-2 bg-surface/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/60">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>Zero-Custody Protocol</span>
             </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-              Machine-Verifiable ProofPacks™
+            <span className="flex items-center gap-2 bg-surface/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/60">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>Machine-Verifiable ProofPacks™</span>
             </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-              RFC 3161 External TSA
+            <span className="flex items-center gap-2 bg-surface/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/60">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>RFC 3161 External TSA</span>
             </span>
           </div>
         </div>
@@ -356,12 +365,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trust Section: 4 Pillars */}
-      <section className="py-20 border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-3">
-            <span className="text-xs uppercase font-bold tracking-wider text-brand">Integrity</span>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text">
+      {/* Bento Grid: Trust Architecture (Magic UI / RareUI inspired) */}
+      <section className="py-24 border-b border-border relative overflow-hidden">
+        {/* Subtle dot matrix bg */}
+        <div className="absolute inset-0 bg-dot-pattern opacity-30 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-bg via-transparent to-bg pointer-events-none" />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14 relative z-10">
+          <div className="text-center space-y-4">
+            <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+              Integrity
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-text">
               The Trust Principles
             </h2>
             <p className="text-sm text-muted max-w-xl mx-auto leading-relaxed">
@@ -369,102 +385,161 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm space-y-2">
-              <div className="p-2.5 rounded-xl bg-brand/10 text-brand w-fit">
-                <Scale className="w-5 h-5" />
+          {/* Asymmetric Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Large card: AI safety */}
+            <div className="md:col-span-2 group relative p-8 rounded-3xl glass-card border border-purple-500/20 shadow-xl hover:border-purple-500/40 transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 group-hover:bg-purple-500/10 transition-colors duration-700" />
+              <div className="relative z-10 space-y-5">
+                <div className="flex items-start justify-between">
+                  <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                    <Scale className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-mono font-bold px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                    Non-Custodial
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-black text-text">AI advises, deterministic rules decide</h3>
+                  <p className="text-sm text-muted leading-relaxed">
+                    The AI cannot disburse payments. Strict JSON schema validators, threshold gates, and dual-LLM consensus hold absolute authority over every PayPal authorization capture.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {['Schema Validation', 'Rubric Scoring', 'Consensus Check', 'Threshold Gates'].map(tag => (
+                    <span key={tag} className="text-[11px] px-2.5 py-1 rounded-lg bg-surface-2/80 border border-border/60 text-muted font-medium">{tag}</span>
+                  ))}
+                </div>
               </div>
-              <h3 className="text-sm font-bold text-text">AI advises, rules decide</h3>
-              <p className="text-xs text-muted leading-relaxed">
-                The AI cannot disburse payments; deterministic rules and threshold checks hold absolute decision authority.
-              </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm space-y-2">
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 w-fit">
-                <Database className="w-5 h-5" />
+            {/* Evidence card */}
+            <div className="group relative p-8 rounded-3xl glass-card border border-emerald-500/20 shadow-xl hover:border-emerald-500/40 transition-all duration-300 overflow-hidden flex flex-col justify-between">
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4 group-hover:bg-emerald-500/10 transition-colors duration-700" />
+              <div className="relative z-10 space-y-4">
+                <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 w-fit">
+                  <Database className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black text-text">Evidence you can export</h3>
+                <p className="text-sm text-muted leading-relaxed">
+                  Every decision recorded in a tamper-evident SHA-256 hash-chained log. Full ProofPack™ export for mediation.
+                </p>
               </div>
-              <h3 className="text-sm font-bold text-text">Evidence you can export</h3>
-              <p className="text-xs text-muted leading-relaxed">
-                Every decision is recorded in a tamper-evident SHA-256 hash-chained log for mediation and disputes.
-              </p>
+              <div className="relative z-10 mt-5 p-3.5 rounded-xl bg-surface-2/90 border border-border/60 font-mono text-[11px] text-emerald-400 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>SHA-256 hash chain · RFC 3161 TSA</span>
+              </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm space-y-2">
-              <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400 w-fit">
-                <DollarSign className="w-5 h-5" />
+            {/* PayPal card */}
+            <div className="group relative p-8 rounded-3xl glass-card border border-sky-500/20 shadow-xl hover:border-sky-500/40 transition-all duration-300 overflow-hidden flex flex-col justify-between">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-sky-500/5 rounded-full blur-3xl -translate-y-1/3 translate-x-1/4 group-hover:bg-sky-500/10 transition-colors duration-700" />
+              <div className="relative z-10 space-y-4">
+                <div className="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 w-fit">
+                  <DollarSign className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-black text-text">PayPal moves the money</h3>
+                <p className="text-sm text-muted leading-relaxed">
+                  ProofPay never holds your funds. 29-day authorization holds stay securely on PayPal rails.
+                </p>
               </div>
-              <h3 className="text-sm font-bold text-text">PayPal moves the money</h3>
-              <p className="text-xs text-muted leading-relaxed">
-                ProofPay never holds your funds. Up to 29-day authorization holds remain securely managed on PayPal rails.
-              </p>
+              <div className="relative z-10 mt-5 flex items-center gap-2 text-sky-400 text-xs font-semibold">
+                <span>Direct PayPal REST API v2</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm space-y-2">
-              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 w-fit">
-                <ShieldCheck className="w-5 h-5" />
+            {/* Honest limits wide card */}
+            <div className="md:col-span-2 group relative p-8 rounded-3xl glass-card border border-amber-500/20 shadow-xl hover:border-amber-500/40 transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-72 h-72 bg-amber-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 group-hover:bg-amber-500/8 transition-colors duration-700" />
+              <div className="relative z-10 space-y-5">
+                <div className="flex items-start justify-between">
+                  <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-mono font-bold px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    Transparency
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-black text-text">Radically honest about limits</h3>
+                  <p className="text-sm text-muted leading-relaxed">
+                    Sandbox today with test money. Authorization hold, not escrow. Not legal advice. Every milestone criterion, evaluation log, and audit chain is fully exportable as verifiable JSON.
+                  </p>
+                </div>
               </div>
-              <h3 className="text-sm font-bold text-text">Honest about limits</h3>
-              <p className="text-xs text-muted leading-relaxed">
-                Sandbox today with test money. Not escrow. Not legal advice. Transparent roadmap toward partner referrals.
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Developers & Machine Agents Section */}
-      <section className="py-20 border-b border-border bg-surface/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="space-y-2">
-              <span className="text-xs uppercase font-bold tracking-wider text-brand">Agentic Commerce</span>
-              <h2 className="text-3xl font-bold tracking-tight text-text">
+      {/* Developers & Machine Agents Section — Premium Terminal Card */}
+      <section className="py-24 border-b border-border bg-surface/20 relative overflow-hidden">
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-sky-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-3">
+              <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+                Agentic Commerce
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-text">
                 Native Tooling for Autonomous AI Agents
               </h2>
-              <p className="text-sm text-muted max-w-xl">
+              <p className="text-sm text-muted max-w-xl leading-relaxed">
                 Equip Claude Desktop, Cursor, LangChain, or custom agents with scoped credentials and Model Context Protocol (MCP) tools.
               </p>
             </div>
             <Link
               href="/app/developers"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
+              className="inline-flex items-center gap-2 text-sm font-bold text-sky-400 hover:text-sky-300 transition-colors whitespace-nowrap group"
             >
               <span>Explore Developer Platform</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
-          <div className="rounded-2xl border border-border bg-surface overflow-hidden shadow-sm">
-            <div className="p-4 border-b border-border flex items-center justify-between bg-surface-2">
-              <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-brand" />
-                <span className="text-xs font-mono font-medium text-text">claude_desktop_config.json</span>
+          <div className="rounded-3xl border border-border/80 glass-card overflow-hidden shadow-2xl">
+            {/* Terminal header with traffic lights */}
+            <div className="p-4 border-b border-border/60 flex items-center justify-between bg-surface-2/60">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
+                  <div className="w-3 h-3 rounded-full bg-amber-500/70"></div>
+                  <div className="w-3 h-3 rounded-full bg-emerald-500/70"></div>
+                </div>
+                <div className="flex items-center gap-2 ml-2">
+                  <Terminal className="w-4 h-4 text-sky-400" />
+                  <span className="text-xs font-mono font-semibold text-muted">claude_desktop_config.json</span>
+                </div>
               </div>
               <button
                 onClick={handleCopyMcp}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface border border-border text-xs text-muted hover:text-text transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg glass-card border border-border/60 text-xs text-muted hover:text-text transition-all hover:border-sky-500/40"
               >
                 {copiedMcp ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedMcp ? 'Copied' : 'Copy MCP Config'}</span>
+                <span>{copiedMcp ? 'Copied!' : 'Copy MCP Config'}</span>
               </button>
             </div>
-            <pre className="p-5 font-mono text-xs text-muted overflow-x-auto leading-relaxed">
+            <pre className="p-6 font-mono text-xs text-muted overflow-x-auto leading-relaxed bg-surface/30">
               {mcpSnippet}
             </pre>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section: 6 Questions from Spec */}
-      <section className="py-20 border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="text-center space-y-3">
-            <span className="text-xs uppercase font-bold tracking-wider text-brand">Questions</span>
-            <h2 className="text-3xl font-bold tracking-tight text-text">
+      {/* FAQ Section */}
+      <section className="py-24 border-b border-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center space-y-4">
+            <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+              Questions
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-text">
               Frequently Asked Questions
             </h2>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-muted leading-relaxed">
               Clear, transparent answers on PayPal holds, verification policies, and sandbox limits.
             </p>
           </div>
@@ -475,21 +550,23 @@ export default function HomePage() {
               return (
                 <div
                   key={idx}
-                  className="rounded-2xl border border-border bg-surface overflow-hidden transition-colors"
+                  className={`rounded-2xl border overflow-hidden transition-all duration-300 ${isOpen ? 'glass-card border-sky-500/30 shadow-lg shadow-sky-500/5' : 'bg-surface border-border/80 hover:border-border'}`}
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-sm text-text hover:bg-surface-2 transition-colors"
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-text hover:bg-surface-2/50 transition-colors"
                   >
                     <span>{faq.q}</span>
-                    {isOpen ? (
-                      <ChevronUp className="w-4 h-4 text-muted flex-shrink-0" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-muted flex-shrink-0" />
-                    )}
+                    <div className={`w-6 h-6 rounded-full border flex items-center justify-center flex-shrink-0 transition-all ${isOpen ? 'bg-sky-500/20 border-sky-500/40 text-sky-400' : 'border-border text-muted'}`}>
+                      {isOpen ? (
+                        <ChevronUp className="w-3.5 h-3.5" />
+                      ) : (
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      )}
+                    </div>
                   </button>
                   {isOpen && (
-                    <div className="px-5 pb-5 text-xs text-muted leading-relaxed border-t border-border/40 pt-3">
+                    <div className="px-5 pb-5 text-sm text-muted leading-relaxed border-t border-border/40 pt-4">
                       {faq.a}
                     </div>
                   )}
@@ -500,39 +577,88 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-surface/30">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-text">
-            Ready to secure agreements on PayPal?
-          </h2>
-          <p className="text-sm text-muted max-w-xl mx-auto leading-relaxed">
-            Create your sandbox workspace in seconds. Draft smart milestone agreements with AI criteria or test autonomous agent scenarios.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+      {/* CTA Section — Premium Gradient with glow */}
+      <section className="py-28 relative overflow-hidden">
+        {/* Concentric glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-900/20 via-indigo-900/15 to-purple-900/20 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-sky-500/15 via-blue-500/15 to-indigo-500/15 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute inset-0 bg-dot-pattern opacity-20 pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
+          <div className="space-y-5">
+            <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/30 px-4 py-1.5 rounded-full backdrop-blur-md">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              Sandbox Live · Real PayPal Rails
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-text leading-tight">
+              Ready to secure agreements{' '}
+              <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                on PayPal?
+              </span>
+            </h2>
+            <p className="text-base text-muted max-w-2xl mx-auto leading-relaxed">
+              Create your sandbox workspace in seconds. Draft smart milestone agreements with AI criteria or test autonomous agent scenarios — all backed by real PayPal authorization holds.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <Link
               href="/app"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-brand hover:bg-brand-hover text-white font-semibold text-sm shadow-md shadow-brand/20 transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.03] active:scale-[0.98] group"
             >
               <span>Get started with sandbox</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="/demo"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-xl bg-surface border border-border text-text font-medium hover:bg-surface-2 transition-colors text-sm shadow-sm"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass-card border border-border/80 text-text font-bold hover:bg-surface-2 transition-all text-sm shadow-md hover:scale-[1.02] active:scale-[0.98]"
             >
               Open Sandbox Playground
             </Link>
           </div>
+          <p className="text-xs text-muted/60 pt-2">Authorization hold, not escrow · Sandbox test money only · No real charges</p>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-surface/60 py-12 text-xs">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* Footer — Premium dark with brand gradient wordmark */}
+      <footer className="border-t border-border/60 bg-surface/80 backdrop-blur-sm py-16 text-xs relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-bg to-transparent pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
+          {/* Brand row */}
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-border/40">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-600 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                  <span className="text-white font-black text-sm tracking-tighter">PP</span>
+                </div>
+                <span className="font-black text-lg tracking-tight text-text">Proof<span className="text-sky-400">Pay</span></span>
+              </div>
+              <p className="text-muted text-[11px] max-w-xs leading-relaxed">
+                Pay-on-acceptance protocol powered by PayPal authorization holds and cryptographic milestone verification.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-2 text-[11px] text-muted bg-surface-2/80 border border-border/60 px-3 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Sandbox Live
+              </span>
+              <a
+                href="https://github.com/Monolithic-Dev/ProofPay"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-muted hover:text-text transition-colors bg-surface-2/80 border border-border/60 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5"
+              >
+                <span>GitHub</span>
+                <ExternalLink className="w-3 h-3 opacity-60" />
+              </a>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="space-y-3">
-              <h4 className="font-semibold text-text uppercase tracking-wider text-[11px]">Product</h4>
+              <h4 className="font-extrabold text-text uppercase tracking-widest text-[10px]">Product</h4>
               <ul className="space-y-2 text-muted">
                 <li><Link href="/app" className="hover:text-text transition-colors">Dashboard</Link></li>
                 <li><Link href="/contracts" className="hover:text-text transition-colors">Agreements</Link></li>
@@ -543,11 +669,11 @@ export default function HomePage() {
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-semibold text-text uppercase tracking-wider text-[11px]">Developers</h4>
+              <h4 className="font-extrabold text-text uppercase tracking-widest text-[10px]">Developers</h4>
               <ul className="space-y-2 text-muted">
                 <li><Link href="/docs" className="hover:text-text transition-colors">API Documentation</Link></li>
                 <li><Link href="/app/developers" className="hover:text-text transition-colors">Service Accounts &amp; MCP</Link></li>
-                <li><Link href="/ledger" className="hover:text-text transition-colors">Audit Ledger (AG Grid)</Link></li>
+                <li><Link href="/ledger" className="hover:text-text transition-colors">Audit Ledger</Link></li>
                 <li>
                   <a
                     href="https://github.com/Monolithic-Dev/ProofPay"
@@ -563,23 +689,22 @@ export default function HomePage() {
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-semibold text-text uppercase tracking-wider text-[11px]">Legal &amp; Trust</h4>
+              <h4 className="font-extrabold text-text uppercase tracking-widest text-[10px]">Legal &amp; Trust</h4>
               <ul className="space-y-2 text-muted">
                 <li><Link href="/legal/terms" className="hover:text-text transition-colors">Terms of Service</Link></li>
                 <li><Link href="/legal/privacy" className="hover:text-text transition-colors">Privacy Policy</Link></li>
                 <li><Link href="/help" className="hover:text-text transition-colors">Help &amp; Support</Link></li>
-                <li><Link href="/trust" className="hover:text-text transition-colors text-brand font-medium">Trust Center &amp; Benchmarks</Link></li>
-                <li><Link href="/verify" className="hover:text-text transition-colors">Offline Proof Pack Verifier</Link></li>
-                <li><Link href="/pricing" className="hover:text-text transition-colors">Pricing &amp; Plans</Link></li>
+                <li><Link href="/trust" className="hover:text-sky-400 transition-colors font-medium">Trust Center &amp; Benchmarks</Link></li>
+                <li><Link href="/verify" className="hover:text-text transition-colors">Proof Pack Verifier</Link></li>
               </ul>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-semibold text-text uppercase tracking-wider text-[11px]">System Status</h4>
+              <h4 className="font-extrabold text-text uppercase tracking-widest text-[10px]">System Status</h4>
               <div className="space-y-2 text-muted">
-                <Link href="/status" className="flex items-center gap-2 hover:text-text transition-colors">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <span className="text-text font-medium">Live Health Telemetry &rarr;</span>
+                <Link href="/status" className="flex items-center gap-2 hover:text-text transition-colors group">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
+                  <span className="text-text font-semibold">Live Health Telemetry →</span>
                 </Link>
                 <p className="text-[11px] leading-relaxed">
                   Platform operates in sandbox test mode with simulated currency.
@@ -588,10 +713,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-muted text-[11px]">
-            <p>© 2026 ProofPay. Pay when it is proven.</p>
-            <p className="text-muted/80">
-              Built for the PayPal AI Hackathon 2026. PayPal authorization hold, not escrow.
+          <div className="border-t border-border/40 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-muted text-[11px]">
+            <p className="font-medium">© 2026 ProofPay. Pay when it is proven.</p>
+            <p className="text-muted/60">
+              Built for the PayPal AI Hackathon 2026 · Authorization hold, not escrow.
             </p>
           </div>
         </div>
