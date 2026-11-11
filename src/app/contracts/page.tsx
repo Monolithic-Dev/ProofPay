@@ -152,41 +152,49 @@ export default function ContractsPage() {
 
         {/* Top Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-5 rounded-xl bg-surface border border-border shadow-sm space-y-2">
+          <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-brand/40 transition-all">
             <div className="flex items-center justify-between text-muted">
-              <span className="text-xs font-medium">Total Agreement Volume</span>
-              <DollarSign className="w-4 h-4 text-brand" />
+              <span className="text-xs font-bold uppercase tracking-wider">Total Volume</span>
+              <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
+                <DollarSign className="w-4 h-4" />
+              </div>
             </div>
-            <p className="text-2xl font-bold tracking-tight text-text">
+            <p className="text-2xl font-black font-mono tracking-tight text-text">
               {formatUsd(metrics.totalMinor)}
             </p>
             <p className="text-[11px] text-muted">Across all negotiated contracts</p>
           </div>
 
-          <div className="p-5 rounded-xl bg-surface border border-border shadow-sm space-y-2">
+          <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-blue-500/40 transition-all">
             <div className="flex items-center justify-between text-muted">
-              <span className="text-xs font-medium">Active Agreements</span>
-              <FileText className="w-4 h-4 text-blue-500" />
+              <span className="text-xs font-bold uppercase tracking-wider">Active Agreements</span>
+              <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                <FileText className="w-4 h-4" />
+              </div>
             </div>
-            <p className="text-2xl font-bold tracking-tight text-text">{metrics.activeCount}</p>
+            <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.activeCount}</p>
             <p className="text-[11px] text-muted">Accepted, funded, or in progress</p>
           </div>
 
-          <div className="p-5 rounded-xl bg-surface border border-border shadow-sm space-y-2">
+          <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-emerald-500/40 transition-all">
             <div className="flex items-center justify-between text-muted">
-              <span className="text-xs font-medium">PayPal Holds Locked</span>
-              <Lock className="w-4 h-4 text-ok" />
+              <span className="text-xs font-bold uppercase tracking-wider">PayPal Holds Locked</span>
+              <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                <Lock className="w-4 h-4" />
+              </div>
             </div>
-            <p className="text-2xl font-bold tracking-tight text-text">{metrics.fundedCount}</p>
+            <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.fundedCount}</p>
             <p className="text-[11px] text-muted">Secured via PayPal 29-day auth holds</p>
           </div>
 
-          <div className="p-5 rounded-xl bg-surface border border-border shadow-sm space-y-2">
+          <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-teal-500/40 transition-all">
             <div className="flex items-center justify-between text-muted">
-              <span className="text-xs font-medium">Completed &amp; Settled</span>
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-bold uppercase tracking-wider">Completed &amp; Settled</span>
+              <div className="p-2 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
             </div>
-            <p className="text-2xl font-bold tracking-tight text-text">{metrics.completedCount}</p>
+            <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.completedCount}</p>
             <p className="text-[11px] text-muted">100% verified &amp; released</p>
           </div>
         </div>
@@ -335,19 +343,19 @@ export default function ContractsPage() {
               return (
                 <div
                   key={c.id}
-                  className="p-5 rounded-xl bg-surface border border-border hover:border-brand/40 transition-all shadow-sm flex flex-col justify-between space-y-4 group"
+                  className="p-5 rounded-2xl glass-card border border-border/80 hover:border-brand/50 transition-all shadow-lg flex flex-col justify-between space-y-4 group"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <Link
                           href={`/contracts/${c.id}`}
-                          className="font-semibold text-base text-text hover:text-brand transition-colors line-clamp-1 group-hover:underline"
+                          className="font-bold text-base text-text hover:text-brand transition-colors line-clamp-1 group-hover:underline"
                         >
                           {c.title}
                         </Link>
                         <div className="flex items-center gap-2 mt-1">
-                          <MonoText value={c.id} short length={8} className="text-[11px] text-muted" />
+                          <MonoText value={c.id} short length={8} className="text-[11px] text-muted bg-surface-2 px-1.5 py-0.5 rounded border border-border/40 font-mono" />
                           <span className="text-[11px] text-muted">•</span>
                           <span className="text-[11px] text-muted">
                             {new Date(c.created_at).toLocaleDateString()}
@@ -358,20 +366,20 @@ export default function ContractsPage() {
                     </div>
 
                     {/* Parties */}
-                    <div className="grid grid-cols-2 gap-2 text-xs py-2 px-3 rounded-lg bg-surface-2 border border-border/60">
+                    <div className="grid grid-cols-2 gap-2 text-xs py-2.5 px-3.5 rounded-xl bg-surface-2/80 border border-border/60">
                       <div>
-                        <span className="text-[10px] text-muted block uppercase tracking-wider font-semibold">
+                        <span className="text-[10px] text-muted block uppercase tracking-wider font-extrabold">
                           Buyer
                         </span>
-                        <span className="text-text font-medium truncate block font-mono">
+                        <span className="text-text font-bold truncate block font-mono text-[11px]">
                           {c.buyer_id.slice(0, 8)}…
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-muted block uppercase tracking-wider font-semibold">
+                        <span className="text-[10px] text-muted block uppercase tracking-wider font-extrabold">
                           Seller
                         </span>
-                        <span className="text-text font-medium truncate block font-mono">
+                        <span className="text-text font-bold truncate block font-mono text-[11px]">
                           {c.seller_id ? `${c.seller_id.slice(0, 8)}…` : 'Unassigned'}
                         </span>
                       </div>
@@ -381,13 +389,13 @@ export default function ContractsPage() {
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs text-muted">
                         <span>
-                          Milestones: {releasedCount} of {milestones.length} released
+                          Milestones: <strong className="text-text">{releasedCount}</strong> of {milestones.length} released
                         </span>
-                        <span className="font-medium text-text">{progressPct}%</span>
+                        <span className="font-bold font-mono text-text">{progressPct}%</span>
                       </div>
-                      <div className="h-1.5 w-full rounded-full bg-surface-2 overflow-hidden">
+                      <div className="h-2 w-full rounded-full bg-surface-2 overflow-hidden border border-border/40 p-0.5">
                         <div
-                          className="h-full bg-brand rounded-full transition-all duration-500"
+                          className="h-full bg-gradient-to-r from-sky-500 to-emerald-400 rounded-full transition-all duration-500"
                           style={{ width: `${progressPct}%` }}
                         />
                       </div>
@@ -395,17 +403,17 @@ export default function ContractsPage() {
                   </div>
 
                   {/* Card Footer */}
-                  <div className="pt-3 border-t border-border flex items-center justify-between text-sm">
+                  <div className="pt-3 border-t border-border/60 flex items-center justify-between text-sm">
                     <div>
-                      <span className="text-xs text-muted block">Total Value</span>
-                      <span className="text-base font-bold text-text">
+                      <span className="text-[10px] text-muted uppercase font-bold tracking-wider block">Total Value</span>
+                      <span className="text-base font-black font-mono text-text">
                         {formatUsd(c.total_minor)}
                       </span>
                     </div>
 
                     <Link
                       href={`/contracts/${c.id}`}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-2 hover:bg-brand hover:text-white border border-border text-xs font-medium transition-all"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-surface-2/80 hover:bg-brand hover:text-white border border-border/80 text-xs font-bold transition-all shadow-sm group-hover:border-brand/40"
                     >
                       <span>Open Workspace</span>
                       <ArrowRight className="w-3.5 h-3.5" />
