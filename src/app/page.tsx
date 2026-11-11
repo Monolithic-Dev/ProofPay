@@ -94,14 +94,14 @@ export default function HomePage() {
             <span className="font-bold text-text">PayPal Rails</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-[-0.03em] text-text leading-[1.08]">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-rubik font-black tracking-[-0.035em] text-text leading-[1.05]">
             Get paid for work that’s{' '}
-            <span className="text-brand">
+            <span className="text-brand inline-block">
               proven.
             </span>
           </h1>
 
-          <p className="max-w-2xl mx-auto text-base sm:text-lg text-muted leading-relaxed font-normal">
+          <p className="max-w-2xl mx-auto text-base sm:text-lg text-muted leading-relaxed font-manrope font-normal">
             ProofPay establishes a PayPal authorization hold before work starts, releasing payment milestone by
             milestone only after deliverables meet cryptographic criteria verified by deterministic analyzers
             and dual-LLM consensus.

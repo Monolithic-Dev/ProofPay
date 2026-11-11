@@ -476,10 +476,10 @@ export default function McpSimulatorPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-6">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
                 Model Context Protocol (MCP) Simulator
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20 font-semibold">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-surface-2 text-text border border-border font-semibold">
                 JSON-RPC 2.0 • 6 Tools
               </span>
             </div>

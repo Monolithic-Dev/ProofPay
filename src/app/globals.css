@@ -19,8 +19,12 @@
   --warn: #D97706;
   --bad: #DC2626;
   --void: #64748B;
-  --font-inter: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-jetbrains-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-rubik: 'Rubik', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-manrope: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-round-8: 'Round 8', 'Round-8', var(--font-display-punch), sans-serif;
+  --font-display-punch: 'Bebas Neue', Anton, sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 html {
@@ -189,12 +193,23 @@ html {
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: var(--font-inter);
+  font-family: var(--font-manrope);
   min-height: 100vh;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-rubik);
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+p, .description-text {
+  font-family: var(--font-manrope);
 }
 
 code, pre {

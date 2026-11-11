@@ -1,16 +1,43 @@
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { Plus_Jakarta_Sans, Rubik, Manrope, JetBrains_Mono, Bebas_Neue } from 'next/font/google'
 import './globals.css'
 import { QueryProvider } from '@/lib/query'
 import { HeaderNav } from '@/components/common/HeaderNav'
 import { PageTransition } from '@/components/common/PageTransition'
 
-const inter = Inter({
+// Primary modern sans-serif for UI & controls
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
+  variable: '--font-sans-main',
+  weight: ['400', '500', '600', '700', '800'],
 })
 
+// Rubik: Used for bold titles, subheadings, and section headers
+const rubik = Rubik({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-rubik',
+  weight: ['500', '600', '700', '800', '900'],
+})
+
+// Manrope: Clean, readable neo-grotesque for descriptions, body text & paragraphs
+const manrope = Manrope({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-manrope',
+  weight: ['400', '500', '600'],
+})
+
+// Bebas Neue: High-impact condensed display typeface (companion to Atipo Round-8) for hero callouts
+const bebasNeue = Bebas_Neue({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-display-punch',
+  weight: ['400'],
+})
+
+// JetBrains Mono: Cryptographic hashes, JSON-RPC payloads & numbers
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
@@ -29,7 +56,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html
+      lang="en"
+      className={`${plusJakartaSans.variable} ${rubik.variable} ${manrope.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
+    >
       <body className="min-h-screen bg-bg text-text font-sans antialiased flex flex-col selection:bg-brand/20 selection:text-brand">
         <a
           href="#main-content"

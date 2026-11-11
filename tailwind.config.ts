@@ -22,8 +22,11 @@ const config: Config = {
         border: 'var(--border)',
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-jetbrains-mono)', 'monospace'],
+        sans: ['var(--font-sans-main)', 'system-ui', '-apple-system', 'sans-serif'],
+        rubik: ['var(--font-rubik)', 'var(--font-sans-main)', 'sans-serif'],
+        manrope: ['var(--font-manrope)', 'var(--font-sans-main)', 'sans-serif'],
+        display: ['var(--font-round-8)', 'var(--font-display-punch)', 'var(--font-rubik)', 'sans-serif'],
+        mono: ['var(--font-jetbrains-mono)', 'ui-monospace', 'monospace'],
       },
       keyframes: {
         'fade-in': {
