@@ -139,6 +139,76 @@ export default function HomePage() {
               <span>RFC 3161 External TSA</span>
             </span>
           </div>
+
+          {/* Brew-Inspired Live Interactive Showcase Frame embedded right in Hero */}
+          <div className="pt-8 max-w-4xl mx-auto">
+            <div className="rounded-2xl border border-border/80 bg-surface/90 shadow-2xl overflow-hidden backdrop-blur-xl">
+              {/* Window Header / Traffic Lights */}
+              <div className="px-4 py-3 border-b border-border/60 bg-surface-2/60 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-border" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-border" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-border" />
+                  <span className="ml-2 text-[11px] font-mono font-medium text-muted">
+                    paypal_orders_v2_consensus.tsx
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-mono font-bold border border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    LIVE VERIFICATION ENGINE
+                  </span>
+                </div>
+              </div>
+
+              {/* Embedded Live Interactive Surface */}
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                {/* Panel 1: Funds Bar */}
+                <div className="p-5 rounded-xl bg-surface-2/50 border border-border/60 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-text uppercase tracking-wider">PayPal Authorization</span>
+                    <span className="text-xs font-mono font-bold text-emerald-500">HOLD_ACTIVE</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs text-muted">
+                      <span>Milestone 1/2 Approved</span>
+                      <span className="font-mono text-text font-bold">$600.00 / $1,200.00</span>
+                    </div>
+                    <div className="h-2.5 w-full bg-surface-3/60 rounded-full overflow-hidden flex">
+                      <div className="h-full bg-emerald-500" style={{ width: '50%' }} />
+                      <div className="h-full bg-sky-500" style={{ width: '50%' }} />
+                    </div>
+                    <div className="flex justify-between text-[11px] text-muted pt-1">
+                      <span className="text-emerald-500 font-medium">Captured: $600</span>
+                      <span className="text-sky-500 font-medium">Remaining Hold: $600</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Panel 2: Cryptographic Consensus */}
+                <div className="p-5 rounded-xl bg-surface-2/50 border border-border/60 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-text uppercase tracking-wider">Dual-LLM Consensus</span>
+                    <span className="text-xs font-mono text-brand font-bold">2/2 MATCH</span>
+                  </div>
+                  <div className="space-y-1.5 text-xs text-muted">
+                    <div className="flex items-center justify-between py-1 border-b border-border/40">
+                      <span>Claude 3.5 Sonnet Judge</span>
+                      <span className="font-mono text-emerald-500 font-bold">PASS (Score: 0.98)</span>
+                    </div>
+                    <div className="flex items-center justify-between py-1 border-b border-border/40">
+                      <span>Gemini 1.5 Pro Auditor</span>
+                      <span className="font-mono text-emerald-500 font-bold">PASS (Score: 0.96)</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-1 text-[11px]">
+                      <span>RFC 3161 Merkle Chain</span>
+                      <span className="font-mono text-text">sha256:4f8e...39ab</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
