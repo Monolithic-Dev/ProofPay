@@ -16,25 +16,21 @@ import {
   ShieldCheck,
   Send,
 } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import { useApiClient } from '@/lib/query'
 import { formatUsd } from '@/lib/format'
+import { useContracts, useCurrentUser } from '@/lib/query'
 
 export default function InboxPage() {
-  const api = useApiClient()
   const [filter, setFilter] = useState<'all' | 'pending' | 'escalation'>('all')
 
-  const { data: contractsData, isLoading, error } = useQuery({
-    queryKey: ['contracts'],
-    queryFn: async () => api.listContracts(),
-  })
+  const { data: contracts, isLoading, error } = useContracts()
+  const { data: user } = useCurrentUser()
 
-  const contracts = contractsData?.contracts || []
+  const safeContracts = Array.isArray(contracts) ? contracts : []
 
   // Derive actionable items from contracts
   const actionItems: any[] = []
 
-  contracts.forEach((c: any) => {
+  safeContracts.forEach((c: any) => {
     if (c.status === 'PROPOSED') {
       actionItems.push({
         id: `prop-${c.id}`,
@@ -110,8 +106,30 @@ export default function InboxPage() {
             <LoadingBlock message="Loading inbox items..." />
           </div>
         ) : error ? (
-          <div className="p-8">
-            <ErrorState title="Failed to load inbox" message={(error as any)?.message} />
+          <div className="card p-12 border border-border/80 rounded-2xl bg-surface/30 backdrop-blur-sm text-center space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-surface-2 border border-border text-muted mx-auto flex items-center justify-center">
+              <Inbox className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-text">Sign In Required for Inbox</h3>
+              <p className="text-xs text-muted max-w-sm mx-auto">
+                Sign in to your account or launch a demo workspace to view your real-time agreements, escalations, and approvals.
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <Link
+                href="/auth/login"
+                className="px-4 py-2 rounded-xl bg-brand text-white text-xs font-semibold hover:bg-brand-hover shadow-sm"
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/demo"
+                className="px-4 py-2 rounded-xl bg-surface-2 text-text text-xs font-semibold hover:bg-surface-3 border border-border"
+              >
+                Explore Sandbox Demos
+              </Link>
+            </div>
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="card p-12 border border-border/80 rounded-2xl bg-surface/30 backdrop-blur-sm text-center space-y-3">
