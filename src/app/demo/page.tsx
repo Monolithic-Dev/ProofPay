@@ -2,6 +2,8 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { PageShell } from '@/components/common/PageShell'
+import { ScrollReveal } from '@/components/common/ScrollReveal'
 import { JudgePanel } from '@/components/judge/JudgePanel'
 import {
   ArrowLeft,
@@ -16,80 +18,31 @@ import {
 
 export default function DemoPlaygroundPage() {
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border pb-4 gap-4">
-        <div>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted hover:text-brand transition-colors mb-2"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Public Product</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
-              Sandbox Playground
-            </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 font-medium">
-              Demo Mode Active
-            </span>
-          </div>
-          <p className="text-sm text-muted mt-1">
-            Test multi-agent transactions, adversarial prompt injections, contract loophole red-teaming, and PayPal sandbox holds without manual setup.
-          </p>
-        </div>
-
+    <PageShell
+      title="Sandbox Playground"
+      subtitle="Test multi-agent transactions, adversarial prompt injections, contract loophole red-teaming, and PayPal sandbox holds without manual setup."
+      backHref="/"
+      backLabel="Back to Home"
+      maxWidth="6xl"
+      actions={
         <div className="flex flex-wrap items-center gap-2">
           <Link
-            href="/demo/loophole"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-colors shadow-sm"
-          >
-            <SearchCode className="w-3.5 h-3.5" />
-            <span>Loophole Finder</span>
-          </Link>
-          <Link
-            href="/demo/lab"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors shadow-sm"
-          >
-            <ShieldAlert className="w-3.5 h-3.5" />
-            <span>Resilience Lab</span>
-          </Link>
-          <Link
-            href="/demo/tribunal"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors shadow-sm"
-          >
-            <Scale className="w-3.5 h-3.5" />
-            <span>AI Tribunal</span>
-          </Link>
-          <Link
-            href="/demo/agent-wallet"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-sm"
-          >
-            <Wallet className="w-3.5 h-3.5" />
-            <span>Agent Wallet</span>
-          </Link>
-          <Link
-            href="/demo/mcp"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-colors shadow-sm"
-          >
-            <Cpu className="w-3.5 h-3.5" />
-            <span>MCP Simulator</span>
-          </Link>
-          <Link
             href="/demo/express"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-brand text-white text-xs font-bold hover:bg-brand-hover transition-colors shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-sky-500/20"
           >
             <Zap className="w-3.5 h-3.5 fill-white" />
-            <span>Express Lane</span>
+            <span>90s Express Lane</span>
           </Link>
           <Link
             href="/contracts"
-            className="px-3.5 py-2 rounded-lg bg-surface border border-border text-text text-xs font-medium hover:bg-surface-2 transition-colors"
+            className="px-3.5 py-1.5 rounded-xl bg-surface-2 border border-border text-text text-xs font-semibold hover:bg-surface-2/80 transition-colors"
           >
-            App Workspace &rarr;
+            Workspace &rarr;
           </Link>
         </div>
-      </div>
+      }
+    >
+      <div className="space-y-8">
 
       {/* Feature Callouts 6-Grid: Express Lane, Loophole Finder, MCP Simulator, AI Tribunal, Agent Wallet, Resilience Lab */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -288,6 +241,7 @@ export default function DemoPlaygroundPage() {
 
       {/* Scenarios and Persona Switcher */}
       <JudgePanel />
-    </div>
+      </div>
+    </PageShell>
   )
 }
