@@ -23,6 +23,7 @@ import { PageShell } from '@/components/common/PageShell'
 import { StatusChip } from '@/components/contract/StatusChip'
 import { MonoText } from '@/components/common/MonoText'
 import { LoadingBlock } from '@/components/common/LoadingBlock'
+import { ScrollReveal } from '@/components/common/ScrollReveal'
 import { useContracts, useCurrentUser } from '@/lib/query'
 import { formatUsd } from '@/lib/format'
 
@@ -151,53 +152,55 @@ export default function ContractsPage() {
         )}
 
         {/* Top Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-brand/40 transition-all">
-            <div className="flex items-center justify-between text-muted">
-              <span className="text-xs font-bold uppercase tracking-wider">Total Volume</span>
-              <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
-                <DollarSign className="w-4 h-4" />
+        <ScrollReveal animation="fade-up">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-brand/40 transition-all">
+              <div className="flex items-center justify-between text-muted">
+                <span className="text-xs font-bold uppercase tracking-wider">Total Volume</span>
+                <div className="p-2 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400">
+                  <DollarSign className="w-4 h-4" />
+                </div>
               </div>
+              <p className="text-2xl font-black font-mono tracking-tight text-text">
+                {formatUsd(metrics.totalMinor)}
+              </p>
+              <p className="text-[11px] text-muted">Across all negotiated contracts</p>
             </div>
-            <p className="text-2xl font-black font-mono tracking-tight text-text">
-              {formatUsd(metrics.totalMinor)}
-            </p>
-            <p className="text-[11px] text-muted">Across all negotiated contracts</p>
-          </div>
 
-          <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-blue-500/40 transition-all">
-            <div className="flex items-center justify-between text-muted">
-              <span className="text-xs font-bold uppercase tracking-wider">Active Agreements</span>
-              <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400">
-                <FileText className="w-4 h-4" />
+            <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-blue-500/40 transition-all">
+              <div className="flex items-center justify-between text-muted">
+                <span className="text-xs font-bold uppercase tracking-wider">Active Agreements</span>
+                <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                  <FileText className="w-4 h-4" />
+                </div>
               </div>
+              <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.activeCount}</p>
+              <p className="text-[11px] text-muted">Accepted, funded, or in progress</p>
             </div>
-            <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.activeCount}</p>
-            <p className="text-[11px] text-muted">Accepted, funded, or in progress</p>
-          </div>
 
-          <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-emerald-500/40 transition-all">
-            <div className="flex items-center justify-between text-muted">
-              <span className="text-xs font-bold uppercase tracking-wider">PayPal Holds Locked</span>
-              <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                <Lock className="w-4 h-4" />
+            <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-emerald-500/40 transition-all">
+              <div className="flex items-center justify-between text-muted">
+                <span className="text-xs font-bold uppercase tracking-wider">PayPal Holds Locked</span>
+                <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  <Lock className="w-4 h-4" />
+                </div>
               </div>
+              <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.fundedCount}</p>
+              <p className="text-[11px] text-muted">Secured via PayPal 29-day auth holds</p>
             </div>
-            <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.fundedCount}</p>
-            <p className="text-[11px] text-muted">Secured via PayPal 29-day auth holds</p>
-          </div>
 
-          <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-teal-500/40 transition-all">
-            <div className="flex items-center justify-between text-muted">
-              <span className="text-xs font-bold uppercase tracking-wider">Completed &amp; Settled</span>
-              <div className="p-2 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400">
-                <ShieldCheck className="w-4 h-4" />
+            <div className="p-5 rounded-2xl glass-card border border-border/80 shadow-lg space-y-2 group hover:border-teal-500/40 transition-all">
+              <div className="flex items-center justify-between text-muted">
+                <span className="text-xs font-bold uppercase tracking-wider">Completed &amp; Settled</span>
+                <div className="p-2 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-400">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
               </div>
+              <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.completedCount}</p>
+              <p className="text-[11px] text-muted">100% verified &amp; released</p>
             </div>
-            <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.completedCount}</p>
-            <p className="text-[11px] text-muted">100% verified &amp; released</p>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Filters and Search Bar */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">

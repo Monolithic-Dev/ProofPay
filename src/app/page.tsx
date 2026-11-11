@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { ScrollReveal } from '@/components/common/ScrollReveal'
 import {
   ShieldCheck,
   CheckCircle2,
@@ -147,20 +148,54 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Infinite Logo / Capability Marquee Banner (RareUI / MagicUI Pattern) */}
+      <section className="py-6 border-b border-border/60 bg-surface/40 overflow-hidden relative">
+        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-bg to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-bg to-transparent z-10 pointer-events-none" />
+        
+        <div className="flex w-max animate-marquee space-x-12 items-center text-xs font-bold uppercase tracking-wider text-muted/70">
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>PayPal Orders v2 API</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>RFC 3161 Timestamping</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Claude & Gemini JSON-RPC MCP</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>SHA-256 Merkle Audit Chain</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Deterministic ProofPack™ Verification</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>OpenTelemetry Enterprise Tracing</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>PayPal Orders v2 API</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>RFC 3161 Timestamping</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Claude & Gemini JSON-RPC MCP</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>SHA-256 Merkle Audit Chain</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Deterministic ProofPack™ Verification</span>
+          <span className="text-border">•</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>OpenTelemetry Enterprise Tracing</span>
+        </div>
+      </section>
+
       {/* Product Visual Showcase: Interactive Component Previews */}
       <section className="py-20 border-b border-border bg-surface/20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="text-center space-y-3">
-            <span className="text-xs uppercase font-extrabold tracking-widest text-brand dark:text-sky-400">
-              Built Like Real Financial Software
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text">
-              Real-time holds, cryptographic proof, and transparent releases
-            </h2>
-            <p className="text-sm text-muted max-w-2xl mx-auto">
-              Every deliverable is proven via deterministic analyzers and signed into a tamper-evident audit chain before PayPal capture.
-            </p>
-          </div>
+          <ScrollReveal animation="fade-up">
+            <div className="text-center space-y-3">
+              <span className="text-xs uppercase font-extrabold tracking-widest text-brand dark:text-sky-400">
+                Built Like Real Financial Software
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text">
+                Real-time holds, cryptographic proof, and transparent releases
+              </h2>
+              <p className="text-sm text-muted max-w-2xl mx-auto">
+                Every deliverable is proven via deterministic analyzers and signed into a tamper-evident audit chain before PayPal capture.
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Visual Component 1: Funds Bar Card */}
@@ -372,18 +407,20 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-bg via-transparent to-bg pointer-events-none" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14 relative z-10">
-          <div className="text-center space-y-4">
-            <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-              Integrity
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-text">
-              The Trust Principles
-            </h2>
-            <p className="text-sm text-muted max-w-xl mx-auto leading-relaxed">
-              We never cut corners on financial integrity, cryptographic proof, or honest claims.
-            </p>
-          </div>
+          <ScrollReveal animation="fade-up">
+            <div className="text-center space-y-4">
+              <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+                Integrity
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-text">
+                The Trust Principles
+              </h2>
+              <p className="text-sm text-muted max-w-xl mx-auto leading-relaxed">
+                We never cut corners on financial integrity, cryptographic proof, or honest claims.
+              </p>
+            </div>
+          </ScrollReveal>
 
           {/* Asymmetric Bento Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -531,18 +568,20 @@ export default function HomePage() {
       {/* FAQ Section */}
       <section className="py-24 border-b border-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-4">
-            <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-              Questions
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-text">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-sm text-muted leading-relaxed">
-              Clear, transparent answers on PayPal holds, verification policies, and sandbox limits.
-            </p>
-          </div>
+          <ScrollReveal animation="fade-up">
+            <div className="text-center space-y-4">
+              <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+                Questions
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-text">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-sm text-muted leading-relaxed">
+                Clear, transparent answers on PayPal holds, verification policies, and sandbox limits.
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="space-y-3">
             {faqs.map((faq, idx) => {
@@ -585,40 +624,42 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-dot-pattern opacity-20 pointer-events-none" />
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
-          <div className="space-y-5">
-            <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/30 px-4 py-1.5 rounded-full backdrop-blur-md">
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          <ScrollReveal animation="scale-up">
+            <div className="space-y-5">
+              <span className="inline-flex items-center gap-2 text-xs uppercase font-extrabold tracking-widest text-sky-400 bg-sky-500/10 border border-sky-500/30 px-4 py-1.5 rounded-full backdrop-blur-md">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                Sandbox Live · Real PayPal Rails
               </span>
-              Sandbox Live · Real PayPal Rails
-            </span>
-            <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-text leading-tight">
-              Ready to secure agreements{' '}
-              <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                on PayPal?
-              </span>
-            </h2>
-            <p className="text-base text-muted max-w-2xl mx-auto leading-relaxed">
-              Create your sandbox workspace in seconds. Draft smart milestone agreements with AI criteria or test autonomous agent scenarios — all backed by real PayPal authorization holds.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            <Link
-              href="/app"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.03] active:scale-[0.98] group"
-            >
-              <span>Get started with sandbox</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="/demo"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass-card border border-border/80 text-text font-bold hover:bg-surface-2 transition-all text-sm shadow-md hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Open Sandbox Playground
-            </Link>
-          </div>
-          <p className="text-xs text-muted/60 pt-2">Authorization hold, not escrow · Sandbox test money only · No real charges</p>
+              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-text leading-tight">
+                Ready to secure agreements{' '}
+                <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                  on PayPal?
+                </span>
+              </h2>
+              <p className="text-base text-muted max-w-2xl mx-auto leading-relaxed">
+                Create your sandbox workspace in seconds. Draft smart milestone agreements with AI criteria or test autonomous agent scenarios — all backed by real PayPal authorization holds.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <Link
+                href="/app"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.03] active:scale-[0.98] group"
+              >
+                <span>Get started with sandbox</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/demo"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass-card border border-border/80 text-text font-bold hover:bg-surface-2 transition-all text-sm shadow-md hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Open Sandbox Playground
+              </Link>
+            </div>
+            <p className="text-xs text-muted/60 pt-4">Authorization hold, not escrow · Sandbox test money only · No real charges</p>
+          </ScrollReveal>
         </div>
       </section>
 

@@ -2,11 +2,13 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { QueryProvider } from '@/lib/query'
 import { HeaderNav } from '@/components/common/HeaderNav'
+import { PageTransition } from '@/components/common/PageTransition'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'ProofPay — Pay when it is proven',
-  description: 'AI-verified milestones with PayPal authorization holds.',
+  title: 'ProofPay — Conditional Payments for Autonomous AI Agents',
+  description:
+    'Two-sided conditional payments for autonomous AI agents. Pre-authorized PayPal funds release only when cryptographic proof of task completion satisfies the agreement.',
 }
 
 export default function RootLayout({
@@ -16,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-bg text-text antialiased flex flex-col">
+      <body className="min-h-screen bg-bg text-text antialiased flex flex-col selection:bg-brand/20 selection:text-brand">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-brand focus:text-white focus:rounded-md focus:shadow-lg"
@@ -24,26 +26,38 @@ export default function RootLayout({
           Skip to main content
         </a>
         <QueryProvider>
-          <header className="border-b border-border bg-surface/85 backdrop-blur-md sticky top-0 z-40 shadow-sm transition-all">
+          <header className="border-b border-border/80 bg-surface/75 backdrop-blur-xl sticky top-0 z-40 shadow-sm transition-all">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Link href="/" className="flex items-center space-x-2 group">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-sky-600 via-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                    <span className="text-white font-black text-sm tracking-tighter">PP</span>
+                <Link href="/" className="flex items-center space-x-2.5 group">
+                  <div className="relative">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/25 group-hover:scale-105 group-hover:shadow-sky-500/40 transition-all">
+                      <span className="text-white font-black text-sm tracking-tighter">PP</span>
+                    </div>
+                    <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
                   </div>
-                  <span className="font-extrabold text-lg tracking-tight text-text">
-                    Proof<span className="text-brand dark:text-sky-400">Pay</span>
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="font-extrabold text-lg tracking-tight text-text leading-none">
+                      Proof<span className="text-brand dark:text-sky-400">Pay</span>
+                    </span>
+                    <span className="text-[9px] uppercase tracking-wider font-semibold text-muted/70 leading-none pt-0.5">
+                      Autonomous Holds
+                    </span>
+                  </div>
                 </Link>
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  PayPal Sandbox v2
-                </span>
+                <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-2/80 border border-border/60 text-[11px] font-medium text-muted">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>PayPal Sandbox v2</span>
+                </div>
               </div>
               <HeaderNav />
             </div>
           </header>
           <main id="main-content" className="flex-1">
-            {children}
+            <PageTransition>{children}</PageTransition>
           </main>
         </QueryProvider>
       </body>

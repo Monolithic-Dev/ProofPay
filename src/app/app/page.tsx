@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { PageShell } from '@/components/common/PageShell'
+import { ScrollReveal } from '@/components/common/ScrollReveal'
 import { Money } from '@/components/common/Money'
 import { StatusChip } from '@/components/contract/StatusChip'
 import { LoadingBlock } from '@/components/common/LoadingBlock'
@@ -135,62 +136,64 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Section B: Money at a Glance (3 Stat Tiles) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* Tile 1: Open Holds */}
-          <div className="p-6 rounded-2xl glass-card border border-border/80 shadow-lg space-y-3 relative overflow-hidden group hover:border-brand/40 transition-all">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted uppercase tracking-wider">Held on PayPal</span>
-              <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 group-hover:scale-105 transition-transform">
-                <Lock className="w-4 h-4" />
+        {/* Section B: Money at a Glance (3 Stat Tiles with Bento Glow) */}
+        <ScrollReveal animation="fade-up">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Tile 1: Open Holds */}
+            <div className="p-6 rounded-2xl glass-card border border-border/80 shadow-lg space-y-3 relative overflow-hidden group hover:border-brand/40 transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-muted uppercase tracking-wider">Held on PayPal</span>
+                <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 group-hover:scale-105 transition-transform">
+                  <Lock className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-3xl font-black text-text tracking-tight font-mono">
+                  {formatUsd(heldMinor)}
+                </div>
+                <p className="text-[11px] text-muted">
+                  Active 29-day authorization holds securing digital work.
+                </p>
               </div>
             </div>
-            <div className="space-y-1">
-              <div className="text-3xl font-black text-text tracking-tight font-mono">
-                {formatUsd(heldMinor)}
-              </div>
-              <p className="text-[11px] text-muted">
-                Active 29-day authorization holds securing digital work.
-              </p>
-            </div>
-          </div>
 
-          {/* Tile 2: Released This Month */}
-          <div className="p-6 rounded-2xl glass-card border border-border/80 shadow-lg space-y-3 relative overflow-hidden group hover:border-emerald-500/40 transition-all">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted uppercase tracking-wider">Released on Proof</span>
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-105 transition-transform">
-                <ShieldCheck className="w-4 h-4" />
+            {/* Tile 2: Released This Month */}
+            <div className="p-6 rounded-2xl glass-card border border-border/80 shadow-lg space-y-3 relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-muted uppercase tracking-wider">Released on Proof</span>
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-105 transition-transform">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-3xl font-black text-emerald-400 tracking-tight font-mono">
+                  {formatUsd(releasedMinor)}
+                </div>
+                <p className="text-[11px] text-muted">
+                  Funds captured and settled after passing verification.
+                </p>
               </div>
             </div>
-            <div className="space-y-1">
-              <div className="text-3xl font-black text-emerald-400 tracking-tight font-mono">
-                {formatUsd(releasedMinor)}
-              </div>
-              <p className="text-[11px] text-muted">
-                Funds captured and settled after passing verification.
-              </p>
-            </div>
-          </div>
 
-          {/* Tile 3: Funds at Risk */}
-          <div className="p-6 rounded-2xl glass-card border border-border/80 shadow-lg space-y-3 relative overflow-hidden group hover:border-amber-500/40 transition-all">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted uppercase tracking-wider">Attention &amp; Risk</span>
-              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 group-hover:scale-105 transition-transform">
-                <TrendingUp className="w-4 h-4" />
+            {/* Tile 3: Funds at Risk */}
+            <div className="p-6 rounded-2xl glass-card border border-border/80 shadow-lg space-y-3 relative overflow-hidden group hover:border-amber-500/40 transition-all">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-muted uppercase tracking-wider">Attention &amp; Risk</span>
+                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 group-hover:scale-105 transition-transform">
+                  <TrendingUp className="w-4 h-4" />
+                </div>
               </div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-3xl font-black text-text tracking-tight font-mono">
-                {formatUsd(atRiskMinor)}
+              <div className="space-y-1">
+                <div className="text-3xl font-black text-text tracking-tight font-mono">
+                  {formatUsd(atRiskMinor)}
+                </div>
+                <p className="text-[11px] text-muted">
+                  Milestones in escalation review or approaching auto-release.
+                </p>
               </div>
-              <p className="text-[11px] text-muted">
-                Milestones in escalation review or approaching auto-release.
-              </p>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Section C: Active Contracts Overview */}
         <div className="space-y-4">
@@ -280,67 +283,69 @@ export default function DashboardPage() {
         </div>
 
         {/* Section D: Getting Started Checklist */}
-        <div className="p-6 rounded-2xl glass-card border border-border/80 space-y-5 shadow-lg">
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-text flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
-                <Sparkles className="w-3.5 h-3.5" />
-              </div>
-              <span>Getting Started Checklist</span>
-            </h3>
-            <p className="text-xs text-muted">Complete these steps to experience the pay-on-acceptance protocol.</p>
+        <ScrollReveal animation="fade-up" delayMs={100}>
+          <div className="p-6 rounded-2xl glass-card border border-border/80 space-y-5 shadow-lg">
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-text flex items-center gap-2">
+                <div className="w-6 h-6 rounded-md bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                  <Sparkles className="w-3.5 h-3.5" />
+                </div>
+                <span>Getting Started Checklist</span>
+              </h3>
+              <p className="text-xs text-muted">Complete these steps to experience the pay-on-acceptance protocol.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
+              <Link
+                href="/studio"
+                className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 1</span>
+                  <CheckCircle2 className={`w-4 h-4 ${contracts && contracts.length > 0 ? 'text-emerald-400' : 'text-muted/40'}`} />
+                </div>
+                <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Create Agreement</div>
+                <p className="text-[11px] text-muted leading-relaxed">Compile natural language into formal milestones &amp; criteria.</p>
+              </Link>
+
+              <Link
+                href="/contracts"
+                className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 2</span>
+                  <Users className="w-4 h-4 text-muted/40" />
+                </div>
+                <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Invite Counterparty</div>
+                <p className="text-[11px] text-muted leading-relaxed">Share a 14-day token link for the seller to lock the agreement hash.</p>
+              </Link>
+
+              <Link
+                href="/contracts"
+                className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 3</span>
+                  <Lock className="w-4 h-4 text-muted/40" />
+                </div>
+                <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Authorize Hold</div>
+                <p className="text-[11px] text-muted leading-relaxed">Approve the 29-day authorization hold on PayPal rails.</p>
+              </Link>
+
+              <Link
+                href="/demo"
+                className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 4</span>
+                  <ShieldCheck className="w-4 h-4 text-muted/40" />
+                </div>
+                <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Verify &amp; Release</div>
+                <p className="text-[11px] text-muted leading-relaxed">Submit work to trigger automated evaluation and partial capture.</p>
+              </Link>
+            </div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
-            <Link
-              href="/studio"
-              className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 1</span>
-                <CheckCircle2 className={`w-4 h-4 ${contracts && contracts.length > 0 ? 'text-emerald-400' : 'text-muted/40'}`} />
-              </div>
-              <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Create Agreement</div>
-              <p className="text-[11px] text-muted leading-relaxed">Compile natural language into formal milestones &amp; criteria.</p>
-            </Link>
-
-            <Link
-              href="/contracts"
-              className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 2</span>
-                <Users className="w-4 h-4 text-muted/40" />
-              </div>
-              <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Invite Counterparty</div>
-              <p className="text-[11px] text-muted leading-relaxed">Share a 14-day token link for the seller to lock the agreement hash.</p>
-            </Link>
-
-            <Link
-              href="/contracts"
-              className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 3</span>
-                <Lock className="w-4 h-4 text-muted/40" />
-              </div>
-              <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Authorize Hold</div>
-              <p className="text-[11px] text-muted leading-relaxed">Approve the 29-day authorization hold on PayPal rails.</p>
-            </Link>
-
-            <Link
-              href="/demo"
-              className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 4</span>
-                <ShieldCheck className="w-4 h-4 text-muted/40" />
-              </div>
-              <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Verify &amp; Release</div>
-              <p className="text-[11px] text-muted leading-relaxed">Submit work to trigger automated evaluation and partial capture.</p>
-            </Link>
-          </div>
-        </div>
+        </ScrollReveal>
       </div>
     </PageShell>
   )
