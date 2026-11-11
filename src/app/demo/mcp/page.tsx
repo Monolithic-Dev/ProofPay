@@ -656,7 +656,7 @@ export default function McpSimulatorPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-border pb-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20">
+                    <div className="w-7 h-7 rounded-lg bg-surface-2 text-text flex items-center justify-center border border-border">
                       <Cpu className="w-4 h-4" />
                     </div>
                     <div>
@@ -664,18 +664,18 @@ export default function McpSimulatorPage() {
                       <p className="text-[11px] text-muted">Claude 3.5 Sonnet / Gemini 1.5 Client via stdio</p>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-2 text-text border border-border">
                     tools/call: {currentStep.tool}
                   </span>
                 </div>
 
                 {/* Agent Thinking Bubble */}
-                <div className="p-3.5 rounded-xl bg-purple-500/5 border border-purple-500/20 space-y-1.5">
-                  <div className="flex items-center gap-1.5 text-purple-400 text-[11px] font-semibold">
-                    <Bot className="w-3.5 h-3.5" />
+                <div className="p-3.5 rounded-xl bg-surface-2/60 border border-border space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-text text-[11px] font-semibold">
+                    <Bot className="w-3.5 h-3.5 text-brand" />
                     <span>Agent Inner Reasoning (Chain of Thought):</span>
                   </div>
-                  <p className="text-xs text-text/90 italic leading-relaxed font-sans">
+                  <p className="text-xs text-text/90 italic leading-relaxed font-manrope">
                     &ldquo;{currentStep.thinking}&rdquo;
                   </p>
                 </div>
@@ -689,14 +689,14 @@ export default function McpSimulatorPage() {
                     <span className="text-muted font-mono text-[10px]">Method: tools/call</span>
                   </div>
                   <div className="p-3.5 rounded-xl bg-surface-2 border border-border font-mono text-[11px] text-text max-h-48 overflow-y-auto space-y-1">
-                    <div className="text-purple-400 font-semibold">&#123;&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;tools/call&quot;,</div>
+                    <div className="text-muted font-semibold">&#123;&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;tools/call&quot;,</div>
                     <div className="text-text pl-4">&quot;params&quot;: &#123;</div>
                     <div className="text-brand pl-8">&quot;name&quot;: &quot;{currentStep.tool}&quot;,</div>
                     <div className="text-text pl-8">&quot;arguments&quot;: {JSON.stringify(currentStep.requestPayload, null, 2).split('\n').map((line, idx) => (
                       <div key={idx} className="pl-4 text-emerald-400">{line}</div>
                     ))}</div>
                     <div className="text-text pl-4">&#125;</div>
-                    <div className="text-purple-400 font-semibold">&#125;</div>
+                    <div className="text-muted font-semibold">&#125;</div>
                   </div>
                 </div>
 
@@ -718,7 +718,7 @@ export default function McpSimulatorPage() {
 
               <div className="text-[11px] text-muted flex items-center justify-between pt-3 border-t border-border/40 font-mono">
                 <span>Active Step: {currentStep.label}</span>
-                <span className="text-purple-400 font-semibold">Zero Custody Enforced</span>
+                <span className="text-brand font-semibold">Zero Custody Enforced</span>
               </div>
             </div>
 
