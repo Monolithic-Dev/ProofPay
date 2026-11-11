@@ -139,100 +139,119 @@ export default function HomePage() {
       </section>
 
       {/* Product Visual Showcase: Interactive Component Previews */}
-      <section className="py-16 border-b border-border bg-surface/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="text-center space-y-2">
-            <h2 className="text-xs uppercase font-bold tracking-wider text-brand">
+      <section className="py-20 border-b border-border bg-surface/20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div className="text-center space-y-3">
+            <span className="text-xs uppercase font-extrabold tracking-widest text-brand dark:text-sky-400">
               Built Like Real Financial Software
-            </h2>
-            <p className="text-2xl font-bold text-text">
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text">
               Real-time holds, cryptographic proof, and transparent releases
+            </h2>
+            <p className="text-sm text-muted max-w-2xl mx-auto">
+              Every deliverable is proven via deterministic analyzers and signed into a tamper-evident audit chain before PayPal capture.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Visual Component 1: Funds Bar Card */}
-            <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-5">
-              <div className="flex items-center justify-between border-b border-border/80 pb-3">
-                <div className="flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-brand" />
-                  <span className="font-semibold text-sm text-text">Funds Bar &amp; PayPal Hold</span>
+            <div className="p-7 rounded-2xl glass-card border border-border/80 shadow-xl space-y-6 hover:border-brand/40 transition-all duration-300">
+              <div className="flex items-center justify-between border-b border-border/60 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-sm text-text block">Funds Bar &amp; PayPal Hold</span>
+                    <span className="text-[11px] text-muted">Two-Phase Authorization Status</span>
+                  </div>
                 </div>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm">
                   Authorized on PayPal
                 </span>
               </div>
 
               {/* Funds Bar Visual Representation */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted">Total Authorized: <strong className="text-text">$1,200.00</strong></span>
-                  <span className="text-emerald-400 font-semibold">$600.00 Released (50%)</span>
+                  <span className="text-muted">Total Authorized: <strong className="text-text font-bold">$1,200.00</strong></span>
+                  <span className="text-emerald-400 font-bold">$600.00 Released (50%)</span>
                 </div>
 
                 {/* Multi-segment progress bar */}
-                <div className="h-3 w-full bg-surface-2 rounded-full overflow-hidden flex">
-                  <div className="h-full bg-emerald-500 transition-all duration-500" style={{ width: '50%' }} title="Released: $600.00" />
-                  <div className="h-full bg-blue-500/80 transition-all duration-500" style={{ width: '50%' }} title="Held on PayPal: $600.00" />
+                <div className="h-3.5 w-full bg-surface-2 rounded-full overflow-hidden flex p-0.5 border border-border/60">
+                  <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-l-full transition-all duration-500" style={{ width: '50%' }} title="Released: $600.00" />
+                  <div className="h-full bg-gradient-to-r from-sky-500 to-blue-600 rounded-r-full transition-all duration-500" style={{ width: '50%' }} title="Held on PayPal: $600.00" />
                 </div>
 
                 <div className="flex items-center justify-between text-[11px] text-muted">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm" />
                     <span>Captured to seller: $600.00</span>
                   </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <span className="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-sm" />
                     <span>Remaining in hold: $600.00</span>
                   </span>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-surface-2 border border-border/60 text-xs text-muted space-y-1">
-                <p className="font-semibold text-text">Up to 29-day authorization window</p>
-                <p className="text-[11px]">
+              <div className="p-4 rounded-xl bg-surface-2/80 border border-border/60 text-xs text-muted space-y-1.5">
+                <div className="flex items-center gap-1.5 font-bold text-text">
+                  <ShieldCheck className="w-4 h-4 text-brand" />
+                  <span>Up to 29-day authorization window</span>
+                </div>
+                <p className="text-[11px] leading-relaxed">
                   Funds stay with the buyer&apos;s PayPal account until verified. If deliverables aren&apos;t approved within the agreed window, hold voids back automatically.
                 </p>
               </div>
             </div>
 
             {/* Visual Component 2: Verification Report Preview */}
-            <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-4">
-              <div className="flex items-center justify-between border-b border-border/80 pb-3">
-                <div className="flex items-center gap-2">
-                  <FileCheck2 className="w-4 h-4 text-purple-400" />
-                  <span className="font-semibold text-sm text-text">Milestone Verification Report</span>
+            <div className="p-7 rounded-2xl glass-card border border-border/80 shadow-xl space-y-6 hover:border-brand/40 transition-all duration-300">
+              <div className="flex items-center justify-between border-b border-border/60 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                    <FileCheck2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-sm text-text block">Milestone Verification Report</span>
+                    <span className="text-[11px] text-muted">Cryptographic Verdict Engine</span>
+                  </div>
                 </div>
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">
                   DECISION: PASS
                 </span>
               </div>
 
-              <div className="space-y-3 text-xs">
+              <div className="space-y-3.5 text-xs">
                 {/* Criterion 1: Deterministic check */}
-                <div className="p-3 rounded-xl bg-surface-2 border border-border/60 space-y-1">
+                <div className="p-3.5 rounded-xl bg-surface-2/80 border border-border/60 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-text">1. Schema Validation (ROW_COUNT_MIN)</span>
-                    <span className="text-emerald-400 font-mono text-[11px]">Passed (124 ≥ 100)</span>
+                    <span className="font-bold text-text">1. Schema Validation (ROW_COUNT_MIN)</span>
+                    <span className="text-emerald-400 font-mono text-[11px] font-bold">Passed (124 ≥ 100)</span>
                   </div>
                   <p className="text-[11px] text-muted">Checked JSON schema headers, required keys, and record limits.</p>
                 </div>
 
                 {/* Criterion 2: Rubric with evidence citation */}
-                <div className="p-3 rounded-xl bg-surface-2 border border-border/60 space-y-1.5">
+                <div className="p-3.5 rounded-xl bg-surface-2/80 border border-border/60 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-text">2. Technical Accuracy &amp; Rubric</span>
-                    <span className="text-emerald-400 font-mono text-[11px]">Score: 0.94 / 1.00</span>
+                    <span className="font-bold text-text">2. Technical Accuracy &amp; Rubric</span>
+                    <span className="text-emerald-400 font-mono text-[11px] font-bold">Score: 0.94 / 1.00</span>
                   </div>
-                  <div className="p-2 rounded-lg bg-surface border border-border font-mono text-[11px] text-text">
+                  <div className="p-2.5 rounded-lg bg-surface border border-border/80 font-mono text-[11px] text-text shadow-inner">
                     <span className="text-muted">Evidence quote: </span>
-                    <span className="text-brand">&quot;Verified all 124 merchant records with active OAuth2 scopes.&quot;</span>
+                    <span className="text-sky-400 font-semibold">&quot;Verified all 124 merchant records with active OAuth2 scopes.&quot;</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-muted pt-1">
-                  <span className="font-mono">Tamper-proof Proof Pack generated</span>
-                  <span className="text-emerald-400 font-semibold">PayPal Capture Released $600.00</span>
+                <div className="flex items-center justify-between text-[11px] text-muted pt-2 border-t border-border/60">
+                  <span className="font-mono flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                    <span>ProofPack™ signed with RFC 3161</span>
+                  </span>
+                  <span className="text-emerald-400 font-bold">PayPal Captured: $600.00</span>
                 </div>
               </div>
             </div>
