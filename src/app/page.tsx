@@ -78,33 +78,27 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen gradient-mesh">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-40 border-b border-border bg-grid-pattern">
-        {/* Magic UI / RareUI Ambient Radial Glows & Concentric Rings */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[900px] h-[450px] bg-gradient-to-tr from-sky-500/20 via-blue-600/15 to-purple-600/20 blur-[140px] rounded-full pointer-events-none -z-10 animate-pulse-slow" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bg/80 to-bg pointer-events-none -z-10" />
+    <div className="flex flex-col min-h-screen">
+      {/* Hero Section — Featurebase Clean Typography and High Contrast */}
+      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28 border-b border-border/80 bg-gradient-to-b from-surface-2/40 via-bg to-bg">
+        {/* Subtle Featurebase top aura */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[350px] bg-gradient-to-b from-brand/10 via-transparent to-transparent blur-[120px] rounded-full pointer-events-none -z-10" />
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
-          {/* Glowing Animated Pill (21st.dev / Magic UI pattern) */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-surface-2/90 backdrop-blur-xl border border-sky-500/30 text-text text-xs font-semibold shadow-lg shadow-sky-500/10 hover:border-sky-500/50 transition-all cursor-default">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
+          {/* Featurebase-style sleek status badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-border text-xs font-medium shadow-xs">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
             <span className="text-muted">Zero-Custody Authorization Hold (Not Escrow) · Powered by</span>
-            <span className="font-extrabold text-text flex items-center gap-1">
-              <span className="text-sky-400">PayPal</span> Rails
-            </span>
+            <span className="font-bold text-text">PayPal Rails</span>
           </div>
 
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-text leading-[1.05]">
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-[-0.03em] text-text leading-[1.08]">
             Get paid for work that’s{' '}
-            <span className="relative whitespace-nowrap">
-              <span className="bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                proven.
-              </span>
-              <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 rounded-full blur-[1px]"></span>
+            <span className="text-brand">
+              proven.
             </span>
           </h1>
 
@@ -114,34 +108,34 @@ export default function HomePage() {
             and dual-LLM consensus.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Link
               href="/demo/express"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-500/25 transition-all hover:scale-[1.03] active:scale-[0.98] group"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-text text-bg hover:opacity-90 font-bold text-xs shadow-sm transition-all group"
             >
               <span>Launch 90-Second Express Sandbox</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
             <Link
               href="/auth/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass-card border border-border/80 text-text font-bold hover:bg-surface-2 transition-all text-sm shadow-md hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-surface border border-border text-text font-semibold hover:bg-surface-2 transition-all text-xs"
             >
               <span>Enterprise Sign In</span>
             </Link>
           </div>
 
-          {/* Social Proof / Trust Indicators with subtle glow */}
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 pt-4 text-xs text-muted font-medium">
-            <span className="flex items-center gap-2 bg-surface/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/60">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          {/* Featurebase clean trust indicators */}
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-xs text-muted font-medium">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
               <span>Zero-Custody Protocol</span>
             </span>
-            <span className="flex items-center gap-2 bg-surface/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/60">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
               <span>Machine-Verifiable ProofPacks™</span>
             </span>
-            <span className="flex items-center gap-2 bg-surface/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/60">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
               <span>RFC 3161 External TSA</span>
             </span>
           </div>
