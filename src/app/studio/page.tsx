@@ -14,7 +14,35 @@ import { Money } from '@/components/common/Money'
 import { StatusChip } from '@/components/contract/StatusChip'
 import { useApiClient, useContracts, useCurrentUser } from '@/lib/query'
 import defaultTemplate from '@/lib/templates/dataset-summary.json'
-import { FileText, ArrowRight, Sparkles, Layers } from 'lucide-react'
+import { FileText, ArrowRight, Layers } from 'lucide-react'
+
+/**
+ * Safely extract a plain-string message from an unknown thrown value.
+ * Prevents "Converting circular structure to JSON → HTMLSpanElement" when
+ * a DOM node or complex object is accidentally caught and stored in state.
+ */
+function safeErrorMessage(err: unknown, fallback: string): string {
+  if (err instanceof Error) return err.message || fallback
+  if (typeof err === 'string') return err
+  try {
+    // Only attempt JSON for plain objects with no DOM refs
+    const cast = err as Record<string, unknown>
+    if (cast && typeof cast.message === 'string') return cast.message
+  } catch {
+    // ignore
+  }
+  return fallback
+}
+
+function safeField(err: unknown, field: string): string | undefined {
+  try {
+    const cast = err as Record<string, unknown>
+    if (cast && typeof cast[field] === 'string') return cast[field] as string
+  } catch {
+    // ignore
+  }
+  return undefined
+}
 
 export default function StudioPage() {
   const router = useRouter()
@@ -26,11 +54,16 @@ export default function StudioPage() {
 
   const ensureSession = async () => {
     if (!currentUser) {
-      await fetch('/api/v1/auth/demo-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ persona_key: 'buyer' }),
-      }).catch(() => {})
+      try {
+        await fetch('/api/v1/auth/demo-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ persona_key: 'buyer' }),
+        })
+      } catch {
+        // Demo login may fail in local dev (no DB) — safe to ignore,
+        // compileContract will return 401 which we handle below
+      }
     }
   }
 
@@ -43,12 +76,12 @@ export default function StudioPage() {
       if (res?.contract?.id) {
         router.push(`/studio/${res.contract.id}`)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Compilation failed:', err)
       setErrorInfo({
-        message: err.message || 'Failed to compile contract from prompt',
-        requestId: err.requestId,
-        code: err.code,
+        message: safeErrorMessage(err, 'Failed to compile contract from prompt'),
+        requestId: safeField(err, 'requestId'),
+        code: safeField(err, 'code'),
       })
     } finally {
       setIsCompiling(false)
@@ -68,11 +101,11 @@ export default function StudioPage() {
       if (res?.contract?.id) {
         router.push(`/studio/${res.contract.id}`)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setErrorInfo({
-        message: err.message || 'Template loading failed. Please try again.',
-        requestId: err.requestId,
-        code: err.code,
+        message: safeErrorMessage(err, 'Template loading failed. Please try again.'),
+        requestId: safeField(err, 'requestId'),
+        code: safeField(err, 'code'),
       })
     } finally {
       setIsCompiling(false)
