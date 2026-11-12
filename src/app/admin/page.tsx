@@ -79,7 +79,7 @@ export default function AdminConsolePage() {
               <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
               <span className="text-base font-bold text-text">Groq LPU Active</span>
             </div>
-            <div className="text-[11px] text-muted">qwen/qwen3.8-27b • ~900ms</div>
+            <div className="text-[11px] text-muted">Qwen / Claude Consensus • ~900ms</div>
           </div>
 
           <div className="card p-5 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm space-y-2">
@@ -123,7 +123,7 @@ export default function AdminConsolePage() {
           </div>
           <div>
             <div className="text-xs text-muted font-medium">Settled &amp; Completed</div>
-            <div className="text-2xl font-black text-emerald-400 mt-1">{completedContractsCount}</div>
+            <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{completedContractsCount}</div>
           </div>
         </div>
 
@@ -142,7 +142,7 @@ export default function AdminConsolePage() {
                 placeholder="Search by ID, title, status…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-4 py-1.5 bg-surface-subtle border border-border rounded-xl text-xs text-text placeholder:text-muted/60 focus:outline-none focus:border-brand w-64"
+                className="pl-9 pr-4 py-1.5 bg-surface-subtle border border-border rounded-xl text-xs text-text placeholder:text-muted/60 focus:outline-none focus:border-brand w-full sm:w-64"
               />
             </div>
           </div>

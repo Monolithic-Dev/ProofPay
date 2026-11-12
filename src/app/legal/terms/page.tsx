@@ -16,9 +16,9 @@ export default function TermsOfServicePage() {
         <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs flex items-start gap-2.5">
           <Scale className="w-4 h-4 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold">Hackathon Prototype Notice &bull; Draft &bull; Not Legal Advice</p>
+            <p className="font-semibold">Sandbox Evaluation Notice &bull; Draft &bull; Not Legal Advice</p>
             <p className="text-[11px] opacity-90 mt-0.5">
-              These terms are provided for hackathon demonstration and evaluation purposes only. ProofPay does not provide legal, financial, or tax counsel.
+              These terms are provided for sandbox evaluation and demonstration purposes only. ProofPay does not provide legal, financial, or tax counsel.
             </p>
           </div>
         </div>

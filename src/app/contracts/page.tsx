@@ -180,7 +180,7 @@ export default function ContractsPage() {
 
             <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm space-y-2 group hover:border-emerald-500/40 transition-all">
               <div className="flex items-center justify-between text-muted">
-                <span className="text-xs font-bold uppercase tracking-wider">PayPal Holds Locked</span>
+                <span className="text-xs font-bold uppercase tracking-wider">Active PayPal Holds</span>
                 <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400">
                   <Lock className="w-4 h-4" />
                 </div>
@@ -197,7 +197,7 @@ export default function ContractsPage() {
                 </div>
               </div>
               <p className="text-2xl font-black font-mono tracking-tight text-text">{metrics.completedCount}</p>
-              <p className="text-[11px] text-muted">100% verified &amp; released</p>
+              <p className="text-[11px] text-muted">Verified &amp; released</p>
             </div>
           </div>
         </ScrollReveal>
@@ -416,7 +416,7 @@ export default function ContractsPage() {
 
                     <Link
                       href={`/contracts/${c.id}`}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-surface-2/80 hover:bg-brand hover:text-white border border-border/80 text-xs font-bold transition-all shadow-sm group-hover:border-brand/40"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-surface-2/80 hover:bg-brand text-text hover:text-white border border-border/80 text-xs font-bold transition-all shadow-sm group-hover:border-brand/40"
                     >
                       <span>Open Workspace</span>
                       <ArrowRight className="w-3.5 h-3.5" />

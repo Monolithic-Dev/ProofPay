@@ -16,7 +16,7 @@ export default function PrivacyPolicyPage() {
         <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs flex items-start gap-2.5">
           <ShieldCheck className="w-4 h-4 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold">Hackathon Prototype Notice &bull; Draft &bull; Not Legal Advice</p>
+            <p className="font-semibold">Sandbox Evaluation Notice &bull; Draft &bull; Not Legal Advice</p>
             <p className="text-[11px] opacity-90 mt-0.5">
               This privacy disclosure outlines data collection, subprocessor engagements, and retention boundaries for the ProofPay prototype.
             </p>
@@ -87,7 +87,7 @@ export default function PrivacyPolicyPage() {
         <section className="space-y-2">
           <h2 className="text-base font-bold text-text">4. Data Retention &amp; Sandbox Purge Schedule (Appendix D-2)</h2>
           <p className="text-xs text-muted leading-relaxed">
-            Deliverable text submissions are expired after 7 days post-verification (permanent SHA-256 hashes are preserved in the ledger). All hackathon sandbox demo agreements are scheduled for automatic purge on <strong>December 16, 2026</strong>.
+            Deliverable text submissions are expired after 7 days post-verification (permanent SHA-256 hashes are preserved in the ledger). Sandbox demo agreements are scheduled for automatic purge on <strong>December 16, 2026</strong>.
           </p>
         </section>
 

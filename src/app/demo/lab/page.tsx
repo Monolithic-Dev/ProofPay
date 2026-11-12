@@ -117,12 +117,12 @@ export default function ResilienceLabPage() {
     <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-border pb-4 gap-4">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
               Resilience Lab (N3)
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 font-medium flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5 text-red-400" />
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 font-medium flex items-center gap-1.5">
+              <Flame className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
               <span>Fault Injection Mode</span>
             </span>
           </div>
@@ -184,7 +184,7 @@ export default function ResilienceLabPage() {
                   className={`w-full py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                     fault.active
                       ? 'bg-red-600 hover:bg-red-700 text-white'
-                      : 'bg-surface-2 hover:bg-red-500/10 text-text hover:text-red-400 border border-border'
+                      : 'bg-surface-2 hover:bg-red-500/10 text-text hover:text-red-600 dark:hover:text-red-400 border border-border'
                   }`}
                 >
                   <Play className="w-3 h-3 fill-current" />
@@ -241,7 +241,7 @@ export default function ResilienceLabPage() {
                 key={i}
                 className={`leading-relaxed ${
                   log.includes('[INJECT')
-                    ? 'text-red-400 font-bold'
+                    ? 'text-red-600 dark:text-red-400 font-bold'
                     : log.includes('[RECOVERY') || log.includes('[STATUS')
                     ? 'text-ok'
                     : 'text-text/90'

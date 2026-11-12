@@ -1,77 +1,57 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { PageShell } from '@/components/common/PageShell'
 import { SettingsNav } from '@/components/settings/SettingsNav'
 import {
   Shield,
   ShieldCheck,
-  ShieldAlert,
   KeyRound,
   Lock,
   ArrowRight,
   TrendingUp,
   AlertTriangle,
   CheckCircle2,
-  Clock,
   ExternalLink,
   Ban,
   Activity,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import {
-  calculateSecurityPosture,
-  type SecurityPosture,
-} from '@/shared/security'
+import { type SecurityPosture } from '@/shared/security'
 
 export default function SecurityCenterPage() {
-  const [useRealApi, setUseRealApi] = useState(false)
-
-  // 1. Fetch current user role
-  const { data: meData, isLoading: isMeLoading } = useQuery({
-    queryKey: ['me'],
+  // 1. Fetch active workspace organization membership role
+  const { data: orgData, isLoading: isOrgLoading } = useQuery({
+    queryKey: ['organizations'],
     queryFn: async () => {
-      const res = await fetch('/api/v1/auth/me')
+      const res = await fetch('/api/v1/organizations')
       if (!res.ok) return null
       return res.json()
     },
   })
 
-  // 2. Fetch posture (falling back to mock posture)
+  // 2. Fetch live organization security posture
   const {
     data: postureData,
     isLoading: isPostureLoading,
     error,
   } = useQuery<SecurityPosture>({
-    queryKey: ['security-posture', useRealApi],
+    queryKey: ['security-posture'],
     queryFn: async () => {
-      if (useRealApi) {
-        const res = await fetch('/api/v1/security/posture')
-        if (res.ok) return res.json()
+      const res = await fetch('/api/v1/orgs/current/security')
+      if (!res.ok) {
+        throw new Error('Failed to load security posture')
       }
-      // Mock calculation from PLAT-6 spec
-      return calculateSecurityPosture({
-        mfaPrivilegedTotal: 2,
-        mfaPrivilegedEnrolled: 1,
-        apiKeysTotal: 3,
-        apiKeysOlder90d: 1,
-        apiKeysWithoutExpiry: 1,
-        apiKeysWithoutAllowlist: 2,
-        staleSessions30d: 0,
-        pendingInvitesOlder14d: 0,
-        unverifiedMembers: 0,
-        riskEventsCount: 0,
-        stepUpEnforced: true,
-      })
+      return res.json()
     },
   })
 
-  const userRole = (meData?.user?.role || 'owner').toLowerCase()
-  const isForbidden = userRole === 'member'
+  const orgRole = (orgData?.organizations?.[0]?.role || 'owner').toLowerCase()
+  const isForbidden = orgRole === 'member' || orgRole === 'viewer'
 
   // Loading state
-  if (isMeLoading || isPostureLoading) {
+  if (isOrgLoading || isPostureLoading) {
     return (
       <PageShell
         title="Security Center"
@@ -88,7 +68,7 @@ export default function SecurityCenterPage() {
     )
   }
 
-  // 403 Forbidden state for Member role
+  // 403 Forbidden state for Member/Viewer role
   if (isForbidden) {
     return (
       <PageShell
@@ -97,10 +77,10 @@ export default function SecurityCenterPage() {
       >
         <SettingsNav />
         <div
-          className="card p-12 text-center border border-rose-500/20 bg-rose-500/5 rounded-2xl max-w-2xl mx-auto space-y-4"
+          className="card p-8 sm:p-12 text-center border border-rose-500/20 bg-rose-500/5 rounded-2xl max-w-2xl mx-auto space-y-4"
           data-testid="security-center-forbidden"
         >
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
             <Ban className="w-8 h-8" />
           </div>
           <h2 className="text-xl font-bold text-text">403 — Access Denied</h2>
@@ -111,7 +91,7 @@ export default function SecurityCenterPage() {
           <div className="pt-2">
             <Link
               href="/settings"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-text bg-surface border border-border/80 rounded-xl hover:bg-surface/80 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-text bg-surface border border-border/80 rounded-xl hover:bg-surface-hover transition-colors"
             >
               Return to Settings
             </Link>
@@ -133,7 +113,7 @@ export default function SecurityCenterPage() {
           className="card p-8 text-center border border-border/80 rounded-2xl max-w-xl mx-auto space-y-4"
           data-testid="security-center-error"
         >
-          <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto" />
+          <AlertTriangle className="w-10 h-10 text-amber-600 dark:text-amber-400 mx-auto" />
           <h2 className="text-lg font-bold text-text">Unable to load security posture</h2>
           <p className="text-sm text-muted">Please refresh the page or try again in a moment.</p>
         </div>
@@ -145,10 +125,10 @@ export default function SecurityCenterPage() {
 
   const scoreBadgeColor =
     score >= 80
-      ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+      ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
       : score >= 60
-        ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
-        : 'text-rose-400 bg-rose-500/10 border-rose-500/20'
+        ? 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border-amber-500/20'
+        : 'text-rose-700 dark:text-rose-400 bg-rose-500/10 border-rose-500/20'
 
   const mfaRatio =
     mfa.privileged_total > 0
@@ -166,12 +146,12 @@ export default function SecurityCenterPage() {
         {/* Posture Score Card */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2 card p-6 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm flex flex-col justify-between">
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between gap-4">
               <div>
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted">
                   Organization Posture Rating
                 </span>
-                <div className="flex items-baseline gap-4 mt-2">
+                <div className="flex flex-wrap items-baseline gap-3 sm:gap-4 mt-2">
                   <span className="text-5xl font-black tracking-tight text-text" data-testid="posture-score">
                     {score}
                   </span>
@@ -183,15 +163,15 @@ export default function SecurityCenterPage() {
                   </span>
                 </div>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-brand/10 text-brand flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-brand/10 text-brand flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between text-xs text-muted">
-              <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
+            <div className="mt-6 pt-4 border-t border-border/60 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+              <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
                 <TrendingUp className="w-4 h-4" />
-                <span>+5 pts this month</span>
+                <span>Continuous posture monitoring active</span>
               </div>
               <span>Evaluated at {new Date(postureData.generated_at).toLocaleDateString()}</span>
             </div>
@@ -204,7 +184,7 @@ export default function SecurityCenterPage() {
                 Step-Up Protection
               </span>
               <div className="mt-2 flex items-center gap-2">
-                <Lock className="w-5 h-5 text-emerald-400" />
+                <Lock className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 <span className="font-semibold text-text text-sm">
                   {postureData.step_up.enforced ? 'Enforced (Active)' : 'Shadow Mode'}
                 </span>
@@ -269,7 +249,7 @@ export default function SecurityCenterPage() {
           <div className="card p-6 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                   <KeyRound className="w-5 h-5" />
                 </div>
                 <div>
@@ -299,7 +279,7 @@ export default function SecurityCenterPage() {
                 href="/settings/api-keys"
                 className="text-xs font-semibold text-brand hover:underline inline-flex items-center gap-1"
               >
-                Rotate & Restrict Keys
+                Rotate &amp; Restrict Keys
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -308,7 +288,7 @@ export default function SecurityCenterPage() {
 
         {/* Actionable Recommendations List */}
         <div className="card p-6 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 className="font-bold text-text text-lg">Actionable Recommendations</h3>
               <p className="text-xs text-muted">
@@ -323,17 +303,17 @@ export default function SecurityCenterPage() {
           <div className="space-y-3 mt-4" data-testid="recommendations-list">
             {recommendations.length === 0 ? (
               <div className="p-6 text-center text-sm text-muted border border-border/60 rounded-xl">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
+                <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
                 All posture benchmarks met. Zero outstanding recommendations.
               </div>
             ) : (
               recommendations.map((rec) => {
                 const badge =
                   rec.severity === 'high'
-                    ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                    ? 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
                     : rec.severity === 'medium'
-                      ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                      : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                      ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20'
+                      : 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20'
 
                 return (
                   <div
@@ -354,7 +334,7 @@ export default function SecurityCenterPage() {
 
                     <Link
                       href={rec.action_href}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-text bg-surface border border-border/80 hover:bg-surface/80 transition-colors whitespace-nowrap self-start sm:self-auto"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-text bg-surface border border-border/80 hover:bg-surface-hover transition-colors whitespace-nowrap self-start sm:self-auto"
                     >
                       <span>Resolve</span>
                       <ExternalLink className="w-3.5 h-3.5 text-muted" />
@@ -368,7 +348,7 @@ export default function SecurityCenterPage() {
 
         {/* Risk Events Table / Empty State */}
         <div className="card p-6 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-surface text-muted flex items-center justify-center border border-border/80">
                 <Activity className="w-5 h-5" />
@@ -384,7 +364,7 @@ export default function SecurityCenterPage() {
           </div>
 
           <div className="p-8 text-center border border-border/60 rounded-xl bg-surface/20 space-y-2">
-            <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
+            <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
             <h4 className="text-sm font-semibold text-text">No anomalous risk events detected</h4>
             <p className="text-xs text-muted max-w-md mx-auto">
               All member sign-ins, API invocations, and payment authorizations conform to standard operational baselines.
@@ -395,4 +375,3 @@ export default function SecurityCenterPage() {
     </PageShell>
   )
 }
-

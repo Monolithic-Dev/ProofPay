@@ -162,7 +162,7 @@ export default function PaymentsPage() {
           <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium text-muted uppercase tracking-wider">Open Holds</span>
-              <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
+              <div className="p-2 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
                 <Lock className="w-4 h-4" />
               </div>
             </div>
@@ -178,11 +178,11 @@ export default function PaymentsPage() {
           <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium text-muted uppercase tracking-wider">Released (Month)</span>
-              <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+              <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-2xl font-bold tracking-tight text-emerald-400">
+            <div className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
               {formatUsd(summary?.released_minor_month ?? 0)}
             </div>
             <p className="text-[11px] text-muted mt-1.5 flex items-center gap-1">
@@ -210,11 +210,11 @@ export default function PaymentsPage() {
           <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium text-muted uppercase tracking-wider">Hold Expiring Soon</span>
-              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+              <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
                 <AlertTriangle className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-2xl font-bold tracking-tight text-amber-400">
+            <div className="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">
               {formatUsd(summary?.at_risk_minor ?? 0)}
             </div>
             <p className="text-[11px] text-muted mt-1.5 flex items-center gap-1">
@@ -226,7 +226,7 @@ export default function PaymentsPage() {
         {/* Filter and Search Bar */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
           {/* Tab Filters */}
-          <div className="flex items-center gap-1 p-1 bg-surface-2 rounded-xl border border-border text-xs font-medium self-start">
+          <div className="flex flex-wrap items-center gap-1 p-1 bg-surface-2 rounded-xl border border-border text-xs font-medium self-start">
             <button
               onClick={() => setFilterType('ALL')}
               className={`px-3 py-1.5 rounded-lg transition-colors ${
@@ -345,13 +345,13 @@ export default function PaymentsPage() {
                         {/* Type Chip */}
                         <td className="py-3 px-4">
                           {isHold && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[11px] font-medium">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-400 text-[11px] font-medium">
                               <Lock className="w-3 h-3" />
                               <span>Hold Authorized</span>
                             </span>
                           )}
                           {isRelease && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-medium">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[11px] font-medium">
                               <CheckCircle2 className="w-3 h-3" />
                               <span>Capture Released</span>
                             </span>
@@ -395,7 +395,7 @@ export default function PaymentsPage() {
 
                         {/* Amount */}
                         <td className="py-3 px-4 text-right font-semibold">
-                          <span className={isRelease ? 'text-emerald-400' : 'text-text'}>
+                          <span className={isRelease ? 'text-emerald-600 dark:text-emerald-400' : 'text-text'}>
                             {formatUsd(p.amount_minor)}
                           </span>
                         </td>

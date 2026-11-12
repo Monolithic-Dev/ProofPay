@@ -24,7 +24,7 @@ export default function PricingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Sandbox Tier */}
           <div className="card p-8 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm space-y-6 relative">
-            <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
               Current Environment
             </div>
             <div>
@@ -39,23 +39,23 @@ export default function PricingPage() {
 
             <ul className="space-y-3 text-xs text-text/80">
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-400" />
+                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Unlimited contracts and milestones</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-400" />
+                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Live Groq LPU contract compilation &amp; linting</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-400" />
+                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Deterministic verification engine &amp; scoring</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-400" />
+                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>PayPal sandbox authorization holds &amp; test captures</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Check className="w-4 h-4 text-emerald-400" />
+                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>MCP server configuration &amp; scoped API keys</span>
               </li>
             </ul>

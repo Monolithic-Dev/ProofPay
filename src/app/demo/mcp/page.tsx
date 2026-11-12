@@ -3,7 +3,7 @@
 /**
  * In-Browser Interactive Model Context Protocol (MCP) Agent Simulator — /demo/mcp
  *
- * Allows hackathon judges to witness autonomous AI agents (Claude, Gemini, OpenAI)
+ * Allows evaluators to witness autonomous AI agents (Claude Desktop, Groq/Qwen, OpenAI)
  * interact with ProofPay via MCP tools to negotiate, hold funds on PayPal, verify,
  * and capture payments in real time in under 60 seconds with 0 installation required.
  */
@@ -144,7 +144,7 @@ const SCENARIOS: AgentScenario[] = [
         tool: 'get_funding_link',
         label: '3. PayPal Authorization Hold Attached',
         thinking:
-          'Requesting PayPal authorization hold link. In this demo sandbox, ProofPay connects pre-authorized hold AUTH-EXPRESS-9921 for $10.00 USD. Funds stay locked with PayPal.',
+          'Requesting PayPal authorization hold link. In this demo sandbox, ProofPay connects pre-authorized hold AUTH-EXPRESS-9921 for $10.00 USD. Funds remain reserved on PayPal.',
         requestPayload: {
           contract_id: 'c7f91a20-4e3b-4192-b892-0b82f1718291',
         },
@@ -484,7 +484,7 @@ export default function McpSimulatorPage() {
               </span>
             </div>
             <p className="text-sm text-muted mt-1.5 max-w-3xl leading-relaxed">
-              Witness autonomous AI agents (Claude, Cursor, Gemini) negotiate milestone agreements, hold funds on PayPal, verify work, and capture payouts via MCP tools with zero setup.
+              Witness autonomous AI agents (Claude Desktop, Cursor, custom agents) propose milestone agreements, authorize holds on PayPal, verify work, and capture payouts via MCP tools with zero setup.
             </p>
           </div>
 
@@ -661,7 +661,7 @@ export default function McpSimulatorPage() {
                     </div>
                     <div>
                       <h2 className="text-sm font-bold text-text">Agent Brain &amp; MCP Client</h2>
-                      <p className="text-[11px] text-muted">Claude 3.5 Sonnet / Gemini 1.5 Client via stdio</p>
+                      <p className="text-[11px] text-muted">Claude Sonnet 4.5 / Qwen Client via stdio</p>
                     </div>
                   </div>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-2 text-text border border-border">
@@ -693,7 +693,7 @@ export default function McpSimulatorPage() {
                     <div className="text-text pl-4">&quot;params&quot;: &#123;</div>
                     <div className="text-brand pl-8">&quot;name&quot;: &quot;{currentStep.tool}&quot;,</div>
                     <div className="text-text pl-8">&quot;arguments&quot;: {JSON.stringify(currentStep.requestPayload, null, 2).split('\n').map((line, idx) => (
-                      <div key={idx} className="pl-4 text-emerald-400">{line}</div>
+                      <div key={idx} className="pl-4 text-emerald-700 dark:text-emerald-400">{line}</div>
                     ))}</div>
                     <div className="text-text pl-4">&#125;</div>
                     <div className="text-muted font-semibold">&#125;</div>
@@ -786,12 +786,12 @@ export default function McpSimulatorPage() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-muted font-mono">
-                    <span className="flex items-center gap-1.5 text-emerald-400">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted font-mono">
+                    <span className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400">
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
                       <span>Captured: ${(currentState.releasedMinor / 100).toFixed(2)}</span>
                     </span>
-                    <span className="flex items-center gap-1.5 text-blue-400">
+                    <span className="flex items-center gap-1.5 text-blue-700 dark:text-blue-400">
                       <span className="w-2 h-2 rounded-full bg-blue-400" />
                       <span>Remaining Hold: ${((currentState.fundedMinor - currentState.releasedMinor) / 100).toFixed(2)}</span>
                     </span>
@@ -840,7 +840,7 @@ export default function McpSimulatorPage() {
                   </div>
                   <div className="flex items-center justify-between text-muted text-[11px]">
                     <span>PayPal Capture ID:</span>
-                    <span className="text-emerald-400 font-semibold">{currentState.paypalCaptureId || 'Uncaptured'}</span>
+                    <span className="text-emerald-700 dark:text-emerald-400 font-semibold">{currentState.paypalCaptureId || 'Uncaptured'}</span>
                   </div>
                   <div className="flex items-center justify-between text-muted text-[11px]">
                     <span>Ledger Hash:</span>

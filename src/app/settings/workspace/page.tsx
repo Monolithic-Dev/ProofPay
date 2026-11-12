@@ -3,27 +3,25 @@
 import React, { useState } from 'react'
 import { PageShell } from '@/components/common/PageShell'
 import { SettingsNav } from '@/components/settings/SettingsNav'
-import { Building, Shield, Clock, DollarSign, CheckCircle2, AlertCircle } from 'lucide-react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Building, Shield, Clock, DollarSign, CheckCircle2 } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 
 export default function WorkspaceSettingsPage() {
-  const queryClient = useQueryClient()
-
   const [savedSuccess, setSavedSuccess] = useState(false)
   const [thresholdDollars, setThresholdDollars] = useState('5000')
   const [autoReleaseHours, setAutoReleaseHours] = useState('72')
   const [membersCanAccept, setMembersCanAccept] = useState(false)
 
-  const { data: meData } = useQuery({
-    queryKey: ['me'],
+  const { data: orgData } = useQuery({
+    queryKey: ['organizations'],
     queryFn: async () => {
-      const res = await fetch('/api/v1/auth/me')
+      const res = await fetch('/api/v1/organizations')
       if (!res.ok) return null
       return res.json()
     },
   })
 
-  const org = meData?.org
+  const org = orgData?.organizations?.[0] ?? null
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,7 +38,7 @@ export default function WorkspaceSettingsPage() {
 
       <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
         {savedSuccess && (
-          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-center gap-3">
+          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-sm flex items-center gap-3">
             <CheckCircle2 className="w-5 h-5 shrink-0" />
             <span>Workspace policy settings updated successfully.</span>
           </div>
@@ -58,7 +56,7 @@ export default function WorkspaceSettingsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div key={org?.id || 'default-org'} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-muted block mb-1">Organization Name</label>
               <input
@@ -82,7 +80,7 @@ export default function WorkspaceSettingsPage() {
         {/* Financial Governance & Policies */}
         <div className="card p-6 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm space-y-6">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
               <Shield className="w-5 h-5" />
             </div>
             <div>
@@ -95,14 +93,14 @@ export default function WorkspaceSettingsPage() {
             <div className="p-4 rounded-xl border border-border/60 bg-surface/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-1 max-w-lg">
                 <div className="text-sm font-semibold text-text flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-emerald-400" />
+                  <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>Funding Approval Threshold (4-Eyes Principle)</span>
                 </div>
                 <div className="text-xs text-muted">
                   Contracts with total volume above this threshold require secondary approval from an Admin or Finance officer before authorization hold can start.
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <span className="text-sm text-muted">$</span>
                 <input
                   type="number"
@@ -116,14 +114,14 @@ export default function WorkspaceSettingsPage() {
             <div className="p-4 rounded-xl border border-border/60 bg-surface/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-1 max-w-lg">
                 <div className="text-sm font-semibold text-text flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-brand" />
+                  <Clock className="w-4 h-4 text-brand shrink-0" />
                   <span>Default Auto-Release Honor Period</span>
                 </div>
                 <div className="text-xs text-muted">
                   Standard review window for milestone submissions before funds automatically capture if buyer does not contest.
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <input
                   type="number"
                   value={autoReleaseHours}
@@ -134,7 +132,7 @@ export default function WorkspaceSettingsPage() {
               </div>
             </div>
 
-            <div className="p-4 rounded-xl border border-border/60 bg-surface/30 flex items-center justify-between">
+            <div className="p-4 rounded-xl border border-border/60 bg-surface/30 flex items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="text-sm font-semibold text-text">Members can accept incoming contracts</div>
                 <div className="text-xs text-muted">When disabled, only Owner and Admin roles may accept seller contracts</div>
@@ -143,7 +141,7 @@ export default function WorkspaceSettingsPage() {
                 type="checkbox"
                 checked={membersCanAccept}
                 onChange={(e) => setMembersCanAccept(e.target.checked)}
-                className="w-4 h-4 rounded text-brand focus:ring-brand accent-brand cursor-pointer"
+                className="w-4 h-4 rounded text-brand focus:ring-brand accent-brand cursor-pointer shrink-0"
               />
             </div>
           </div>

@@ -3,10 +3,9 @@
 import React, { useState } from 'react'
 import { PageShell } from '@/components/common/PageShell'
 import { SettingsNav } from '@/components/settings/SettingsNav'
-import { MonoText } from '@/components/common/MonoText'
 import { LoadingBlock } from '@/components/common/LoadingBlock'
 import { ErrorState } from '@/components/common/ErrorState'
-import { Users, UserPlus, Shield, Trash2, Mail, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
+import { UserPlus, Trash2, Mail, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 export default function TeamSettingsPage() {
@@ -19,16 +18,16 @@ export default function TeamSettingsPage() {
   const [inviteSuccessMsg, setInviteSuccessMsg] = useState<string | null>(null)
 
   // Fetch active org
-  const { data: meData } = useQuery({
-    queryKey: ['me'],
+  const { data: orgData, isLoading: isOrgLoading } = useQuery({
+    queryKey: ['organizations'],
     queryFn: async () => {
-      const res = await fetch('/api/v1/auth/me')
+      const res = await fetch('/api/v1/organizations')
       if (!res.ok) return null
       return res.json()
     },
   })
 
-  const orgId = meData?.org?.id
+  const orgId = orgData?.organizations?.[0]?.id
 
   // Fetch team members
   const { data, isLoading, error } = useQuery({
@@ -125,7 +124,8 @@ export default function TeamSettingsPage() {
         <button
           type="button"
           onClick={() => setIsInviteOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand hover:bg-brand-hover text-white text-sm font-semibold shadow-lg shadow-brand/20 transition-all"
+          disabled={!orgId}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand hover:bg-brand-hover text-white text-sm font-semibold shadow-lg shadow-brand/20 transition-all disabled:opacity-50"
         >
           <UserPlus className="w-4 h-4" />
           <span>Invite Teammate</span>
@@ -136,14 +136,14 @@ export default function TeamSettingsPage() {
 
       <div className="space-y-8 max-w-5xl">
         {actionError && (
-          <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-3">
+          <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm flex items-center gap-3">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>{actionError}</span>
           </div>
         )}
 
         {inviteSuccessMsg && (
-          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-center gap-3">
+          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-sm flex items-center gap-3">
             <CheckCircle2 className="w-5 h-5 shrink-0" />
             <span>{inviteSuccessMsg}</span>
           </div>
@@ -151,7 +151,7 @@ export default function TeamSettingsPage() {
 
         {/* Members List */}
         <div className="card border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm overflow-hidden">
-          <div className="p-6 border-b border-border/60 flex items-center justify-between">
+          <div className="p-6 border-b border-border/60 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h3 className="text-base font-semibold text-text">Workspace Members</h3>
               <p className="text-xs text-muted">People with access to this workspace and contracts</p>
@@ -161,9 +161,13 @@ export default function TeamSettingsPage() {
             </span>
           </div>
 
-          {isLoading ? (
+          {isOrgLoading || isLoading ? (
             <div className="p-8">
               <LoadingBlock message="Loading team members..." />
+            </div>
+          ) : !orgId ? (
+            <div className="p-8 text-center text-sm text-muted">
+              Sign in or select a sandbox persona in <span className="font-mono">/demo</span> to manage workspace team members.
             </div>
           ) : error ? (
             <div className="p-8">
@@ -172,22 +176,22 @@ export default function TeamSettingsPage() {
           ) : (
             <div className="divide-y divide-border/60">
               {members.map((m: any) => (
-                <div key={m.id} className="p-5 flex items-center justify-between hover:bg-surface/30 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand font-bold text-sm">
+                <div key={m.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface/30 transition-colors">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand font-bold text-sm shrink-0">
                       {m.display_name ? m.display_name.slice(0, 2).toUpperCase() : 'PP'}
                     </div>
-                    <div>
-                      <div className="text-sm font-semibold text-text">{m.display_name || 'Member'}</div>
-                      <div className="text-xs text-muted flex items-center gap-2">
-                        <span>{m.email}</span>
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold text-text truncate">{m.display_name || 'Member'}</div>
+                      <div className="text-xs text-muted flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                        <span className="truncate">{m.email}</span>
                         <span>•</span>
                         <span>Joined {new Date(m.joined_at).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 self-start sm:self-auto shrink-0">
                     {m.role === 'owner' ? (
                       <span className="px-3 py-1 rounded-full text-xs font-semibold bg-brand/10 text-brand border border-brand/20">
                         Owner
@@ -215,7 +219,7 @@ export default function TeamSettingsPage() {
                           }
                         }}
                         disabled={removeMemberMutation.isPending}
-                        className="p-1.5 text-muted hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors"
+                        className="p-1.5 text-muted hover:text-red-500 rounded-lg hover:bg-red-500/10 transition-colors"
                         title="Remove member"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -237,15 +241,15 @@ export default function TeamSettingsPage() {
             </div>
             <div className="divide-y divide-border/60">
               {pendingInvites.map((inv: any) => (
-                <div key={inv.id} className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-4 h-4 text-muted" />
-                    <span className="text-sm font-medium text-text">{inv.email}</span>
-                    <span className="px-2 py-0.5 rounded text-xs bg-surface border border-border text-muted capitalize">
+                <div key={inv.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Mail className="w-4 h-4 text-muted shrink-0" />
+                    <span className="text-sm font-medium text-text truncate">{inv.email}</span>
+                    <span className="px-2 py-0.5 rounded text-xs bg-surface border border-border text-muted capitalize shrink-0">
                       {inv.role}
                     </span>
                   </div>
-                  <div className="text-xs text-muted flex items-center gap-1.5">
+                  <div className="text-xs text-muted flex items-center gap-1.5 shrink-0">
                     <Clock className="w-3.5 h-3.5" />
                     <span>Expires {new Date(inv.expires_at).toLocaleDateString()}</span>
                   </div>
@@ -294,14 +298,14 @@ export default function TeamSettingsPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-muted block mb-1">Role & Permissions</label>
+                <label className="text-xs font-semibold text-muted block mb-1">Role &amp; Permissions</label>
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value as any)}
                   className="w-full bg-surface-subtle border border-border rounded-xl px-3.5 py-2 text-sm text-text focus:outline-none focus:border-brand"
                 >
-                  <option value="member">Member — Create, submit & discuss contracts</option>
-                  <option value="finance">Finance — Authorize & approve funding, view ledger</option>
+                  <option value="member">Member — Create, submit &amp; discuss contracts</option>
+                  <option value="finance">Finance — Authorize &amp; approve funding, view ledger</option>
                   <option value="admin">Admin — Manage members, API keys, and contracts</option>
                   <option value="viewer">Viewer — Read-only auditing and reports</option>
                 </select>

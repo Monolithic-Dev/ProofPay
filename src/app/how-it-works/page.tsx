@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React from 'react'
 import Link from 'next/link'
@@ -30,9 +30,9 @@ export default function HowItWorksPage() {
             <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
               1
             </div>
-            <h3 className="text-base font-bold text-text">Lock Before Starting</h3>
+            <h3 className="text-base font-bold text-text">Authorize Hold Before Starting</h3>
             <p className="text-xs text-muted leading-relaxed">
-              Client approves an authorization hold via PayPal up front. The provider knows funds are guaranteed without the client releasing upfront cash.
+              Client approves an authorization hold via PayPal up front. The provider knows funds are reserved on PayPal without the client releasing upfront cash.
             </p>
           </div>
 
@@ -52,7 +52,7 @@ export default function HowItWorksPage() {
             </div>
             <h3 className="text-base font-bold text-text">Capture on Proof</h3>
             <p className="text-xs text-muted leading-relaxed">
-              Only a verified <span className="font-semibold text-emerald-400">PASSED</span> result unlocks the single release gateway to execute a PayPal partial capture. Unused balance is voided.
+              Only a verified <span className="font-semibold text-emerald-600 dark:text-emerald-400">PASSED</span> result unlocks the single release gateway to execute a PayPal partial capture. Unused balance is voided.
             </p>
           </div>
         </div>

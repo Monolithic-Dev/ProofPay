@@ -226,7 +226,7 @@ export default function TransparencyLogPage() {
             <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
               <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
               <div className="space-y-1 text-xs">
-                <p className="font-semibold text-amber-300">Hash Not Included</p>
+                <p className="font-semibold text-amber-800 dark:text-amber-300">Hash Not Included</p>
                 <p className="text-muted text-[11px]">
                   No matching leaf was found in recent checkpoints. Ensure you entered a valid 64-character SHA-256 hash.
                 </p>
@@ -261,7 +261,7 @@ export default function TransparencyLogPage() {
                     </span>
                   </div>
                   <span className="text-muted font-mono text-[11px]">
-                    {new Date(cp.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {`${new Date(cp.timestamp).toISOString().slice(11, 16)} UTC`}
                   </span>
                 </div>
 

@@ -83,7 +83,7 @@ print(f"Contract Created: {contract['id']} (Hash: {contract['contract_hash'][:12
             <a
               href="/postman/proofpay-postman-collection.json"
               download="proofpay-postman-collection.json"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-500/10 border border-orange-500/20 hover:bg-orange-500/20 text-orange-400 text-xs font-semibold transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-orange-500/10 border border-orange-500/20 hover:bg-orange-500/20 text-orange-700 dark:text-orange-400 text-xs font-semibold transition-all whitespace-nowrap"
             >
               <FileCode className="w-3.5 h-3.5" />
               <span>Postman Collection</span>
@@ -185,12 +185,12 @@ print(f"Contract Created: {contract['id']} (Hash: {contract['contract_hash'][:12
           </div>
         </div>
 
-        {/* Section 4: Official Hackathon Sponsor Integrations & Toolkits */}
+        {/* Section 4: Ecosystem Integrations & Toolkits */}
         <div className="space-y-6 pt-4 border-t border-border/60">
           <div className="space-y-1">
-            <h2 className="text-xl font-bold text-text">Sponsor Integrations &amp; Toolkits</h2>
+            <h2 className="text-xl font-bold text-text">Ecosystem Integrations &amp; Toolkits</h2>
             <p className="text-xs text-muted">
-              Built-in production integrations supporting the official PayPal AI Hackathon sponsors.
+              Built-in integrations for API testing, SDK generation, ledger inspection, event streaming, and cloud deployment.
             </p>
           </div>
 
@@ -199,7 +199,7 @@ print(f"Contract Created: {contract['id']} (Hash: {contract['contract_hash'][:12
             <div className="p-5 rounded-2xl bg-surface border border-border/80 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-text">Postman Collection</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 font-semibold border border-orange-500/20">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-700 dark:text-orange-400 font-semibold border border-orange-500/20">
                   Ready to Import
                 </span>
               </div>
@@ -229,7 +229,7 @@ print(f"Contract Created: {contract['id']} (Hash: {contract['contract_hash'][:12
             <div className="p-5 rounded-2xl bg-surface border border-border/80 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-text">APIMatic SDKs</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 font-semibold border border-purple-500/20">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-700 dark:text-purple-400 font-semibold border border-purple-500/20">
                   OpenAPI 3.1
                 </span>
               </div>
@@ -251,7 +251,7 @@ print(f"Contract Created: {contract['id']} (Hash: {contract['contract_hash'][:12
             <div className="p-5 rounded-2xl bg-surface border border-border/80 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-text">AG Grid Ledger</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 font-semibold border border-blue-500/20">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-400 font-semibold border border-blue-500/20">
                   AG Grid v33
                 </span>
               </div>
@@ -272,7 +272,7 @@ print(f"Contract Created: {contract['id']} (Hash: {contract['contract_hash'][:12
             <div className="p-5 rounded-2xl bg-surface border border-border/80 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-text">Elastic (ECS) Feed</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-semibold border border-emerald-500/20">
                   ECS 8.x
                 </span>
               </div>
@@ -294,7 +294,7 @@ print(f"Contract Created: {contract['id']} (Hash: {contract['contract_hash'][:12
             <div className="p-5 rounded-2xl bg-surface border border-border/80 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-text">Zapier Webhooks</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 font-semibold border border-amber-500/20">
                   HMAC-SHA256
                 </span>
               </div>
@@ -315,7 +315,7 @@ print(f"Contract Created: {contract['id']} (Hash: {contract['contract_hash'][:12
             <div className="p-5 rounded-2xl bg-surface border border-border/80 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-text">Render Cloud Deploy</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 font-semibold border border-cyan-500/20">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 font-semibold border border-cyan-500/20">
                   render.yaml
                 </span>
               </div>

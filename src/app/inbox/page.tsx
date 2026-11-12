@@ -38,7 +38,7 @@ export default function InboxPage() {
         title: `Contract proposed: ${c.title}`,
         type: 'acceptance',
         icon: FileText,
-        color: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+        color: 'text-blue-600 dark:text-blue-400 bg-blue-500/10 border-blue-500/20',
         badge: 'Review Agreement',
         urgency: 'Action needed to start work',
         amount: c.total_minor,
@@ -50,9 +50,9 @@ export default function InboxPage() {
         title: `Funding required: ${c.title}`,
         type: 'pending',
         icon: DollarSign,
-        color: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+        color: 'text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/20',
         badge: 'Authorize Hold',
-        urgency: 'Lock funds via PayPal to proceed',
+        urgency: 'Authorize hold via PayPal to proceed',
         amount: c.total_minor,
       })
     } else if (c.status === 'ACTIVE' || c.status === 'FUNDED') {
@@ -62,7 +62,7 @@ export default function InboxPage() {
         title: `Milestone delivery active: ${c.title}`,
         type: 'pending',
         icon: Send,
-        color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
+        color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
         badge: 'In Progress',
         urgency: 'Deliverables pending submission & verification',
         amount: c.total_minor,
@@ -148,7 +148,7 @@ export default function InboxPage() {
               return (
                 <div
                   key={item.id}
-                  className="card p-5 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm hover:border-brand/40 transition-all flex items-center justify-between gap-4"
+                  className="card p-5 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm hover:border-brand/40 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
                   <div className="flex items-center gap-4">
                     <div className={`p-3 rounded-xl border ${item.color} shrink-0`}>

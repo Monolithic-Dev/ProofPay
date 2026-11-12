@@ -17,7 +17,7 @@ import {
 export default function DemoPlaygroundPage() {
   const showcaseLabs = [
     {
-      title: '90-Second Express Judge Sandbox',
+      title: '90-Second Express Sandbox',
       badge: 'PRE-AUTHORIZED',
       desc: 'Experience the full PayPal payment lifecycle: authorization hold → AI verify → partial capture in < 90 seconds without logging into PayPal.',
       href: '/demo/express',
@@ -35,7 +35,7 @@ export default function DemoPlaygroundPage() {
     {
       title: 'In-Browser MCP Agent Simulator',
       badge: 'AUTONOMOUS',
-      desc: 'Watch Claude and Gemini execute the 6 ProofPay MCP tools via JSON-RPC: create contracts, inspect status, and submit deliverables under bounded human funding policies.',
+      desc: 'Watch Claude Desktop, Cursor, and custom agents execute the 6 ProofPay MCP tools via JSON-RPC: create contracts, inspect status, and submit deliverables under bounded human funding policies.',
       href: '/demo/mcp',
       cta: 'Open MCP Simulator',
       icon: Cpu,
@@ -74,7 +74,7 @@ export default function DemoPlaygroundPage() {
       backLabel="Back to Home"
       maxWidth="6xl"
       actions={
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href="/demo/express"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-text text-bg hover:opacity-90 font-bold text-xs transition-all shadow-sm"
@@ -102,7 +102,7 @@ export default function DemoPlaygroundPage() {
                 className="p-6 rounded-2xl bg-surface border border-border/80 shadow-xs flex flex-col justify-between space-y-4 hover:border-brand/40 hover:shadow-md transition-all group"
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <div className="p-2.5 rounded-xl bg-surface-2 border border-border/60 text-text group-hover:text-brand transition-colors">
                       <Icon className="w-4 h-4" />
                     </div>

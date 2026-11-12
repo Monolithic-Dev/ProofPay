@@ -15,12 +15,12 @@ export default function PaymentsSettingsPage() {
 
       <div className="space-y-8 max-w-4xl">
         {/* Sandbox Status Banner */}
-        <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm flex items-start gap-4">
-          <Info className="w-5 h-5 shrink-0 mt-0.5 text-amber-400" />
+        <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300 text-sm flex items-start gap-4">
+          <Info className="w-5 h-5 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
           <div className="space-y-1">
-            <div className="font-semibold text-amber-200">Sandbox Authorization Hold Environment</div>
-            <div className="text-xs text-amber-300/80 leading-relaxed">
-              ProofPay operates in PayPal Sandbox mode. Buyer authorization holds lock test funds on PayPal; captured funds land in the platform test merchant account. No real credit cards or bank accounts are debited.
+            <div className="font-semibold text-amber-900 dark:text-amber-200">Sandbox Authorization Hold Environment</div>
+            <div className="text-xs text-amber-800 dark:text-amber-300/80 leading-relaxed">
+              ProofPay operates in PayPal Sandbox mode. Buyer authorization holds reserve test funds on PayPal; captured funds land in the platform test merchant account. No real credit cards or bank accounts are debited.
             </div>
           </div>
         </div>
@@ -37,7 +37,7 @@ export default function PaymentsSettingsPage() {
                 <p className="text-xs text-muted">Platform Gateway Mode (v2 R1)</p>
               </div>
             </div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
               <CheckCircle2 className="w-3.5 h-3.5" />
               Sandbox Active
             </span>
@@ -86,7 +86,7 @@ export default function PaymentsSettingsPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-4 rounded-xl border border-border/60 bg-surface/30 text-center space-y-1">
-              <div className="text-2xl font-bold text-text">0.0%</div>
+              <div className="text-2xl font-bold text-text">No Fee</div>
               <div className="text-xs text-muted font-medium">Platform Fee in Sandbox</div>
             </div>
             <div className="p-4 rounded-xl border border-border/60 bg-surface/30 text-center space-y-1">
@@ -94,7 +94,7 @@ export default function PaymentsSettingsPage() {
               <div className="text-xs text-muted font-medium">Monthly Workspace Cost</div>
             </div>
             <div className="p-4 rounded-xl border border-border/60 bg-surface/30 text-center space-y-1">
-              <div className="text-2xl font-bold text-emerald-400">0 ms</div>
+              <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">0 ms</div>
               <div className="text-xs text-muted font-medium">Hold Release Delay</div>
             </div>
           </div>

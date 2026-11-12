@@ -29,7 +29,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
     {
       href: '/demo/mcp',
       label: 'MCP Agent Simulator',
-      badge: 'Claude/Gemini',
+      badge: 'JSON-RPC',
       icon: Cpu,
     },
     {
@@ -54,11 +54,11 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Sub-header Navigation Bar: Luxury minimal strip with hidden scrollbar */}
-      <div className="border-b border-border/70 bg-surface/80 backdrop-blur-xl sticky top-16 z-30">
+      {/* Sub-header Navigation Bar: Clean wrap; sticky only on md+ viewports to preserve mobile scroll area */}
+      <div className="border-b border-border/70 bg-surface/80 backdrop-blur-xl md:sticky md:top-16 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center space-x-1 sm:space-x-2 py-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-muted/70 mr-2 hidden md:inline-flex items-center gap-1.5 shrink-0">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 py-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-muted/70 mr-1.5 hidden lg:inline-flex items-center gap-1.5 shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-brand" />
               <span>Showcase Labs</span>
             </span>
@@ -72,7 +72,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
                 <Link
                   key={tab.href}
                   href={tab.href}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'bg-surface-2 text-text border border-border/80 shadow-xs'
                       : 'text-muted hover:text-text hover:bg-surface-2/60'
@@ -81,7 +81,7 @@ export default function DemoLayout({ children }: { children: React.ReactNode }) 
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-brand' : 'text-muted/70'}`} />
                   <span>{tab.label}</span>
                   {tab.badge && (
-                    <span className="text-[10px] px-1.5 py-0.2 rounded font-mono bg-surface-3/60 text-muted font-medium">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded font-mono bg-surface-3/60 text-muted font-medium">
                       {tab.badge}
                     </span>
                   )}

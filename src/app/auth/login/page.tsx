@@ -69,7 +69,7 @@ export default function LoginPage() {
           <p className="text-sm text-muted">
             {mode === 'login'
               ? 'Access your agreements, milestone proof, and PayPal holds'
-              : 'Start locking authorization holds or delivering verified work'}
+              : 'Start creating PayPal authorization holds or delivering verified work'}
           </p>
         </div>
 
@@ -181,12 +181,12 @@ export default function LoginPage() {
         <div className="p-4 rounded-xl bg-surface-2 border border-border text-center space-y-2">
           <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-muted">
             <Sparkles className="w-3.5 h-3.5 text-brand" />
-            <span>Testing the PayPal Sandbox or Judge Mode?</span>
+            <span>Testing the PayPal Sandbox Playground?</span>
           </div>
           <p className="text-xs text-muted leading-relaxed">
             Visit the{' '}
             <Link href="/demo" className="text-brand font-medium hover:underline">
-              Interactive Judge Sandbox &rarr;
+              Interactive Sandbox Playground &rarr;
             </Link>{' '}
             for one-click scenario testing and pre-configured personas.
           </p>

@@ -85,7 +85,7 @@ export default function HomePage() {
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
           {/* Featurebase-style sleek status badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-border text-xs font-medium shadow-xs">
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 px-3 py-1 rounded-full bg-surface border border-border text-xs font-medium shadow-xs max-w-full">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -143,7 +143,7 @@ export default function HomePage() {
           <div className="pt-8 max-w-4xl mx-auto">
             <div className="rounded-2xl border border-border/80 bg-surface/90 shadow-2xl overflow-hidden backdrop-blur-xl">
               {/* Window Header / Traffic Lights */}
-              <div className="px-4 py-3 border-b border-border/60 bg-surface-2/60 flex items-center justify-between">
+              <div className="px-4 py-3 border-b border-border/60 bg-surface-2/60 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-border" />
                   <span className="w-2.5 h-2.5 rounded-full bg-border" />
@@ -192,11 +192,11 @@ export default function HomePage() {
                   </div>
                   <div className="space-y-1.5 text-xs text-muted">
                     <div className="flex items-center justify-between py-1 border-b border-border/40">
-                      <span>Claude 3.5 Sonnet Judge</span>
+                      <span>Anthropic Claude Sonnet 4.5 Judge</span>
                       <span className="font-mono text-emerald-500 font-bold">PASS (Score: 0.98)</span>
                     </div>
                     <div className="flex items-center justify-between py-1 border-b border-border/40">
-                      <span>Gemini 1.5 Pro Auditor</span>
+                      <span>Groq LPU (Qwen) Auditor</span>
                       <span className="font-mono text-emerald-500 font-bold">PASS (Score: 0.96)</span>
                     </div>
                     <div className="flex items-center justify-between pt-1 text-[11px]">
@@ -221,7 +221,7 @@ export default function HomePage() {
           <span className="text-border/60">/</span>
           <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>RFC 3161 Timestamping</span>
           <span className="text-border/60">/</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Claude &amp; Gemini JSON-RPC MCP</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Anthropic &amp; Groq JSON-RPC MCP</span>
           <span className="text-border/60">/</span>
           <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>SHA-256 Merkle Audit Chain</span>
           <span className="text-border/60">/</span>
@@ -233,7 +233,7 @@ export default function HomePage() {
           <span className="text-border/60">/</span>
           <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>RFC 3161 Timestamping</span>
           <span className="text-border/60">/</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Claude &amp; Gemini JSON-RPC MCP</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Anthropic &amp; Groq JSON-RPC MCP</span>
           <span className="text-border/60">/</span>
           <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>SHA-256 Merkle Audit Chain</span>
           <span className="text-border/60">/</span>
@@ -811,7 +811,7 @@ export default function HomePage() {
           <div className="border-t border-border/40 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-muted text-[11px]">
             <p className="font-medium">© 2026 ProofPay. Pay when it is proven.</p>
             <p className="text-muted/60">
-              Built for the PayPal AI Hackathon 2026 · Authorization hold, not escrow.
+              Pay-on-acceptance protocol · Authorization hold, not escrow.
             </p>
           </div>
         </div>

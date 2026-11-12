@@ -1,31 +1,24 @@
 'use client'
 
 /**
- * Express Judge Lane Page — /demo/express
- * Implements AIP-13 90-Second Express Judge Lane.
+ * Express Sandbox Lane Page — /demo/express
+ * Implements AIP-13 90-Second Express Evaluation Flow.
  *
- * Allows hackathon judges to experience the entire ProofPay payment lifecycle:
+ * Lets evaluators experience the entire ProofPay payment lifecycle:
  * Pre-authorized hold -> Worker submit -> Multi-Stage AI verify -> PayPal capture -> SHA-256 ledger
  * In < 90 seconds, without logging into a personal PayPal sandbox account.
  */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import {
   Zap,
   ShieldCheck,
   CheckCircle2,
   ArrowRight,
   Loader2,
-  FileText,
-  Lock,
-  Bot,
   ExternalLink,
-  Sparkles,
   ArrowLeft,
   AlertCircle,
-  Database,
-  Coins
 } from 'lucide-react'
 import { useCurrentUser, useApiClient } from '@/lib/query'
 import { useQueryClient } from '@tanstack/react-query'
@@ -46,8 +39,7 @@ interface StepInfo {
   status: 'pending' | 'running' | 'completed' | 'failed'
 }
 
-export default function ExpressJudgePage() {
-  const router = useRouter()
+export default function ExpressSandboxPage() {
   const api = useApiClient()
   const queryClient = useQueryClient()
   const { data: currentUser } = useCurrentUser()
@@ -56,16 +48,23 @@ export default function ExpressJudgePage() {
   const [isRunning, setIsRunning] = useState(false)
   const [activeStep, setActiveStep] = useState<number>(0)
   const [contractId, setContractId] = useState<string | null>(null)
-  const [runId, setRunId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [events, setEvents] = useState<any[]>([])
 
-  // Fetch pool status on mount
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Fetch pool status on mount + clear timers on unmount
   useEffect(() => {
     fetch('/api/v1/demo/express')
       .then((res) => res.json())
       .then((data) => setPoolStatus(data))
       .catch((err) => console.error('Failed to load express pool status:', err))
+
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
   }, [])
 
   const steps: StepInfo[] = [
@@ -103,6 +102,9 @@ export default function ExpressJudgePage() {
 
   const handleStartExpressLane = async () => {
     try {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+
       setIsRunning(true)
       setErrorMsg(null)
       setActiveStep(0)
@@ -110,7 +112,7 @@ export default function ExpressJudgePage() {
 
       // 1. Ensure logged in as buyer persona if not logged in
       if (!currentUser) {
-        await api.demoLogin('buyer_sarah')
+        await api.demoLogin('buyer')
         await queryClient.invalidateQueries({ queryKey: ['me'] })
       }
 
@@ -122,14 +124,13 @@ export default function ExpressJudgePage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        throw new Error(data.message || 'Failed to start express lane')
+        throw new Error(data.error?.message || data.message || 'Failed to start express lane')
       }
 
       const runData = await res.json()
-      setRunId(runData.run_id)
 
       // 3. Poll run events until completion
-      const pollInterval = setInterval(async () => {
+      pollIntervalRef.current = setInterval(async () => {
         try {
           const runRes = await api.getDemoRun(runData.run_id)
           if (runRes.events) {
@@ -142,16 +143,22 @@ export default function ExpressJudgePage() {
 
           // Advance UI step based on events
           const eventCount = runRes.events?.length || 0
-          if (eventCount >= 1 && activeStep < 1) setActiveStep(1)
-          if (eventCount >= 2 && activeStep < 2) setActiveStep(2)
-          if (eventCount >= 3 && activeStep < 3) setActiveStep(3)
+          setActiveStep((prev) => {
+            let next = prev
+            if (eventCount >= 1) next = Math.max(next, 1)
+            if (eventCount >= 2) next = Math.max(next, 2)
+            if (eventCount >= 3) next = Math.max(next, 3)
+            return next
+          })
 
           if (runRes.status === 'DONE') {
-            clearInterval(pollInterval)
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+            if (timeoutRef.current) clearTimeout(timeoutRef.current)
             setActiveStep(4)
             setIsRunning(false)
           } else if (runRes.status === 'FAILED') {
-            clearInterval(pollInterval)
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+            if (timeoutRef.current) clearTimeout(timeoutRef.current)
             setIsRunning(false)
             setErrorMsg('Express evaluation encountered a failure during verification.')
           }
@@ -161,11 +168,9 @@ export default function ExpressJudgePage() {
       }, 1500)
 
       // Safeguard timeout (90 seconds)
-      setTimeout(() => {
-        clearInterval(pollInterval)
-        if (isRunning) {
-          setIsRunning(false)
-        }
+      timeoutRef.current = setTimeout(() => {
+        if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+        setIsRunning(false)
       }, 90000)
     } catch (err: any) {
       console.error('Express launch error:', err)
@@ -185,13 +190,13 @@ export default function ExpressJudgePage() {
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Sandbox Playground</span>
         </Link>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-border pb-6">
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text">
-                Express Judge Lane
+                Express Sandbox Lane
               </h1>
-              <span className="px-3 py-0.5 rounded-full text-xs font-mono bg-brand/10 text-brand border border-brand/20 font-semibold">
+              <span className="px-3 py-0.5 rounded-full text-xs font-mono bg-brand/10 text-brand border border-brand/20 font-semibold whitespace-nowrap">
                 &le; 90 Seconds
               </span>
             </div>
@@ -200,27 +205,27 @@ export default function ExpressJudgePage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Link
               href="/demo/mcp"
-              className="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 transition-colors flex items-center gap-1.5 shadow-sm"
+              className="px-3 py-1.5 rounded-lg bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 transition-colors flex items-center gap-1.5 shadow-sm whitespace-nowrap"
             >
               <span>MCP Simulator →</span>
             </Link>
             <Link
               href="/demo/tribunal"
-              className="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors flex items-center gap-1.5 shadow-sm"
+              className="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors flex items-center gap-1.5 shadow-sm whitespace-nowrap"
             >
               <span>AI Tribunal →</span>
             </Link>
             <Link
               href="/demo/agent-wallet"
-              className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm"
+              className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm whitespace-nowrap"
             >
               <span>Agent Wallet →</span>
             </Link>
-            <span className="text-xs text-muted">Environment:</span>
-            <span className="px-2.5 py-1 rounded-lg bg-surface border border-border text-xs font-mono font-medium text-text">
+            <span className="text-xs text-muted whitespace-nowrap">Environment:</span>
+            <span className="px-2.5 py-1 rounded-lg bg-surface border border-border text-xs font-mono font-medium text-text whitespace-nowrap">
               PayPal v2 Sandbox
             </span>
           </div>
@@ -232,10 +237,10 @@ export default function ExpressJudgePage() {
         <ShieldCheck className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" />
         <div className="space-y-1 text-xs">
           <strong className="font-semibold text-text block text-sm">
-            Pre-Authorized by ProofPay Team for Instant Evaluation
+            Pre-Authorized Sandbox Pool for Instant Evaluation
           </strong>
           <p className="text-muted leading-relaxed">
-            Judges have limited evaluation windows. This express lane connects to our pre-authorized pool of PayPal sandbox authorizations ($10.00 USD spending cap). When launched, the autonomous worker agent delivers live data, the multi-stage AI checks it against formal criteria, and the PayPal capture executes for real on the sandbox ledger.
+            This express lane connects directly to a pre-authorized pool of PayPal sandbox authorizations ($10.00 USD spending cap). When launched, the autonomous worker agent delivers live data, the multi-stage verification engine checks it against formal criteria, and the PayPal capture executes against the sandbox ledger.
           </p>
         </div>
       </div>
@@ -286,7 +291,7 @@ export default function ExpressJudgePage() {
             type="button"
             disabled={isRunning}
             onClick={handleStartExpressLane}
-            className="px-6 py-3 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="px-6 py-3 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 whitespace-nowrap"
           >
             {isRunning ? (
               <>
@@ -334,8 +339,8 @@ export default function ExpressJudgePage() {
                 )}
               </div>
 
-              <div className="flex-1 space-y-0.5">
-                <div className="flex items-center justify-between">
+              <div className="flex-1 space-y-0.5 min-w-0">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="text-xs font-bold text-text">{step.title}</h3>
                   <span
                     className={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded ${

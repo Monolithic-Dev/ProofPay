@@ -156,7 +156,7 @@ export default function AgentWalletDemoPage() {
               <Wallet className="w-5 h-5 flex-shrink-0" />
             </div>
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-sm font-bold text-text">Zero-Trust Agentic Commerce Guardrails</h2>
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-brand/10 text-brand border border-brand/30 font-semibold">
                   PayPal Pre-Authorized Hold
@@ -169,12 +169,12 @@ export default function AgentWalletDemoPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
             <Link
               href="/demo/tribunal"
               className="px-3 py-1.5 rounded-xl bg-surface border border-border text-xs font-semibold text-text hover:border-brand/40 transition-all flex items-center gap-1.5"
             >
-              <Bot className="w-3.5 h-3.5 text-purple-400" />
+              <Bot className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
               <span>Dispute Tribunal</span>
             </Link>
             <Link
@@ -289,7 +289,7 @@ export default function AgentWalletDemoPage() {
 
         {/* Autonomous Task Execution Queue */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-2">
               <Layers className="w-4 h-4 text-brand" />
               <span>Autonomous Agent Task Queue ({tasks.length} Micro-Contracts)</span>
@@ -300,9 +300,9 @@ export default function AgentWalletDemoPage() {
                 type="button"
                 onClick={handleRunAll}
                 disabled={executing || tasks.every((t) => t.status !== 'PENDING')}
-                className="px-4 py-2 rounded-xl bg-brand text-black font-semibold text-xs hover:bg-brand/90 transition-all flex items-center gap-1.5 disabled:opacity-40 shadow-sm"
+                className="px-4 py-2 rounded-xl bg-brand text-white font-semibold text-xs hover:bg-brand-hover transition-all flex items-center gap-1.5 disabled:opacity-40 shadow-sm"
               >
-                <Play className="w-3.5 h-3.5 fill-black" />
+                <Play className="w-3.5 h-3.5 fill-white" />
                 <span>{executing ? 'Executing Policy Pipeline...' : 'Run All Agent Tasks'}</span>
               </button>
 

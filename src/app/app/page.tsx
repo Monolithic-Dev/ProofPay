@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { PageShell } from '@/components/common/PageShell'
 import { ScrollReveal } from '@/components/common/ScrollReveal'
-import { Money } from '@/components/common/Money'
 import { StatusChip } from '@/components/contract/StatusChip'
 import { LoadingBlock } from '@/components/common/LoadingBlock'
 import { useCurrentUser, useContracts } from '@/lib/query'
@@ -16,16 +15,12 @@ import {
   Inbox,
   AlertTriangle,
   Lock,
-  Layers,
   CheckCircle2,
   Users,
   FileCode,
   ListChecks,
-  DollarSign,
   TrendingUp,
-  Clock,
   Briefcase,
-  User,
 } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -33,26 +28,31 @@ export default function DashboardPage() {
   const { data: contracts, isLoading: isLoadingContracts } = useContracts()
 
   const [paymentsSummary, setPaymentsSummary] = useState<any>(null)
-  const [inboxItems, setInboxItems] = useState<any[]>([])
-  const [isLoadingExtras, setIsLoadingExtras] = useState(true)
 
   useEffect(() => {
+    let active = true
     async function loadDashboardData() {
       try {
-        const [sumRes, inRes] = await Promise.all([
-          fetch('/api/v1/payments/summary').then((r) => (r.ok ? r.json() : null)),
-          fetch('/api/v1/inbox').then((r) => (r.ok ? r.json() : { items: [] })),
-        ])
-        setPaymentsSummary(sumRes)
-        setInboxItems(inRes?.items || [])
-      } catch (e) {
-        console.error('Failed to load dashboard extras', e)
-      } finally {
-        setIsLoadingExtras(false)
+        const res = await fetch('/api/v1/payments/summary')
+        if (active && res.ok) {
+          const sumRes = await res.json()
+          setPaymentsSummary(sumRes)
+        }
+      } catch {
+        // Ignore when unauthenticated or network interrupted
       }
     }
     loadDashboardData()
+    return () => {
+      active = false
+    }
   }, [])
+
+  const inboxItems = useMemo(() => {
+    return (contracts || []).filter((c) =>
+      ['PROPOSED', 'ACCEPTED', 'FUNDED', 'IN_PROGRESS', 'ACTIVE'].includes(c.status)
+    )
+  }, [contracts])
 
   if (isLoadingUser || isLoadingContracts) {
     return (
@@ -75,7 +75,7 @@ export default function DashboardPage() {
       title={`Welcome, ${user?.display_name || 'Partner'}`}
       subtitle={`Organization: ${user?.org_role ? `${user.org_role.toUpperCase()} • ` : ''}Real-time milestone verifications and PayPal authorization holds.`}
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/inbox"
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface border border-border text-xs font-semibold text-text hover:bg-surface-2 transition-colors relative shadow-sm"
@@ -83,7 +83,7 @@ export default function DashboardPage() {
             <Inbox className="w-3.5 h-3.5 text-muted" />
             <span>Inbox</span>
             {inboxItems.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-brand text-white text-[10px] font-bold">
+              <span className="px-1.5 py-0.5 rounded-full bg-brand text-white text-[10px] font-bold">
                 {inboxItems.length}
               </span>
             )}
@@ -103,7 +103,7 @@ export default function DashboardPage() {
         {inboxItems.length > 0 ? (
           <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400">
+              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
@@ -117,20 +117,20 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/inbox"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 text-black font-semibold text-xs hover:bg-amber-400 transition-colors shrink-0 shadow-sm"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-semibold text-xs hover:bg-amber-400 transition-colors shrink-0 shadow-sm"
             >
               <span>Review in Inbox</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         ) : (
-          <div className="p-4 rounded-xl bg-surface border border-border/80 flex items-center justify-between text-xs text-muted">
+          <div className="p-4 rounded-xl bg-surface border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-muted">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span className="text-text font-medium">All caught up!</span>
               <span>No blocking verification escalations or funding requests.</span>
             </div>
-            <Link href="/contracts" className="text-brand hover:underline font-medium">
+            <Link href="/contracts" className="text-brand hover:underline font-medium shrink-0">
               View all contracts →
             </Link>
           </div>
@@ -143,7 +143,7 @@ export default function DashboardPage() {
             <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-3 relative overflow-hidden group hover:border-brand/40 transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-muted uppercase tracking-wider">Held on PayPal</span>
-                <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-500 dark:text-sky-400 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-600 dark:text-sky-400 group-hover:scale-105 transition-transform">
                   <Lock className="w-4 h-4" />
                 </div>
               </div>
@@ -161,12 +161,12 @@ export default function DashboardPage() {
             <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-3 relative overflow-hidden group hover:border-emerald-500/40 transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-muted uppercase tracking-wider">Released on Proof</span>
-                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
               </div>
               <div className="space-y-1">
-                <div className="text-3xl font-black text-emerald-500 dark:text-emerald-400 tracking-tight font-mono">
+                <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">
                   {formatUsd(releasedMinor)}
                 </div>
                 <p className="text-[11px] text-muted">
@@ -179,7 +179,7 @@ export default function DashboardPage() {
             <div className="p-6 rounded-2xl bg-surface border border-border shadow-sm space-y-3 relative overflow-hidden group hover:border-amber-500/40 transition-all">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-muted uppercase tracking-wider">Attention &amp; Risk</span>
-                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 dark:text-amber-400 group-hover:scale-105 transition-transform">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
                   <TrendingUp className="w-4 h-4" />
                 </div>
               </div>
@@ -197,7 +197,7 @@ export default function DashboardPage() {
 
         {/* Section C: Active Contracts Overview */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="space-y-0.5">
               <h2 className="text-lg font-bold text-text">Active Agreements</h2>
               <p className="text-xs text-muted">Contracts currently funded or undergoing deliverable verification.</p>
@@ -241,22 +241,22 @@ export default function DashboardPage() {
                     href={`/contracts/${contract.id}`}
                     className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-2/70 transition-all block group"
                   >
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-1.5 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="font-bold text-text text-sm group-hover:text-brand transition-colors">
                           {contract.title}
                         </span>
                         <StatusChip status={contract.status} />
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-muted">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-muted">
                         <span>ID: <code className="font-mono text-text bg-surface-2 px-1.5 py-0.5 rounded border border-border/50">{contract.id.slice(0, 8)}</code></span>
                         <span>•</span>
                         <span>{contract.milestones?.length || 0} Milestones</span>
                         {contract.authorization_id && (
                           <>
                             <span>•</span>
-                            <span className="text-emerald-400 font-mono text-[11px] font-semibold flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            <span className="text-emerald-600 dark:text-emerald-400 font-mono text-[11px] font-semibold flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
                               Hold Authorized
                             </span>
                           </>
@@ -264,7 +264,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 sm:text-right shrink-0">
+                    <div className="flex items-center justify-between sm:justify-end gap-4 sm:text-right shrink-0">
                       <div>
                         <div className="text-[11px] text-muted uppercase font-bold tracking-wider">Agreement Total</div>
                         <div className="text-sm font-bold font-mono text-text">
@@ -301,8 +301,8 @@ export default function DashboardPage() {
                 className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 1</span>
-                  <CheckCircle2 className={`w-4 h-4 ${contracts && contracts.length > 0 ? 'text-emerald-400' : 'text-muted/40'}`} />
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">Step 1</span>
+                  <CheckCircle2 className={`w-4 h-4 ${contracts && contracts.length > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted/40'}`} />
                 </div>
                 <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Create Agreement</div>
                 <p className="text-[11px] text-muted leading-relaxed">Compile natural language into formal milestones &amp; criteria.</p>
@@ -313,7 +313,7 @@ export default function DashboardPage() {
                 className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 2</span>
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">Step 2</span>
                   <Users className="w-4 h-4 text-muted/40" />
                 </div>
                 <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Invite Counterparty</div>
@@ -325,7 +325,7 @@ export default function DashboardPage() {
                 className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 3</span>
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">Step 3</span>
                   <Lock className="w-4 h-4 text-muted/40" />
                 </div>
                 <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Authorize Hold</div>
@@ -337,7 +337,7 @@ export default function DashboardPage() {
                 className="p-4 rounded-xl bg-surface-2/70 border border-border/80 hover:border-brand/50 hover:bg-surface-2 transition-all space-y-2 block group shadow-sm"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Step 4</span>
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">Step 4</span>
                   <ShieldCheck className="w-4 h-4 text-muted/40" />
                 </div>
                 <div className="font-bold text-xs text-text group-hover:text-brand transition-colors">Verify &amp; Release</div>

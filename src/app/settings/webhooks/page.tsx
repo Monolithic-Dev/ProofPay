@@ -77,21 +77,21 @@ export default function WebhooksSettingsPage() {
 
       <div className="space-y-8 max-w-4xl pb-16">
         {saveSuccess && (
-          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-center gap-3">
+          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-sm flex items-center gap-3">
             <CheckCircle2 className="w-5 h-5 shrink-0" />
             <span>Webhook configuration saved successfully.</span>
           </div>
         )}
 
         {pingSuccess && (
-          <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm flex items-center gap-3">
+          <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-400 text-sm flex items-center gap-3">
             <CheckCircle2 className="w-5 h-5 shrink-0" />
             <span>{pingSuccess}</span>
           </div>
         )}
 
         {errorMsg && (
-          <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-3">
+          <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm flex items-center gap-3">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>{errorMsg}</span>
           </div>
@@ -100,7 +100,7 @@ export default function WebhooksSettingsPage() {
         {/* Zapier & Automation Banner */}
         <div className="card p-6 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm space-y-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400">
               <Zap className="w-5 h-5" />
             </div>
             <div>
@@ -124,7 +124,7 @@ export default function WebhooksSettingsPage() {
           }}
           className="card p-6 border border-border/80 rounded-2xl bg-surface/40 backdrop-blur-sm space-y-6"
         >
-          <div className="flex items-center justify-between border-b border-border/60 pb-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-4">
             <div>
               <h4 className="text-sm font-semibold text-text">Outbound Endpoint</h4>
               <p className="text-xs text-muted">Where ProofPay should POST real-time event JSON payloads</p>
@@ -192,7 +192,7 @@ export default function WebhooksSettingsPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-border/60">
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-border/60">
             <button
               type="button"
               disabled={!url || saveMutation.isPending}

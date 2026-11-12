@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState } from 'react'
 import Link from 'next/link'
@@ -153,7 +153,7 @@ export default function HelpPage() {
 
             {submittedTicket ? (
               <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs space-y-3">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+                <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm">
                   <CheckCircle2 className="w-5 h-5" />
                   <span>Support Ticket Submitted (#{submittedTicket.id.slice(0, 8)})</span>
                 </div>
@@ -170,7 +170,7 @@ export default function HelpPage() {
             ) : (
               <form onSubmit={handleSubmitTicket} className="space-y-4 text-xs">
                 {errorMsg && (
-                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400">
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400">
                     {errorMsg}
                   </div>
                 )}
