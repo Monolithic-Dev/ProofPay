@@ -1,24 +1,21 @@
 'use client'
 
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { AgGridReact } from 'ag-grid-react'
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community'
+import { ModuleRegistry, AllCommunityModule, ColDef, GridApi, GridReadyEvent } from 'ag-grid-community'
 import {
   ShieldCheck,
   Download,
   Search,
   RefreshCw,
-  Hash,
   Database,
-  ExternalLink,
   Lock,
-  FileCheck2,
   Cpu,
 } from 'lucide-react'
 import { PageShell } from '@/components/common/PageShell'
-import { MonoText } from '@/components/common/MonoText'
-import { LoadingBlock } from '@/components/common/LoadingBlock'
+
+ModuleRegistry.registerModules([AllCommunityModule])
 
 interface LedgerRow {
   id: string
@@ -42,6 +39,15 @@ export default function LedgerPage() {
   const [error, setError] = useState<string | null>(null)
   const [quickFilterText, setQuickFilterText] = useState('')
   const [gridApi, setGridApi] = useState<GridApi | null>(null)
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    const checkDark = () => setIsDark(document.documentElement.classList.contains('dark'))
+    checkDark()
+    const observer = new MutationObserver(checkDark)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
 
   const fetchLedger = useCallback(async () => {
     setLoading(true)
@@ -75,7 +81,6 @@ export default function LedgerPage() {
     }
   }
 
-  // AG Grid Column Definitions
   const columnDefs = useMemo<ColDef<LedgerRow>[]>(() => {
     return [
       {
@@ -96,13 +101,13 @@ export default function LedgerPage() {
         filter: 'agTextColumnFilter',
         cellRenderer: (params: any) => {
           const val = String(params.value || '')
-          let color = 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+          let color = 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20'
           if (val.includes('PAYPAL') || val.includes('CAPTURED') || val.includes('RELEASE')) {
-            color = 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+            color = 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
           } else if (val.includes('FAIL') || val.includes('VOID') || val.includes('REJECT')) {
-            color = 'bg-red-500/10 text-red-500 border-red-500/20'
+            color = 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20'
           } else if (val.includes('VERIF') || val.includes('SUBMISSION')) {
-            color = 'bg-purple-500/10 text-purple-500 border-purple-500/20'
+            color = 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20'
           }
           return (
             <span
@@ -189,7 +194,6 @@ export default function LedgerPage() {
     ]
   }, [])
 
-  // Summary stats
   const stats = useMemo(() => {
     let paypalEvents = 0
     let verifications = 0
@@ -237,6 +241,12 @@ export default function LedgerPage() {
       }
     >
       <div className="space-y-6">
+        {error && (
+          <div className="p-4 rounded-xl bg-bad/10 border border-bad/20 text-xs text-bad">
+            {error}
+          </div>
+        )}
+
         {/* Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="p-4 rounded-xl bg-surface border border-border shadow-sm space-y-1">
@@ -251,7 +261,7 @@ export default function LedgerPage() {
           <div className="p-4 rounded-xl bg-surface border border-border shadow-sm space-y-1">
             <div className="flex items-center justify-between text-muted">
               <span className="text-xs font-medium">PayPal Hold Events</span>
-              <Lock className="w-4 h-4 text-emerald-500" />
+              <Lock className="w-4 h-4 text-ok" />
             </div>
             <p className="text-2xl font-bold tracking-tight text-text">{stats.paypalEvents}</p>
             <p className="text-[11px] text-muted">Authorizations, captures &amp; releases</p>
@@ -260,10 +270,10 @@ export default function LedgerPage() {
           <div className="p-4 rounded-xl bg-surface border border-border shadow-sm space-y-1">
             <div className="flex items-center justify-between text-muted">
               <span className="text-xs font-medium">AI Evidence Verifications</span>
-              <Cpu className="w-4 h-4 text-purple-500" />
+              <Cpu className="w-4 h-4 text-purple-600 dark:text-purple-400" />
             </div>
             <p className="text-2xl font-bold tracking-tight text-text">{stats.verifications}</p>
-            <p className="text-[11px] text-muted">Groq LPU verified deliverables</p>
+            <p className="text-[11px] text-muted">Groq LPU &amp; rule-verified deliverables</p>
           </div>
 
           <div className="p-4 rounded-xl bg-surface border border-border shadow-sm space-y-1">
@@ -277,8 +287,8 @@ export default function LedgerPage() {
         </div>
 
         {/* AG Grid Controls Bar */}
-        <div className="flex items-center justify-between gap-4 p-3 rounded-xl bg-surface border border-border">
-          <div className="relative flex-1 max-w-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-surface border border-border">
+          <div className="relative flex-1 sm:max-w-sm">
             <Search className="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
@@ -289,9 +299,9 @@ export default function LedgerPage() {
             />
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-muted">
+          <div className="flex items-center gap-2 text-xs text-muted self-end sm:self-auto">
             <span>Powered by</span>
-            <span className="px-2 py-0.5 rounded bg-surface-2 font-semibold text-text border border-border">
+            <span className="px-2 py-0.5 rounded bg-surface-2 font-semibold text-text border border-border whitespace-nowrap">
               AG Grid v33
             </span>
           </div>
@@ -300,10 +310,11 @@ export default function LedgerPage() {
         {/* AG Grid Component */}
         <div className="rounded-xl overflow-hidden border border-border shadow-sm bg-surface">
           <div
-            className="ag-theme-quartz-dark ag-theme-quartz"
+            className={isDark ? 'ag-theme-quartz-dark' : 'ag-theme-quartz'}
             style={{ height: '560px', width: '100%' }}
           >
             <AgGridReact
+              theme="legacy"
               rowData={rows}
               columnDefs={columnDefs}
               pagination={true}

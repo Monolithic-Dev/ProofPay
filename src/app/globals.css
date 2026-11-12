@@ -1,24 +1,45 @@
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-quartz.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-quartz.css';
-
 :root {
   --bg: #F8FAFC;
+  --bg-rgb: 248 250 252;
   --surface: #FFFFFF;
+  --surface-rgb: 255 255 255;
   --surface-2: #F1F5F9;
+  --surface-2-rgb: 241 245 249;
   --surface-3: #E2E8F0;
+  --surface-3-rgb: 226 232 240;
+  --surface-subtle: #F8FAFC;
+  --surface-subtle-rgb: 248 250 252;
+  --surface-hover: #E2E8F0;
+  --surface-hover-rgb: 226 232 240;
   --text: #0F172A;
+  --text-rgb: 15 23 42;
   --muted: #475569;
+  --muted-rgb: 71 85 105;
   --border: #E2E8F0;
+  --border-rgb: 226 232 240;
+  --border-hover: #CBD5E1;
+  --border-hover-rgb: 203 213 225;
   --brand: #0284C7;
-  --brand-rgb: 2, 132, 199;
+  --brand-rgb: 2 132 199;
+  --brand-hover: #0369A1;
+  --brand-hover-rgb: 3 105 161;
+  --accent: #6366F1;
+  --accent-rgb: 99 102 241;
   --ok: #059669;
+  --ok-rgb: 5 150 105;
   --warn: #D97706;
+  --warn-rgb: 217 119 6;
   --bad: #DC2626;
+  --bad-rgb: 220 38 38;
   --void: #64748B;
+  --void-rgb: 100 116 139;
   --font-sans-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-rubik: 'Rubik', 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-manrope: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -75,6 +96,33 @@ html {
   50% { opacity: 0.8; transform: scale(1.04); }
 }
 
+@keyframes enter-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--tw-enter-translate-y, 0)) scale(var(--tw-enter-scale, 1));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-in {
+  animation: enter-in 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.fade-in {
+  opacity: 0;
+}
+
+.zoom-in-95 {
+  --tw-enter-scale: 0.95;
+}
+
+.slide-in-from-top-1 {
+  --tw-enter-translate-y: -0.25rem;
+}
+
 .animate-pulse-slow {
   animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -90,14 +138,24 @@ html {
 /* Modern Grid & Dot Matrix Backgrounds */
 .bg-grid-pattern {
   background-size: 40px 40px;
-  background-image: 
+  background-image:
+    linear-gradient(to right, rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+}
+
+.dark .bg-grid-pattern {
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 }
 
 .bg-dot-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(15, 23, 42, 0.09) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+.dark .bg-dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
 }
 
 /* Border Beam Effect */
@@ -167,7 +225,7 @@ html {
 }
 
 .gradient-mesh {
-  background-image: 
+  background-image:
     radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.15) 0px, transparent 55%),
     radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
     radial-gradient(at 50% 60%, rgba(14, 165, 233, 0.08) 0px, transparent 60%),
@@ -176,18 +234,39 @@ html {
 
 .dark {
   --bg: #030712;
+  --bg-rgb: 3 7 18;
   --surface: #0B0F19;
+  --surface-rgb: 11 15 25;
   --surface-2: #111827;
+  --surface-2-rgb: 17 24 39;
   --surface-3: #1F2937;
+  --surface-3-rgb: 31 41 55;
+  --surface-subtle: #111827;
+  --surface-subtle-rgb: 17 24 39;
+  --surface-hover: #1F2937;
+  --surface-hover-rgb: 31 41 55;
   --text: #F8FAFC;
+  --text-rgb: 248 250 252;
   --muted: #94A3B8;
+  --muted-rgb: 148 163 184;
   --border: #1E293B;
+  --border-rgb: 30 41 59;
+  --border-hover: #334155;
+  --border-hover-rgb: 51 65 85;
   --brand: #38BDF8;
-  --brand-rgb: 56, 189, 248;
+  --brand-rgb: 56 189 248;
+  --brand-hover: #0EA5E9;
+  --brand-hover-rgb: 14 165 233;
+  --accent: #818CF8;
+  --accent-rgb: 129 140 248;
   --ok: #10B981;
+  --ok-rgb: 16 185 129;
   --warn: #F59E0B;
+  --warn-rgb: 245 158 11;
   --bad: #EF4444;
+  --bad-rgb: 239 68 68;
   --void: #64748B;
+  --void-rgb: 100 116 139;
 }
 
 body {
@@ -227,7 +306,8 @@ code, pre {
 }
 
 /* Sleek AG Grid Customization */
-.ag-theme-quartz {
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
   --ag-background-color: var(--surface);
   --ag-foreground-color: var(--text);
   --ag-border-color: var(--border);
@@ -237,8 +317,8 @@ code, pre {
   --ag-header-column-resize-handle-color: var(--border);
   --ag-odd-row-background-color: transparent;
   --ag-row-hover-color: var(--surface-2);
-  --ag-selected-row-background-color: rgba(var(--brand-rgb), 0.08);
-  --ag-font-family: var(--font-inter);
+  --ag-selected-row-background-color: rgb(var(--brand-rgb) / 0.1);
+  --ag-font-family: var(--font-sans-main);
   --ag-font-size: 12px;
   --ag-grid-size: 6px;
   --ag-cell-horizontal-padding: 14px;
@@ -249,12 +329,13 @@ code, pre {
   border-radius: 12px;
 }
 
-.dark .ag-theme-quartz {
+.dark .ag-theme-quartz,
+.dark .ag-theme-quartz-dark {
   --ag-background-color: var(--surface);
   --ag-foreground-color: var(--text);
   --ag-border-color: var(--border);
   --ag-header-background-color: var(--surface-2);
   --ag-header-foreground-color: var(--text);
   --ag-row-hover-color: var(--surface-2);
-  --ag-selected-row-background-color: rgba(59, 130, 246, 0.15);
+  --ag-selected-row-background-color: rgb(var(--brand-rgb) / 0.15);
 }

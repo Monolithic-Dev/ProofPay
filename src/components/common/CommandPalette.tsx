@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -177,7 +177,7 @@ export function CommandPalette() {
                       key={item.id}
                       onClick={() => handleSelect(item)}
                       onMouseEnter={() => setSelectedIndex(index)}
-                      className={`p-3 rounded-xl flex items-center justify-between cursor-pointer transition-colors ${
+                      className={`group p-3 rounded-xl flex items-center justify-between cursor-pointer transition-colors ${
                         isSelected
                           ? 'bg-brand text-white shadow-md shadow-brand/20'
                           : 'hover:bg-surface-2/60 text-text'

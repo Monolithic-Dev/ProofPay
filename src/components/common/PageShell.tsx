@@ -40,7 +40,7 @@ export function PageShell({
       : 'max-w-7xl'
 
   return (
-    <div className={`relative min-h-[calc(100vh-4rem)] overflow-hidden`}>
+    <div className="relative min-h-[calc(100vh-4rem)] overflow-x-clip">
       {/* Ambient background grid pattern */}
       <div className="absolute inset-0 bg-grid-pattern opacity-15 pointer-events-none" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-gradient-to-b from-sky-500/5 via-transparent to-transparent pointer-events-none blur-3xl" />
@@ -62,11 +62,11 @@ export function PageShell({
 
         <ScrollReveal animation="fade-up" durationMs={400}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/80 pb-6">
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 min-w-0">
               <h1 className="text-2xl sm:text-3xl font-rubik font-extrabold tracking-tight text-text">{title}</h1>
               {subtitle && <p className="text-sm font-manrope text-muted leading-relaxed max-w-3xl">{subtitle}</p>}
             </div>
-            {actions && <div className="flex items-center gap-3 shrink-0">{actions}</div>}
+            {actions && <div className="flex flex-wrap items-center gap-3 shrink-0">{actions}</div>}
           </div>
         </ScrollReveal>
 

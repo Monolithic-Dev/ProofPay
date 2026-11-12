@@ -1,7 +1,7 @@
-﻿'use client'
+'use client'
 
 /**
- * ScenarioButtons Component — one-click scenario triggers for Hackathon Judges.
+ * ScenarioButtons Component — one-click scenario triggers for Sandbox Evaluators.
  * Implements phase-6-frontend.md §6.4, phase-7 §7.4 & ux-flows.md §4 (S0).
  * Updated per docs/v2/08-current-build-review.md & 09-judging-criteria-alignment.md.
  */

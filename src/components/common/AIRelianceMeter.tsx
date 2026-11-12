@@ -51,9 +51,9 @@ export function AIRelianceMeter({
   const { percentage, level, description } = computeReliance(requiredRubricCount, requiredTotalCount)
 
   const colorMap: Record<RelianceLevel, { bar: string; text: string; bg: string }> = {
-    Low: { bar: 'bg-emerald-500', text: 'text-emerald-400', bg: 'bg-emerald-950/40 border-emerald-800/40' },
-    Medium: { bar: 'bg-amber-500', text: 'text-amber-400', bg: 'bg-amber-950/40 border-amber-800/40' },
-    High: { bar: 'bg-red-500', text: 'text-red-400', bg: 'bg-red-950/40 border-red-800/40' },
+    Low: { bar: 'bg-ok', text: 'text-ok', bg: 'bg-ok/10 border-ok/30' },
+    Medium: { bar: 'bg-warn', text: 'text-warn', bg: 'bg-warn/10 border-warn/30' },
+    High: { bar: 'bg-bad', text: 'text-bad', bg: 'bg-bad/10 border-bad/30' },
   }
 
   const style = colorMap[level]
@@ -61,20 +61,20 @@ export function AIRelianceMeter({
   return (
     <div className={`rounded-xl border p-3 ${style.bg} ${className}`}>
       <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
-        <span className="text-zinc-200">AI Reliance Score</span>
+        <span className="text-text">AI Reliance Score</span>
         <span className={`font-mono ${style.text}`}>
           {level} ({percentage}%)
         </span>
       </div>
 
-      <div className="w-full bg-zinc-800 rounded-full h-2 overflow-hidden mb-2">
+      <div className="w-full bg-surface-2 border border-border/60 rounded-full h-2 overflow-hidden mb-2">
         <div
           className={`h-2 rounded-full transition-all duration-300 ${style.bar}`}
           style={{ width: `${Math.max(percentage, 5)}%` }}
         />
       </div>
 
-      <p className="text-[11px] text-zinc-400 leading-relaxed">{description}</p>
+      <p className="text-[11px] text-muted leading-relaxed">{description}</p>
     </div>
   )
 }

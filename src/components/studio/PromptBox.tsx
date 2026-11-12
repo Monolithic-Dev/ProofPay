@@ -80,7 +80,7 @@ export function PromptBox({
             placeholder="Describe the job milestones, formats, and payments…"
             rows={5}
             disabled={isCompiling}
-            className="w-full p-4 rounded-xl bg-surface border border-border text-sm text-text placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-all resize-y disabled:opacity-60 leading-relaxed font-manrope shadow-inner"
+            className="w-full p-4 pb-10 rounded-xl bg-surface border border-border text-sm text-text placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-all resize-y disabled:opacity-60 leading-relaxed font-manrope shadow-inner"
           />
           <div className="absolute bottom-3 right-3 text-[10px] font-mono text-muted bg-surface-2 px-2 py-0.5 rounded-md border border-border">
             {prompt.length} / {maxLength}

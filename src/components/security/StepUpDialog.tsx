@@ -65,38 +65,39 @@ export function StepUpDialog({
       aria-labelledby="step-up-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
     >
-      <div className="w-full max-w-md rounded-2xl border border-zinc-700 bg-zinc-900 p-6 shadow-2xl text-zinc-100">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl text-text">
         <div className="flex items-center justify-between mb-4">
-          <h2 id="step-up-title" className="text-lg font-semibold tracking-tight text-white flex items-center gap-2">
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+          <h2 id="step-up-title" className="text-lg font-semibold tracking-tight text-text flex items-center gap-2">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-warn animate-pulse" />
             Security Verification Required
           </h2>
           <button
+            type="button"
             onClick={onCancel}
-            className="text-zinc-400 hover:text-zinc-200 text-sm focus:outline-none"
+            className="text-muted hover:text-text text-sm focus:outline-none p-1"
             aria-label="Close dialog"
           >
             ✕
           </button>
         </div>
 
-        <p className="text-sm text-zinc-400 mb-6">
-          The requested action (<code className="text-amber-400 bg-zinc-800 px-1 py-0.5 rounded">{action}</code>) requires fresh proof of identity within the last 10 minutes.
+        <p className="text-sm text-muted mb-6">
+          The requested action (<code className="text-warn bg-surface-2 border border-border px-1.5 py-0.5 rounded font-mono text-xs">{action}</code>) requires fresh proof of identity within the last 10 minutes.
         </p>
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-950/60 border border-red-500/50 p-3 text-xs text-red-300">
+          <div className="mb-4 rounded-lg bg-bad/10 border border-bad/30 p-3 text-xs text-bad">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex gap-2 p-1 bg-zinc-800 rounded-lg text-xs">
+          <div className="flex gap-2 p-1 bg-surface-2 border border-border rounded-lg text-xs">
             <button
               type="button"
               onClick={() => setMethod('password')}
               className={`flex-1 py-1.5 rounded-md font-medium transition ${
-                method === 'password' ? 'bg-zinc-700 text-white shadow' : 'text-zinc-400 hover:text-zinc-200'
+                method === 'password' ? 'bg-surface text-text shadow-xs border border-border/60' : 'text-muted hover:text-text'
               }`}
             >
               Account Password
@@ -105,7 +106,7 @@ export function StepUpDialog({
               type="button"
               onClick={() => setMethod('totp')}
               className={`flex-1 py-1.5 rounded-md font-medium transition ${
-                method === 'totp' ? 'bg-zinc-700 text-white shadow' : 'text-zinc-400 hover:text-zinc-200'
+                method === 'totp' ? 'bg-surface text-text shadow-xs border border-border/60' : 'text-muted hover:text-text'
               }`}
             >
               Authenticator Code (TOTP)
@@ -113,7 +114,7 @@ export function StepUpDialog({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-zinc-300 mb-1.5">
+            <label className="block text-xs font-medium text-text mb-1.5">
               {method === 'password' ? 'Confirm Password' : '6-Digit TOTP Code'}
             </label>
             <input
@@ -123,7 +124,7 @@ export function StepUpDialog({
               onChange={(e) => setCredential(e.target.value)}
               placeholder={method === 'password' ? 'Enter password' : 'e.g. 123456'}
               required
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              className="w-full rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm text-text placeholder:text-muted/60 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
             />
           </div>
 
@@ -131,14 +132,14 @@ export function StepUpDialog({
             <button
               type="button"
               onClick={onCancel}
-              className="rounded-lg border border-zinc-700 px-4 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-800 transition"
+              className="rounded-lg border border-border bg-surface px-4 py-2 text-xs font-medium text-muted hover:text-text hover:bg-surface-2 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || !credential}
-              className="rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-500 disabled:opacity-50 transition"
+              className="rounded-lg bg-brand hover:bg-brand-hover px-4 py-2 text-xs font-semibold text-white disabled:opacity-50 transition"
             >
               {loading ? 'Verifying...' : 'Verify & Proceed'}
             </button>
@@ -148,4 +149,3 @@ export function StepUpDialog({
     </div>
   )
 }
-

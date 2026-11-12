@@ -1,9 +1,7 @@
 'use client'
 
 /**
- * JudgePanel Component — full judge dashboard for testing ProofPay personas & scenarios.
- * Implements phase-6-frontend.md §6.4 & ux-flows.md §4 (S0).
- * Enhanced with Express Judge Lane (docs/v2/PROOFPAY-FULL-AUDIT-AND-IMPROVEMENTS.md I-5 & H-1).
+ * Sandbox Playground Control Panel — interactive persona switcher & scenarios.
  */
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -18,9 +16,6 @@ import {
   Loader2,
   Zap,
   Play,
-  ArrowRight,
-  Clock,
-  Sparkles
 } from 'lucide-react'
 import { useApiClient, useCurrentUser } from '@/lib/query'
 import { SandboxCredsBanner } from './SandboxCredsBanner'
@@ -28,7 +23,8 @@ import { ScenarioButtons } from './ScenarioButtons'
 import { WorkerStatusBanner } from './WorkerStatusBanner'
 
 interface PersonaConfig {
-  key: string
+  key: 'buyer' | 'seller' | 'buyer_agent' | 'worker_agent'
+  email: string
   name: string
   role: string
   isAgent: boolean
@@ -38,7 +34,8 @@ interface PersonaConfig {
 
 const PERSONAS: PersonaConfig[] = [
   {
-    key: 'buyer_sarah',
+    key: 'buyer',
+    email: 'buyer@demo.proofpay',
     name: 'Sarah Buyer',
     role: 'Buyer',
     isAgent: false,
@@ -46,7 +43,8 @@ const PERSONAS: PersonaConfig[] = [
     icon: Shield,
   },
   {
-    key: 'seller_alex',
+    key: 'seller',
+    email: 'seller@demo.proofpay',
     name: 'Alex Seller',
     role: 'Seller',
     isAgent: false,
@@ -54,7 +52,8 @@ const PERSONAS: PersonaConfig[] = [
     icon: UserCheck,
   },
   {
-    key: 'agent_buyer',
+    key: 'buyer_agent',
+    email: 'buyer-agent@demo.proofpay',
     name: 'ProcureBot',
     role: 'Buyer Agent',
     isAgent: true,
@@ -62,7 +61,8 @@ const PERSONAS: PersonaConfig[] = [
     icon: Bot,
   },
   {
-    key: 'agent_seller',
+    key: 'worker_agent',
+    email: 'worker-agent@demo.proofpay',
     name: 'SynthetixBot',
     role: 'Worker Agent',
     isAgent: true,
@@ -77,23 +77,29 @@ export function JudgePanel({ className = '' }: { className?: string }) {
   const queryClient = useQueryClient()
   const { data: currentUser } = useCurrentUser()
   const [switchingPersona, setSwitchingPersona] = useState<string | null>(null)
+  const [switchError, setSwitchError] = useState<string | null>(null)
   const [isLaunchingExpress, setIsLaunchingExpress] = useState(false)
   const [expressError, setExpressError] = useState<string | null>(null)
 
   const handleSwitchPersona = async (personaKey: string) => {
     try {
+      setSwitchError(null)
       setSwitchingPersona(personaKey)
       await api.demoLogin(personaKey)
       await queryClient.invalidateQueries({ queryKey: ['me'] })
+      await queryClient.invalidateQueries({ queryKey: ['contracts'] })
       router.refresh()
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to switch persona:', err)
+      setSwitchError(err?.message || 'Failed to switch sandbox persona')
     } finally {
       setSwitchingPersona(null)
     }
   }
 
   const handleLaunchExpressLane = async () => {
+    setIsLaunchingExpress(true)
+    setExpressError(null)
     router.push('/demo/express')
   }
 
@@ -102,7 +108,7 @@ export function JudgePanel({ className = '' }: { className?: string }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-6">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl sm:text-2xl font-bold text-text">Sandbox Playground &amp; Interactive Testing</h2>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-ok/10 text-ok border border-ok/20">
               Active
@@ -137,22 +143,22 @@ export function JudgePanel({ className = '' }: { className?: string }) {
         </div>
       </div>
 
-      {/* Express Judge Lane (90 Seconds End-to-End) */}
+      {/* Express Sandbox Lane (90 Seconds End-to-End) */}
       <div className="p-6 rounded-2xl bg-gradient-to-r from-brand/10 via-surface to-accent/10 border border-brand/30 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Zap className="w-4 h-4 text-brand" />
               <span className="text-xs font-bold text-text uppercase tracking-wider">
-                Express Judge Lane • 90-Second Walkthrough
+                Express Sandbox Lane • 90-Second Walkthrough
               </span>
               <span className="px-2 py-0.5 rounded-full bg-brand/10 text-brand text-[10px] font-mono font-semibold">
                 1-Click
               </span>
             </div>
             <p className="text-xs sm:text-sm text-muted max-w-2xl leading-relaxed">
-              Short on time? Run a complete, pre-authorized flow end-to-end:
-              Agent negotiation &rarr; PayPal authorization hold &rarr; Deterministic schema evaluation &rarr; PayPal capture &rarr; Offline Proof Pack.
+              Want a guided end-to-end walkthrough? Run a complete pre-authorized flow:
+              Contract setup &rarr; PayPal authorization hold &rarr; Deterministic schema evaluation &rarr; PayPal capture &rarr; Offline Proof Pack.
               <strong> No manual PayPal login required for this lane.</strong>
             </p>
           </div>
@@ -166,7 +172,7 @@ export function JudgePanel({ className = '' }: { className?: string }) {
             {isLaunchingExpress ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Running Express Pipeline…</span>
+                <span>Opening Express Lane…</span>
               </>
             ) : (
               <>
@@ -184,23 +190,30 @@ export function JudgePanel({ className = '' }: { className?: string }) {
 
       {/* Persona Switcher */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-sm font-semibold text-text">Select Active Persona</h3>
           {currentUser && (
-            <span className="text-xs text-muted flex items-center gap-1.5">
+            <span className="text-xs text-muted flex flex-wrap items-center gap-1.5">
               <span>Logged in as:</span>
               <strong className="text-text font-medium">{currentUser.display_name}</strong>
-              <span className="px-1.5 py-0.2 rounded bg-surface-2 text-[10px] font-mono border border-border">
+              <span className="px-1.5 py-0.5 rounded bg-surface-2 text-[10px] font-mono border border-border">
                 {currentUser.role}
               </span>
             </span>
           )}
         </div>
 
+        {switchError && (
+          <div className="p-3 rounded-xl bg-bad/10 border border-bad/30 text-xs text-bad">
+            {switchError}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {PERSONAS.map((p) => {
             const Icon = p.icon
-            const isActive = currentUser?.email.includes(p.key.split('_')[1] || '')
+            const isActive =
+              currentUser?.persona_key === p.key || currentUser?.email === p.email
             const isPending = switchingPersona === p.key
 
             return (
@@ -213,7 +226,7 @@ export function JudgePanel({ className = '' }: { className?: string }) {
                 }`}
               >
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <span
                       className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded ${
                         p.role.includes('Buyer')

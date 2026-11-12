@@ -9,17 +9,30 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: 'var(--brand)',
-        ok: 'var(--ok)',
-        warn: 'var(--warn)',
-        bad: 'var(--bad)',
-        void: 'var(--void)',
-        bg: 'var(--bg)',
-        surface: 'var(--surface)',
-        'surface-2': 'var(--surface-2)',
-        text: 'var(--text)',
-        muted: 'var(--muted)',
-        border: 'var(--border)',
+        brand: 'rgb(var(--brand-rgb) / <alpha-value>)',
+        'brand-hover': 'rgb(var(--brand-hover-rgb) / <alpha-value>)',
+        accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
+        ok: 'rgb(var(--ok-rgb) / <alpha-value>)',
+        warn: 'rgb(var(--warn-rgb) / <alpha-value>)',
+        bad: 'rgb(var(--bad-rgb) / <alpha-value>)',
+        danger: 'rgb(var(--bad-rgb) / <alpha-value>)',
+        void: 'rgb(var(--void-rgb) / <alpha-value>)',
+        bg: 'rgb(var(--bg-rgb) / <alpha-value>)',
+        surface: 'rgb(var(--surface-rgb) / <alpha-value>)',
+        'surface-2': 'rgb(var(--surface-2-rgb) / <alpha-value>)',
+        'surface-3': 'rgb(var(--surface-3-rgb) / <alpha-value>)',
+        'surface-subtle': 'rgb(var(--surface-subtle-rgb) / <alpha-value>)',
+        'surface-hover': 'rgb(var(--surface-hover-rgb) / <alpha-value>)',
+        text: 'rgb(var(--text-rgb) / <alpha-value>)',
+        muted: 'rgb(var(--muted-rgb) / <alpha-value>)',
+        border: 'rgb(var(--border-rgb) / <alpha-value>)',
+        'border-hover': 'rgb(var(--border-hover-rgb) / <alpha-value>)',
+      },
+      boxShadow: {
+        xs: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+      },
+      backdropBlur: {
+        xs: '2px',
       },
       fontFamily: {
         sans: ['var(--font-sans-main)', 'system-ui', '-apple-system', 'sans-serif'],
@@ -34,8 +47,8 @@ const config: Config = {
           to: { opacity: '1', transform: 'translateY(0)' },
         },
         'pulse-glow': {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(var(--brand-rgb), 0.4)' },
-          '50%': { boxShadow: '0 0 0 8px rgba(var(--brand-rgb), 0)' },
+          '0%, 100%': { boxShadow: '0 0 0 0 rgb(var(--brand-rgb) / 0.4)' },
+          '50%': { boxShadow: '0 0 0 8px rgb(var(--brand-rgb) / 0)' },
         },
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
@@ -63,8 +76,8 @@ const config: Config = {
         'pulse-slow': 'pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       backgroundImage: {
-        'grid-pattern': 'linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)',
-        'dot-pattern': 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
+        'grid-pattern': 'linear-gradient(to right, rgba(15,23,42,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.04) 1px, transparent 1px)',
+        'dot-pattern': 'radial-gradient(rgba(15,23,42,0.09) 1px, transparent 1px)',
       },
       backgroundSize: {
         'grid-40': '40px 40px',

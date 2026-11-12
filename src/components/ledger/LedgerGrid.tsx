@@ -5,7 +5,7 @@
  * Implements phase-6-frontend.md §6.4 & ux-flows.md §4 (S6).
  * Enhanced with sleek quartz theme variables and responsive card layout for mobile devices.
  */
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { AgGridReact } from 'ag-grid-react'
 import {
   ModuleRegistry,
@@ -34,6 +34,15 @@ export function LedgerGrid({ events = [], onSelectEvent, className = '' }: Ledge
   const [quickFilterText, setQuickFilterText] = useState('')
   const [copiedHash, setCopiedHash] = useState<string | null>(null)
   const [mobileView, setMobileView] = useState<'table' | 'cards'>('table')
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    const checkDark = () => setIsDark(document.documentElement.classList.contains('dark'))
+    checkDark()
+    const observer = new MutationObserver(checkDark)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
 
   const handleCopy = (hash: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -249,12 +258,13 @@ export function LedgerGrid({ events = [], onSelectEvent, className = '' }: Ledge
 
       {/* Desktop AG Grid Table */}
       <div
-        className={`w-full rounded-2xl overflow-hidden border border-border shadow-sm ag-theme-quartz ${
-          mobileView === 'cards' ? 'hidden sm:block' : 'block'
-        }`}
+        className={`w-full rounded-2xl overflow-hidden border border-border shadow-sm ${
+          isDark ? 'ag-theme-quartz-dark' : 'ag-theme-quartz'
+        } ${mobileView === 'cards' ? 'hidden sm:block' : 'block'}`}
       >
         <div style={{ width: '100%', height: events.length > 10 ? '580px' : '420px' }}>
           <AgGridReact<LedgerEvent>
+            theme="legacy"
             rowData={events}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
