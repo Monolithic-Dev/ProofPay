@@ -132,17 +132,18 @@ export default function ExpressSandboxPage() {
       // 3. Poll run events until completion
       pollIntervalRef.current = setInterval(async () => {
         try {
-          const runRes = await api.getDemoRun(runData.run_id)
-          if (runRes.events) {
-            setEvents(runRes.events)
+          const runRes: any = await api.getDemoRun(runData.run_id)
+          const run = runRes?.run ?? runRes
+          if (run?.events) {
+            setEvents(run.events)
           }
 
-          if (runRes.contract_id) {
-            setContractId(runRes.contract_id)
+          if (run?.contract_id) {
+            setContractId(run.contract_id)
           }
 
           // Advance UI step based on events
-          const eventCount = runRes.events?.length || 0
+          const eventCount = run?.events?.length || 0
           setActiveStep((prev) => {
             let next = prev
             if (eventCount >= 1) next = Math.max(next, 1)
@@ -151,12 +152,12 @@ export default function ExpressSandboxPage() {
             return next
           })
 
-          if (runRes.status === 'DONE') {
+          if (run?.status === 'DONE') {
             if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
             if (timeoutRef.current) clearTimeout(timeoutRef.current)
             setActiveStep(4)
             setIsRunning(false)
-          } else if (runRes.status === 'FAILED') {
+          } else if (run?.status === 'FAILED') {
             if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
             if (timeoutRef.current) clearTimeout(timeoutRef.current)
             setIsRunning(false)

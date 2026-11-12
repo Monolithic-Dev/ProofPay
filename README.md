@@ -25,6 +25,8 @@
 - [4-Stage Verification & Adversarial Defense Pipeline](#4-stage-verification--adversarial-defense-pipeline)
 - [Signature Capabilities](#signature-capabilities)
 - [Domain Model & PostgreSQL Schema](#domain-model--postgresql-schema)
+- [Complete Feature & Route Coverage (47 Pages)](#complete-feature--route-coverage-47-pages)
+- [Cloud Deployment & Multi-Language SDKs](#cloud-deployment--multi-language-sdks)
 - [Verified Evaluation & Chaos Resilience Benchmarks](#verified-evaluation--chaos-resilience-benchmarks)
 - [Model Context Protocol (MCP) Server](#model-context-protocol-mcp-server)
 - [Enterprise Security & Multi-Tenant Architecture](#enterprise-security--multi-tenant-architecture)
@@ -184,7 +186,16 @@ All deliverable evaluations run through [`runVerificationPipeline`](src/server/v
 - **Advisory Dispute Tribunal (`/demo/tribunal`):** When automated verification escalates borderline evidence, three role-specialized agents (`SentinelBot` buyer advocate, `LexiBot` seller respondent, `JusticeBot` neutral reviewer) analyze git diffs, test logs, and rubrics to produce **advisory settlement recommendations for human sign-off** (never autonomous unapproved payouts).
 
 ### 6. Organization Governance & 1099-K Tax Compliance (`/settings/*`, `/app/*`)
-- Multi-tenant workspaces with role-based access control (`owner`, `admin`, `finance`, `member`, `viewer`), four-eyes `funding_approvals` thresholds, counterparty directory, versioned contracts (`contract_versions`), outbound webhook signing, and IRS Form 1099-K / W-9 volume tracking ([`compliance.ts`](src/server/tax/compliance.ts)) across federal (`$5,000`) and low-threshold states (`$600` in MA, VT, VA, MD; `$1,000` / 4 txns in IL) with 24% missing-TIN backup withholding alerts.
+- Multi-tenant workspaces with role-based access control (`owner`, `admin`, `finance`, `member`, `viewer`), four-eyes `funding_approvals` thresholds, counterparty directory (`/app/counterparties`), reusable templates (`/app/templates`), versioned contracts (`contract_versions`), outbound webhook signing (`/settings/webhooks`), and IRS Form 1099-K / W-9 volume tracking ([`compliance.ts`](src/server/tax/compliance.ts)) across federal (`$5,000`) and low-threshold states (`$600` in MA, VT, VA, MD; `$1,000` / 4 txns in IL) with 24% missing-TIN backup withholding alerts.
+
+### 7. Contract Studio, Replay & Deterministic Satisfiability Linter (`/studio`, `/contracts/[id]/replay`, `/contracts/[id]/receipts/[milestoneId]`)
+- Natural-language scope compiler translates plain English requirements into strict canonical `contract_json` specifications, runs deterministic satisfiability linting before proposal, tracks full chronological event replay (`/contracts/[id]/replay`), and issues cryptographic milestone settlement receipts (`/contracts/[id]/receipts/[milestoneId]`).
+
+### 8. AG Grid Interactive Financial Audit Ledger (`/ledger`, [`LedgerGrid.tsx`](src/components/ledger/LedgerGrid.tsx))
+- Built on **AG Grid Community v33**, rendering filterable, multi-column sortable contract and financial ledger trails with dynamic light/dark Quartz theme synchronization (`ag-theme-quartz` / `ag-theme-quartz-dark`), status badges, minor-unit reconciliation totals, and instant contract drill-down.
+
+### 9. Safety Evidence, Live Health & Reconciliation Ops (`/trust`, `/status`, `/admin`)
+- Public safety transparency & red-team benchmark scores at `/trust`, live database/PayPal/worker probe health at `/status`, real-time agent execution logs at `/agent-console/[runId]`, and operational payment reconciliation at `/admin`.
 
 ---
 
@@ -261,6 +272,38 @@ classDiagram
 | **Ledger, Outbox & Platform** | `ledger_events`, `jobs`, `idempotency_keys`, `kv`, `audit_events`, `notifications`, `support_tickets`, `demo_runs`, `demo_pool` |
 
 </details>
+
+---
+
+## Complete Feature & Route Coverage (47 Pages)
+
+Every route across `src/app/` is organized into focused user, agent, audit, and operational workflows:
+
+<details>
+<summary><strong>Click to expand all 47 App Router routes by module</strong></summary>
+
+| Module | Routes & Purpose |
+|---|---|
+| **Public & Trust Portal** | `/` (Landing), `/how-it-works` (Interactive Architecture Guide), `/pricing` (Tiers), `/docs` (REST & SDK Reference), `/help` (Support), `/trust` (Safety & Benchmark Evidence), `/status` (System Health Probes), `/verify` (Offline ProofPack Verifier), `/transparency` (Merkle Checkpoints), `/legal/terms`, `/legal/privacy` |
+| **Interactive Sandbox (`/demo/*`)** | `/demo` (Sandbox Hub), `/demo/express` (90s Pre-Authorized Pool Flow), `/demo/loophole` (Contract Exploit Red-Teamer + RFC 6902 Patch), `/demo/lab` (PayPal & LLM Fault-Injection Lab), `/demo/mcp` (Live MCP Tool & Guardrail Simulator), `/demo/tribunal` (3-Agent Advisory Dispute Tribunal), `/demo/agent-wallet` (Agent Caps & Spend Governance) |
+| **Contract Lifecycle & Studio** | `/studio`, `/studio/[contractId]` (Natural-Language Contract Compiler & Rubric Editor), `/contracts` (Contracts List), `/contracts/[id]` (Detail & Actions), `/contracts/[id]/fund` (PayPal `AUTHORIZE` Flow), `/contracts/[id]/milestones/[mid]` (Deliverable Submission & 4-Stage Pipeline Report), `/contracts/[id]/ledger` (Contract Hash Chain), `/contracts/[id]/receipts/[milestoneId]` (Signed Receipt), `/contracts/[id]/replay` (Chronological Event Replay), `/invite/[token]` |
+| **Workspace, Ledger & Ops** | `/app` (Executive Dashboard), `/app/payments` (PayPal Authorizations & 1099-K Compliance), `/app/counterparties` (Vendor Directory & W-9 Status), `/app/templates` (Reusable Verified Specs), `/app/developers` (API & SDK Setup), `/app/security` (Session Posture), `/ledger` (AG Grid Financial Audit Ledger), `/inbox` (Action Notifications), `/agent-console/[runId]` (Agent Trace Viewer), `/admin` (Reconciliation & Ops) |
+| **Auth & Organization Settings** | `/auth/login`, `/auth/register`, `/settings` (Overview), `/settings/workspace`, `/settings/team` (RBAC Roles & Invites), `/settings/payments` (PayPal Connection & Holds), `/settings/api-keys`, `/settings/webhooks`, `/settings/security-center` (Step-Up Auth & SAML SSO) |
+
+</details>
+
+---
+
+## Cloud Deployment & Multi-Language SDKs
+
+### Render Blueprint Infrastructure ([`render.yaml`](render.yaml))
+ProofPay ships a turnkey multi-service Infrastructure-as-Code Blueprint (`render.yaml`) provisioning three isolated components in `oregon`:
+- **`proofpay-web` (`type: web`):** Next.js 15 App Router UI & 73 API route handlers with `/api/v1/health` readiness probes.
+- **`proofpay-worker` (`type: worker`):** Standalone `SKIP LOCKED` outbox verification & settlement reconciliation worker (`npm run worker`).
+- **`proofpay-postgres` (`postgresMajorVersion: 16`):** Managed PostgreSQL 16 database automatically wired via `fromDatabase` connection strings.
+
+### APIMatic OpenAPI & Multi-Language SDKs ([`apimatic.json`](apimatic.json))
+ProofPay exposes its formal OpenAPI contract at [`public/openapi.json`](public/openapi.json) paired with [`apimatic.json`](apimatic.json) to generate strongly typed client SDKs across **TypeScript, Python, C#, Java, Go, and PHP**, alongside an interactive authenticated explorer at `/docs`.
 
 ---
 
