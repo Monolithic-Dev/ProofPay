@@ -309,7 +309,7 @@ ProofPay exposes its formal OpenAPI contract at [`public/openapi.json`](public/o
 
 ## Verified Evaluation & Chaos Resilience Benchmarks
 
-All metrics below are directly recorded in [`docs/eval-results.md`](docs/eval-results.md) and [`docs/chaos-results.md`](docs/chaos-results.md) with prompt caching disabled (`noCache: true`) and strict dev / held-out splitting to prevent overfitting:
+All metrics below are directly recorded in [`bench/eval-results.md`](bench/eval-results.md) and [`bench/chaos-results.md`](bench/chaos-results.md) with prompt caching disabled (`noCache: true`) and strict dev / held-out splitting to prevent overfitting:
 
 ### Verification Pipeline Benchmark (30 Fixtures: 20 Dev + 10 Held-Out)
 
@@ -556,7 +556,7 @@ ProofPay/
 │   ├── banner.svg            # Repository hero banner
 │   ├── icons/                # Local technology SVGs (14 icons)
 │   └── screenshots/          # UI showcase screenshots (8 captures)
-├── docs/                     # Specs, eval-results.md, chaos-results.md, runbook, MCP guide
+├── bench/                    # Benchmark datasets, evaluation results, and chaos reports
 ├── drizzle/                  # 11 PostgreSQL SQL migrations (0000_init.sql – 0010_demo_pool.sql)
 ├── scripts/                  # DB migrate/seed, check-copy.mjs, eval/chaos/canary/attack runners
 ├── src/

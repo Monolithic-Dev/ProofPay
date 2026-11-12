@@ -16,23 +16,27 @@ export interface CheckEvalResult {
 
 export function checkEvalEvidence(baseDir: string = process.cwd()): CheckEvalResult {
   const errors: string[] = []
-  const evalFile = path.join(baseDir, 'docs', 'eval-results.md')
+  const docsEvalFile = path.join(baseDir, 'docs', 'eval-results.md')
+  const benchEvalFile = path.join(baseDir, 'bench', 'eval-results.md')
+  const evalFile = fs.existsSync(docsEvalFile) ? docsEvalFile : benchEvalFile
 
   if (!fs.existsSync(evalFile)) {
-    return { valid: false, errors: ['docs/eval-results.md does not exist'] }
+    return { valid: false, errors: ['eval-results.md does not exist in bench/ or docs/'] }
   }
 
   const content = fs.readFileSync(evalFile, 'utf8')
 
   // Check for presence of evaluation evidence sections
   if (!content.includes('eval') && !content.includes('PASS') && !content.includes('Result')) {
-    errors.push('docs/eval-results.md does not contain valid evaluation records')
+    errors.push('eval-results.md does not contain valid evaluation records')
   }
 
   // Check prompt registry exists and has computed hashes
-  const regFile = path.join(baseDir, 'docs', 'ai', 'prompt-registry.json')
+  const docsRegFile = path.join(baseDir, 'docs', 'ai', 'prompt-registry.json')
+  const benchRegFile = path.join(baseDir, 'bench', 'prompt-registry.json')
+  const regFile = fs.existsSync(docsRegFile) ? docsRegFile : benchRegFile
   if (!fs.existsSync(regFile)) {
-    errors.push('docs/ai/prompt-registry.json missing. Run `npm run eval -- --write-evidence`')
+    errors.push('prompt-registry.json missing in bench/ and docs/. Run `npm run eval -- --write-evidence`')
   } else {
     const committed = JSON.parse(fs.readFileSync(regFile, 'utf8')) as Array<{ id: string; sha256: string }>
     const current = computePromptRegistry(baseDir)
