@@ -9,7 +9,6 @@ import { getDb } from '@/server/db/client'
 import { ledger_events } from '@/server/db/schema'
 import { desc } from 'drizzle-orm'
 import { buildMerkleTree, verifyInclusionProof } from '@/lib/crypto/attestation'
-import { createHash } from 'crypto'
 
 export const dynamic = 'force-dynamic'
 
@@ -93,33 +92,15 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // If targetLeaf was searched but not in live events, check fallback roots
-    if (targetLeaf && !proofData.found) {
-      const cleanLeaf = targetLeaf.trim().toLowerCase()
-      // Allow simulated matching for the sample checkpoint root
-      if (cleanLeaf.length === 64) {
-        const dummyProof = [
-          createHash('sha256').update(`${cleanLeaf}:sibling1`).digest('hex'),
-          createHash('sha256').update(`${cleanLeaf}:sibling2`).digest('hex'),
-        ]
-        proofData = {
-          found: true,
-          proof: dummyProof,
-          root: checkpoints[0]?.merkle_root,
-        }
-      }
-    }
-
     return NextResponse.json({
       checkpoints,
       authority_fingerprint: 'ed25519:SHA256:7c92b9e68c14a2bf90a618d9f4e2427ae41e4649b934ca495991b7852b855a9',
       lookup: targetLeaf ? proofData : undefined,
     })
-  } catch (err) {
+  } catch {
     return NextResponse.json({
       checkpoints: FALLBACK_CHECKPOINTS,
       authority_fingerprint: 'ed25519:SHA256:7c92b9e68c14a2bf90a618d9f4e2427ae41e4649b934ca495991b7852b855a9',
     })
   }
 }
-

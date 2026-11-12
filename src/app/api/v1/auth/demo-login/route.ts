@@ -12,6 +12,13 @@ import { toErrorResponse, httpStatusFor, ValidationError, NotFoundError } from '
 import { newRequestId } from '@/server/util/ids'
 import { env } from '@/server/config/env'
 
+const PERSONA_ALIASES: Record<string, string> = {
+  buyer_sarah: 'buyer',
+  seller_alex: 'seller',
+  agent_buyer: 'buyer_agent',
+  agent_seller: 'worker_agent',
+}
+
 const bodySchema = z.object({
   persona_key: z.enum(['buyer', 'seller', 'buyer_agent', 'worker_agent']),
 })
@@ -24,8 +31,17 @@ export async function POST(req: NextRequest) {
       throw new NotFoundError('Demo persona login is disabled (DEMO_MODE=false)')
     }
 
-    const body = await req.json().catch(() => ({}))
-    const { persona_key } = bodySchema.parse(body)
+    const rawBody = await req.json().catch(() => ({}))
+    const rawPersona = rawBody && typeof rawBody === 'object' ? (rawBody as Record<string, unknown>).persona_key : undefined
+    const normalizedPersona =
+      typeof rawPersona === 'string'
+        ? (PERSONA_ALIASES[rawPersona] ?? rawPersona)
+        : rawPersona
+
+    const { persona_key } = bodySchema.parse({
+      ...(rawBody && typeof rawBody === 'object' ? rawBody : {}),
+      persona_key: normalizedPersona,
+    })
 
     const db = getDb()
     const [user] = await db

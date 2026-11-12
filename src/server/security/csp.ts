@@ -26,6 +26,7 @@ export function buildCspHeader(options?: CspHeaderOptions): { headerName: string
     `default-src 'self'`,
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
     `style-src 'self' 'unsafe-inline'`,
+    `font-src 'self' data:`,
     `img-src 'self' data: https:`,
     `connect-src 'self' https://api-m.sandbox.paypal.com`,
     `frame-ancestors 'none'`,

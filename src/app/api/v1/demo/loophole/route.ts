@@ -1,18 +1,19 @@
 /**
  * Interactive Zero-Login Demo API for N1 Loophole Finder — /api/v1/demo/loophole
- * Lets judges run real deterministic red-team probes against preset or edited
+ * Lets evaluators run real deterministic red-team probes against preset or edited
  * ContractSchema documents and apply RFC 6902 patches + live re-test.
  */
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import type { Operation } from 'fast-json-patch'
 import { apiHandler } from '@/server/http/handler'
+import { env } from '@/server/config/env'
 import { applyPatchSafe } from '@/server/contracts/lint/patch'
 import {
   DEMO_LOOPHOLE_PRESETS,
   scanContractForLoopholes,
 } from '@/server/contracts/loophole-finder'
-import { ValidationError } from '@/server/util/errors'
+import { AppError, ValidationError } from '@/server/util/errors'
 
 const DemoLoopholePostSchema = z.discriminatedUnion('action', [
   z.object({
@@ -35,6 +36,10 @@ const DemoLoopholePostSchema = z.discriminatedUnion('action', [
 ])
 
 export const GET = apiHandler({ auth: 'none' }, async () => {
+  if (!env.DEMO_MODE) {
+    throw new AppError('DEMO_MODE_DISABLED', 'Loophole Finder demo requires DEMO_MODE', 404)
+  }
+
   const initialPreset = DEMO_LOOPHOLE_PRESETS[0]!
   const initialScan = await scanContractForLoopholes(initialPreset.contract)
   return NextResponse.json(
@@ -52,6 +57,10 @@ export const POST = apiHandler(
     body: DemoLoopholePostSchema,
   },
   async ({ body }) => {
+    if (!env.DEMO_MODE) {
+      throw new AppError('DEMO_MODE_DISABLED', 'Loophole Finder demo requires DEMO_MODE', 404)
+    }
+
     if (body!.action === 'scan') {
       const scan = await scanContractForLoopholes(body!.contract)
       return NextResponse.json({ contract: body!.contract, scan }, { status: 200 })
@@ -78,4 +87,3 @@ export const POST = apiHandler(
     )
   }
 )
-

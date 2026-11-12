@@ -34,7 +34,7 @@ const nextConfig: NextConfig = {
           {
             key: 'Content-Security-Policy',
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.paypal.com; connect-src 'self' https://*.paypal.com https://api.anthropic.com; frame-src 'self' https://*.paypal.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';",
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.paypal.com; connect-src 'self' https://*.paypal.com https://api.anthropic.com; frame-src 'self' https://*.paypal.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:;",
           },
         ],
       },
