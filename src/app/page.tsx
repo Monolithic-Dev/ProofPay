@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { ScrollReveal } from '@/components/common/ScrollReveal'
-import { HeroDotGrid } from '@/components/common/HeroDotGrid'
 import {
   ShieldCheck,
   CheckCircle2,
@@ -79,10 +78,8 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section — Linear dot-grid + cursor spotlight */}
-      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28 border-b border-border/80 bg-bg">
-        {/* Linear-style animated dot grid with cursor-spotlight */}
-        <HeroDotGrid />
+      {/* Hero Section — Linear dot-grid + cursor spotlight now global (PageTransition) */}
+      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28 border-b border-border/40">
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
           {/* Featurebase-style sleek status badge */}
