@@ -1,47 +1,48 @@
 import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans, Rubik, Manrope, JetBrains_Mono, Bebas_Neue } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 import { QueryProvider } from '@/lib/query'
 import { HeaderNav } from '@/components/common/HeaderNav'
 import { PageTransition } from '@/components/common/PageTransition'
 
-// Primary modern sans-serif for UI & controls
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
+// Primary modern sans-serif for UI & controls (self-hosted Latin WOFF2 for zero-flake CI/Docker builds)
+const plusJakartaSans = localFont({
+  src: './fonts/plus-jakarta-sans-latin.woff2',
   display: 'swap',
   variable: '--font-sans-main',
-  weight: ['400', '500', '600', '700', '800'],
+  weight: '400 800',
 })
 
 // Rubik: Used for bold titles, subheadings, and section headers
-const rubik = Rubik({
-  subsets: ['latin'],
+const rubik = localFont({
+  src: './fonts/rubik-latin.woff2',
   display: 'swap',
   variable: '--font-rubik',
-  weight: ['500', '600', '700', '800', '900'],
+  weight: '500 900',
 })
 
 // Manrope: Clean, readable neo-grotesque for descriptions, body text & paragraphs
-const manrope = Manrope({
-  subsets: ['latin'],
+const manrope = localFont({
+  src: './fonts/manrope-latin.woff2',
   display: 'swap',
   variable: '--font-manrope',
-  weight: ['400', '500', '600'],
+  weight: '400 600',
 })
 
 // Bebas Neue: High-impact condensed display typeface (companion to Atipo Round-8) for hero callouts
-const bebasNeue = Bebas_Neue({
-  subsets: ['latin'],
+const bebasNeue = localFont({
+  src: './fonts/bebas-neue-latin.woff2',
   display: 'swap',
   variable: '--font-display-punch',
-  weight: ['400'],
+  weight: '400',
 })
 
 // JetBrains Mono: Cryptographic hashes, JSON-RPC payloads & numbers
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
+const jetbrainsMono = localFont({
+  src: './fonts/jetbrains-mono-latin.woff2',
   display: 'swap',
   variable: '--font-jetbrains-mono',
+  weight: '100 800',
 })
 
 export const metadata: Metadata = {
