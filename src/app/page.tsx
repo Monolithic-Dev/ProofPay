@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import Link from 'next/link'
@@ -33,11 +33,11 @@ export default function HomePage() {
   const faqs = [
     {
       q: 'What is an authorization hold and how long does it last?',
-      a: 'A PayPal authorization hold reserves funds on the buyer’s chosen funding source without charging them upfront. PayPal holds the funds for up to 29 days. Money only leaves the buyer’s account when a milestone is verified and captured.',
+      a: 'A PayPal authorization hold reserves funds on the buyerâ€™s chosen funding source without charging them upfront. PayPal holds the funds for up to 29 days. Money only leaves the buyerâ€™s account when a milestone is verified and captured.',
     },
     {
       q: 'Is this escrow?',
-      a: 'No. ProofPay is not an escrow agent and never custodies, pools, or touches user money. Funds remain entirely with PayPal inside an authorization hold on the buyer’s account, and PayPal moves money directly to the seller upon verified capture.',
+      a: 'No. ProofPay is not an escrow agent and never custodies, pools, or touches user money. Funds remain entirely with PayPal inside an authorization hold on the buyerâ€™s account, and PayPal moves money directly to the seller upon verified capture.',
     },
     {
       q: 'What if the AI makes a mistake or is manipulated?',
@@ -78,63 +78,50 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section — Linear dot-grid + cursor spotlight now global (PageTransition) */}
-      <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-28 border-b border-border/40">
+      {/* Hero Section â€” clean flat surface, no decorative patterns */}
+      <section className="relative pt-20 pb-24 md:pt-28 md:pb-32 border-b border-border/60">
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
-          {/* Featurebase-style sleek status badge */}
-          <div className="inline-flex flex-wrap items-center justify-center gap-2 px-3 py-1 rounded-full bg-surface border border-border text-xs font-medium shadow-xs max-w-full">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-muted">Zero-Custody Authorization Hold (Not Escrow) · Powered by</span>
-            <span className="font-bold text-text">PayPal Rails</span>
-          </div>
 
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-rubik font-black tracking-[-0.035em] text-text leading-[1.05]">
-            Get paid for work that’s{' '}
-            <span className="text-brand inline-block">
-              proven.
-            </span>
-          </h1>
-
-          <p className="max-w-2xl mx-auto text-base sm:text-lg text-muted leading-relaxed font-manrope font-normal">
-            ProofPay establishes a PayPal authorization hold before work starts, releasing payment milestone by
-            milestone only after deliverables meet cryptographic criteria verified by deterministic analyzers
-            and dual-LLM consensus.
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-7">
+          {/* Clean eyebrow label */}
+          <p className="text-xs font-semibold tracking-[0.18em] uppercase text-muted/60 font-manrope">
+            Authorization Hold · Not Escrow · Powered by PayPal
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <h1 className="text-5xl sm:text-6xl md:text-[80px] font-rubik font-black tracking-[-0.04em] text-text leading-[1.0]">
+            Get paid for work that&apos;s{' '}
+            <span className="text-brand">proven.</span>
+          </h1>
+
+          <p className="max-w-xl mx-auto text-base sm:text-lg text-muted leading-relaxed font-manrope">
+            ProofPay establishes a PayPal authorization hold before work starts,
+            releasing payment milestone by milestone only after deliverables meet
+            cryptographic criteria verified by deterministic analyzers and dual-LLM consensus.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
             <Link
               href="/demo/express"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-text text-bg hover:opacity-90 font-bold text-xs shadow-sm transition-all group"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-lg bg-text text-bg hover:opacity-90 font-bold text-sm shadow-sm transition-all group"
             >
               <span>Launch 90-Second Express Sandbox</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
             <Link
               href="/auth/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-surface border border-border text-text font-semibold hover:bg-surface-2 transition-all text-xs"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 rounded-lg bg-surface border border-border text-text font-semibold hover:bg-surface-2 transition-all text-sm"
             >
               <span>Enterprise Sign In</span>
             </Link>
           </div>
 
-          {/* Featurebase clean trust indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-xs text-muted font-medium">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-              <span>Zero-Custody Protocol</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-              <span>Machine-Verifiable ProofPacks™</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-              <span>RFC 3161 External TSA</span>
-            </span>
+          {/* Trust indicators - text only, dot separators, no colored icons */}
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 text-[11px] text-muted/50 font-manrope tracking-wide">
+            <span>Zero-Custody Protocol</span>
+            <span aria-hidden="true" className="text-border">·</span>
+            <span>Machine-Verifiable ProofPacks&#8482;</span>
+            <span aria-hidden="true" className="text-border">·</span>
+            <span>RFC 3161 External TSA</span>
           </div>
 
           {/* Brew-Inspired Live Interactive Showcase Frame embedded right in Hero */}
@@ -223,7 +210,7 @@ export default function HomePage() {
           <span className="text-border/60">/</span>
           <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>SHA-256 Merkle Audit Chain</span>
           <span className="text-border/60">/</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Deterministic ProofPack™ Verification</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Deterministic ProofPackâ„¢ Verification</span>
           <span className="text-border/60">/</span>
           <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>OpenTelemetry Enterprise Tracing</span>
           <span className="text-border/60">/</span>
@@ -235,7 +222,7 @@ export default function HomePage() {
           <span className="text-border/60">/</span>
           <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>SHA-256 Merkle Audit Chain</span>
           <span className="text-border/60">/</span>
-          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Deterministic ProofPack™ Verification</span>
+          <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>Deterministic ProofPackâ„¢ Verification</span>
           <span className="text-border/60">/</span>
           <span className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border"></span>OpenTelemetry Enterprise Tracing</span>
         </div>
@@ -334,7 +321,7 @@ export default function HomePage() {
                 <div className="p-3.5 rounded-xl bg-surface-2/80 border border-border/60 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-text">1. Schema Validation (ROW_COUNT_MIN)</span>
-                    <span className="text-emerald-400 font-mono text-[11px] font-bold">Passed (124 ≥ 100)</span>
+                    <span className="text-emerald-400 font-mono text-[11px] font-bold">Passed (124 â‰¥ 100)</span>
                   </div>
                   <p className="text-[11px] text-muted">Checked JSON schema headers, required keys, and record limits.</p>
                 </div>
@@ -354,7 +341,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between text-[11px] text-muted pt-2 border-t border-border/60">
                   <span className="font-mono flex items-center gap-1.5">
                     <ShieldCheck className="w-3.5 h-3.5 text-text" />
-                    <span>ProofPack™ signed with RFC 3161</span>
+                    <span>ProofPackâ„¢ signed with RFC 3161</span>
                   </span>
                   <span className="text-brand font-bold">PayPal Captured: $600.00</span>
                 </div>
@@ -396,7 +383,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-lg font-bold text-text">Secure the payment</h3>
               <p className="text-xs sm:text-sm text-muted leading-relaxed">
-                The buyer approves a PayPal authorization for the total. It’s a hold on their funding source, not a charge. The seller can see the funds are secured before starting.
+                The buyer approves a PayPal authorization for the total. Itâ€™s a hold on their funding source, not a charge. The seller can see the funds are secured before starting.
               </p>
             </div>
 
@@ -518,12 +505,12 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl font-bold text-text">Evidence you can export</h3>
                 <p className="text-sm text-muted leading-relaxed">
-                  Every decision recorded in a tamper-evident SHA-256 hash-chained log. Full ProofPack™ export for mediation.
+                  Every decision recorded in a tamper-evident SHA-256 hash-chained log. Full ProofPackâ„¢ export for mediation.
                 </p>
               </div>
               <div className="relative z-10 mt-5 p-3 rounded-xl bg-surface-2 border border-border font-mono text-[11px] text-text flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand" />
-                <span>SHA-256 hash chain · RFC 3161 TSA</span>
+                <span>SHA-256 hash chain Â· RFC 3161 TSA</span>
               </div>
             </div>
 
@@ -567,7 +554,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Developers & Machine Agents Section — Premium Terminal Card */}
+      {/* Developers & Machine Agents Section â€” Premium Terminal Card */}
       <section className="py-24 border-b border-border bg-surface/20 relative overflow-hidden">
         <div className="absolute top-1/2 right-0 w-96 h-96 bg-sky-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
@@ -673,7 +660,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section — Premium Monochrome with Subtle Brand Glow */}
+      {/* CTA Section â€” Premium Monochrome with Subtle Brand Glow */}
       <section className="py-28 relative overflow-hidden border-t border-border bg-surface/30">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-brand/5 blur-[120px] rounded-full pointer-events-none" />
         <div className="absolute inset-0 bg-dot-pattern opacity-15 pointer-events-none" />
@@ -683,7 +670,7 @@ export default function HomePage() {
             <div className="space-y-5">
               <span className="inline-flex items-center gap-2 text-xs uppercase font-mono font-bold tracking-wider text-muted bg-surface-2 border border-border px-4 py-1.5 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand"></span>
-                Sandbox Live · Real PayPal Rails
+                Sandbox Live Â· Real PayPal Rails
               </span>
               <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-text leading-tight">
                 Ready to secure agreements{' '}
@@ -692,7 +679,7 @@ export default function HomePage() {
                 </span>
               </h2>
               <p className="text-base text-muted max-w-2xl mx-auto leading-relaxed">
-                Create your sandbox workspace in seconds. Draft smart milestone agreements with AI criteria or test autonomous agent scenarios — all backed by real PayPal authorization holds.
+                Create your sandbox workspace in seconds. Draft smart milestone agreements with AI criteria or test autonomous agent scenarios â€” all backed by real PayPal authorization holds.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -710,12 +697,12 @@ export default function HomePage() {
                 Open Sandbox Playground
               </Link>
             </div>
-            <p className="text-xs text-muted/60 pt-4">Authorization hold, not escrow · Sandbox test money only · No real charges</p>
+            <p className="text-xs text-muted/60 pt-4">Authorization hold, not escrow Â· Sandbox test money only Â· No real charges</p>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* Footer — Premium dark with brand gradient wordmark */}
+      {/* Footer â€” Premium dark with brand gradient wordmark */}
       <footer className="border-t border-border/60 bg-surface/80 backdrop-blur-sm py-16 text-xs relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-bg to-transparent pointer-events-none" />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
@@ -797,7 +784,7 @@ export default function HomePage() {
               <div className="space-y-2 text-muted">
                 <Link href="/status" className="flex items-center gap-2 hover:text-text transition-colors group">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
-                  <span className="text-text font-semibold">Live Health Telemetry →</span>
+                  <span className="text-text font-semibold">Live Health Telemetry â†’</span>
                 </Link>
                 <p className="text-[11px] leading-relaxed">
                   Platform operates in sandbox test mode with simulated currency.
@@ -807,9 +794,9 @@ export default function HomePage() {
           </div>
 
           <div className="border-t border-border/40 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-muted text-[11px]">
-            <p className="font-medium">© 2026 ProofPay. Pay when it is proven.</p>
+            <p className="font-medium">Â© 2026 ProofPay. Pay when it is proven.</p>
             <p className="text-muted/60">
-              Pay-on-acceptance protocol · Authorization hold, not escrow.
+              Pay-on-acceptance protocol Â· Authorization hold, not escrow.
             </p>
           </div>
         </div>
@@ -817,3 +804,4 @@ export default function HomePage() {
     </div>
   )
 }
+
