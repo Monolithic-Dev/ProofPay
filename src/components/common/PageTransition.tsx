@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { GlobalCursorSpotlight } from '@/components/common/GlobalCursorSpotlight'
 
 interface PageTransitionProps {
   children: React.ReactNode
@@ -10,8 +9,7 @@ interface PageTransitionProps {
 
 /**
  * Route-change transition wrapper.
- * Plays a subtle, polished fade + slide-in animation whenever routing to a new page.
- * Also renders the global cursor spotlight that sits over the whole-page dot grid.
+ * Plays a subtle fade + slide-in animation whenever routing to a new page.
  */
 export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname()
@@ -24,20 +22,15 @@ export function PageTransition({ children }: PageTransitionProps) {
   }, [pathname])
 
   return (
-    <>
-      {/* Global cursor spotlight — covers entire viewport, pointer-events:none */}
-      <GlobalCursorSpotlight />
-
-      <div
-        key={pathname}
-        className={`transition-all duration-300 ease-out relative z-10 ${
-          mounted
-            ? 'opacity-100 translate-y-0 filter-none'
-            : 'opacity-0 translate-y-2 filter blur-[2px]'
-        }`}
-      >
-        {children}
-      </div>
-    </>
+    <div
+      key={pathname}
+      className={`transition-all duration-300 ease-out ${
+        mounted
+          ? 'opacity-100 translate-y-0 filter-none'
+          : 'opacity-0 translate-y-2 filter blur-[2px]'
+      }`}
+    >
+      {children}
+    </div>
   )
 }
